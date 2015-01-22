@@ -5,7 +5,7 @@
 # coords <- point$coordinates
 # sprintf('POINT (%s)', paste0(format(coords, nsmall = decimals), collapse = ""))
 
-#' Dump a GeoJSON-like Point object to WKT.
+#' Convert GeoJSON-like POINT object to WKT.
 #'
 #' @export
 #'
@@ -16,6 +16,7 @@
 #' @examples
 #' point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
 #' dump_point(point)
+
 dump_point <- function(obj, fmt){
   decimals <- 16
   coords <- point$coordinates

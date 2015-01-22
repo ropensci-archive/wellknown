@@ -1,0 +1,24 @@
+wellknown
+=======
+
+`wellknown` - convert WKT and WKB to GeoJSON.
+
+## Install
+
+```{r eval=FALSE}
+install.packages("devtools")
+devtools::install_github("sckott/wellknown")
+```
+
+```{r}
+library("wellknown")
+```
+
+## GeoJSON to WKT
+
+### Point
+
+```{r}
+point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
+dump_point(point)
+```
