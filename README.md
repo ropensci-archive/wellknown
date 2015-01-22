@@ -3,7 +3,7 @@ wellknown
 
 
 
-`wellknown` - convert WKT and WKB to GeoJSON.
+`wellknown` - convert WKT and WKB to GeoJSON and vice versa.
 
 ## Install
 
@@ -25,7 +25,7 @@ library("wellknown")
 
 ```r
 point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
-gj2wkt(point)
+geojson2wkt(point)
 #> [1] "POINT (116.4000000000000057 45.2000000000000028 11.0999999999999996)"
 ```
 
@@ -36,7 +36,7 @@ gj2wkt(point)
 st <- list(type = 'LineString',
             coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
                               c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))
-gj2wkt(st, fmt=0)
+geojson2wkt(st, fmt=0)
 #> [1] "LINESTRING (0 0 10, 2 1 20, 4 2 30, 5 4 40)"
 ```
 
@@ -49,7 +49,121 @@ poly <- list(type = 'Polygon',
         list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)),
         list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801), c(100.201, 0.201))
 ))
-gj2wkt(poly)
+geojson2wkt(poly)
 #> [1] "POLYGON ((100.0010000000000048 0.0010000000000000, 101.1234500000000054 0.0010000000000000, 101.0010000000000048 1.0009999999999999, 100.0010000000000048 0.0010000000000000), (100.2009999999999934 0.2010000000000000, 100.8010000000000019 0.2010000000000000, 100.8010000000000019 0.8010000000000000, 100.2009999999999934 0.2010000000000000))"
 ```
 
+
+## WKT to GeoJSON
+
+### Point
+
+As a `Feature`
+
+
+```r
+str <- "POINT (-116.4000000000000057 45.2000000000000028)"
+wkt2geojson(str)
+#> $type
+#> [1] "Feature"
+#> 
+#> $geometry
+#> $geometry$type
+#> [1] "Point"
+#> 
+#> $geometry$coordinates
+#> [1] -116.4   45.2
+```
+
+Not a `Feature`
+
+
+```r
+wkt2geojson(str, feature=FALSE)
+#> $type
+#> [1] "Point"
+#> 
+#> $coordinates
+#> [1] -116.4   45.2
+```
+
+### Polygon
+
+As a `Feature`
+
+
+```r
+str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
+wkt2geojson(str)
+#> $type
+#> [1] "Feature"
+#> 
+#> $geometry
+#> $geometry$type
+#> [1] "Polygon"
+#> 
+#> $geometry$coordinates
+#> $geometry$coordinates[[1]]
+#> $geometry$coordinates[[1]][[1]]
+#> [1] 100.0   0.1
+#> 
+#> $geometry$coordinates[[1]][[2]]
+#> [1] 101.1   0.3
+#> 
+#> $geometry$coordinates[[1]][[3]]
+#> [1] 101.0   0.5
+#> 
+#> $geometry$coordinates[[1]][[4]]
+#> [1] 100.0   0.1
+#> 
+#> 
+#> $geometry$coordinates[[2]]
+#> $geometry$coordinates[[2]][[1]]
+#> [1] 103.2   0.2
+#> 
+#> $geometry$coordinates[[2]][[2]]
+#> [1] 104.8   0.2
+#> 
+#> $geometry$coordinates[[2]][[3]]
+#> [1] 100.8   0.8
+#> 
+#> $geometry$coordinates[[2]][[4]]
+#> [1] 103.2   0.2
+```
+
+Not a `Feature`
+
+
+```r
+wkt2geojson(str, feature=FALSE)
+#> $type
+#> [1] "Polygon"
+#> 
+#> $coordinates
+#> $coordinates[[1]]
+#> $coordinates[[1]][[1]]
+#> [1] 100.0   0.1
+#> 
+#> $coordinates[[1]][[2]]
+#> [1] 101.1   0.3
+#> 
+#> $coordinates[[1]][[3]]
+#> [1] 101.0   0.5
+#> 
+#> $coordinates[[1]][[4]]
+#> [1] 100.0   0.1
+#> 
+#> 
+#> $coordinates[[2]]
+#> $coordinates[[2]][[1]]
+#> [1] 103.2   0.2
+#> 
+#> $coordinates[[2]][[2]]
+#> [1] 104.8   0.2
+#> 
+#> $coordinates[[2]][[3]]
+#> [1] 100.8   0.8
+#> 
+#> $coordinates[[2]][[4]]
+#> [1] 103.2   0.2
+```
