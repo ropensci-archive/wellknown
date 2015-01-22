@@ -17,6 +17,7 @@ properties(x, style = NULL, popup = NULL)
 Add properties to a geojson object
 }
 \examples{
+str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 x <- wkt2geojson(str)
 properties(x, style=list(color = "red"))
 }

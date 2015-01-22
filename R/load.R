@@ -2,9 +2,10 @@
 #'
 #' @export
 #'
-#' @param obj A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
+#' @param str A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates.
+#' @param feature (logical) Make a feature geojson object. Default: TRUE
 #' @seealso \code{\link{geojson2wkt}}
 #' @examples
 #' # point
@@ -13,7 +14,8 @@
 #' wkt2geojson(str, feature=FALSE)
 #'
 #' # polygon
-#' str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
+#' str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
+#'    (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
 
@@ -68,6 +70,7 @@ load_polygon <- function(str, fmt = 16, feature = TRUE){
 #' @param style List of color, fillColor, etc., or NULL
 #' @param popup Popup text, or NULL
 #' @examples
+#' str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 #' x <- wkt2geojson(str)
 #' properties(x, style=list(color = "red"))
 properties <- function(x, style = NULL, popup = NULL){

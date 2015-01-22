@@ -7,10 +7,12 @@
 wkt2geojson(str, fmt = 16, feature = TRUE)
 }
 \arguments{
+\item{str}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
+
 \item{fmt}{Format string which indicates the number of digits to display after the
 decimal point when formatting coordinates.}
 
-\item{obj}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
+\item{feature}{(logical) Make a feature geojson object. Default: TRUE}
 }
 \description{
 Convert WKT to GeoJSON-like objects.
@@ -22,7 +24,8 @@ wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 
 # polygon
-str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
+str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
+   (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 }
