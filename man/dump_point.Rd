@@ -7,19 +7,13 @@
 dump_point(obj, fmt = 16)
 }
 \arguments{
-\item{obj}{A GeoJSON-like `dict` representing a Point.}
+\item{obj}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
 
 \item{fmt}{Format string which indicates the number of digits to display after the
 decimal point when formatting coordinates.}
 }
-\value{
-WKT representation of the input GeoJSON Point ``obj``.
-}
 \description{
 Convert GeoJSON-like POINT object to WKT.
 }
-\examples{
-point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
-dump_point(point)
-}
+\keyword{internal}
 

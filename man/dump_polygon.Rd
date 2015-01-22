@@ -7,7 +7,7 @@
 dump_polygon(obj, fmt = 16)
 }
 \arguments{
-\item{obj}{A GeoJSON-like `dict` representing a LineString}
+\item{obj}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
 
 \item{fmt}{Format string which indicates the number of digits to display after the
 decimal point when formatting coordinates.}
@@ -15,13 +15,5 @@ decimal point when formatting coordinates.}
 \description{
 Convert GeoJSON-like Polygon object to WKT.
 }
-\examples{
-poly <- list(type = 'Polygon',
-     coordinates=list(
-       list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)),
-       list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801), c(100.201, 0.201))
-))
-dump_polygon(poly)
-dump_polygon(poly, fmt=6)
-}
+\keyword{internal}
 
