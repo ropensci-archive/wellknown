@@ -12,4 +12,4 @@ cw <- function(s, strict = FALSE, onlyfirst = FALSE) {
 }
 
 strextract <- function(str, pattern) regmatches(str, regexpr(pattern, str))
-strtrim <- function(str) gsub("^\\s+|\\s+$", "", str)
+str_trim_ <- function(str) gsub("^\\s+|\\s+$", "", str)

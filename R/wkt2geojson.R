@@ -18,6 +18,9 @@
 #'    (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
+#'
+#' # multipoint
+#' mp <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE){
   type <- cw(types[sapply(types, grepl, x = str)], onlyfirst = TRUE)
