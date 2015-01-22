@@ -86,7 +86,7 @@ wkt2geojson(str)
 #> [1] -116.4   45.2
 ```
 
-Not a `Feature`
+Not `Feature`
 
 
 ```r
@@ -96,6 +96,61 @@ wkt2geojson(str, feature=FALSE)
 #> 
 #> $coordinates
 #> [1] -116.4   45.2
+```
+
+### Multipoint
+
+As a `Feature`
+
+
+```r
+str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
+wkt2geojson(str)
+#> $type
+#> [1] "Feature"
+#> 
+#> $geometry
+#> $geometry$type
+#> [1] "Multipoint"
+#> 
+#> $geometry$coordinates
+#> $geometry$coordinates[[1]]
+#> $geometry$coordinates[[1]][[1]]
+#> [1] 100.000   3.101
+#> 
+#> 
+#> $geometry$coordinates[[2]]
+#> $geometry$coordinates[[2]][[1]]
+#> [1] 101.0   2.1
+#> 
+#> 
+#> $geometry$coordinates[[3]]
+#> $geometry$coordinates[[3]][[1]]
+#> [1] 3.14 2.18
+```
+
+Not `Feature`
+
+
+```r
+wkt2geojson(str, feature=FALSE)
+#> $type
+#> [1] "Multipoint"
+#> 
+#> $coordinates
+#> $coordinates[[1]]
+#> $coordinates[[1]][[1]]
+#> [1] 100.000   3.101
+#> 
+#> 
+#> $coordinates[[2]]
+#> $coordinates[[2]][[1]]
+#> [1] 101.0   2.1
+#> 
+#> 
+#> $coordinates[[3]]
+#> $coordinates[[3]][[1]]
+#> [1] 3.14 2.18
 ```
 
 ### Polygon
@@ -142,7 +197,7 @@ wkt2geojson(str)
 #> [1] 103.2   0.2
 ```
 
-Not a `Feature`
+Not `Feature`
 
 
 ```r
@@ -178,3 +233,4 @@ wkt2geojson(str, feature=FALSE)
 #> $coordinates[[2]][[4]]
 #> [1] 103.2   0.2
 ```
+

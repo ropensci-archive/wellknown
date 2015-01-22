@@ -73,7 +73,22 @@ str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 wkt2geojson(str)
 ```
 
-Not a `Feature`
+Not `Feature`
+
+```{r}
+wkt2geojson(str, feature=FALSE)
+```
+
+### Multipoint
+
+As a `Feature`
+
+```{r}
+str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
+wkt2geojson(str)
+```
+
+Not `Feature`
 
 ```{r}
 wkt2geojson(str, feature=FALSE)
@@ -88,8 +103,9 @@ str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 
 wkt2geojson(str)
 ```
 
-Not a `Feature`
+Not `Feature`
 
 ```{r}
 wkt2geojson(str, feature=FALSE)
 ```
+
