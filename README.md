@@ -10,7 +10,7 @@ wellknown
 
 ```r
 install.packages("devtools")
-devtools::install_github("sckott/wellknown")
+devtools::install_github("ropensci/wellknown")
 ```
 
 
@@ -234,3 +234,10 @@ wkt2geojson(str, feature=FALSE)
 #> [1] 103.2   0.2
 ```
 
+## Meta
+
+* Please report any issues or bugs](https://github.com/ropensci/wellknown/issues).
+* License: MIT
+* Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
+
+[![ropensci footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)

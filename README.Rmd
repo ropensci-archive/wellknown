@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r eval=FALSE}
 install.packages("devtools")
-devtools::install_github("sckott/wellknown")
+devtools::install_github("ropensci/wellknown")
 ```
 
 ```{r}
@@ -109,3 +109,10 @@ Not `Feature`
 wkt2geojson(str, feature=FALSE)
 ```
 
+## Meta
+
+* Please report any issues or bugs](https://github.com/ropensci/wellknown/issues).
+* License: MIT
+* Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
+
+[![ropensci footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
