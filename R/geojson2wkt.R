@@ -27,7 +27,7 @@
 #' geojson2wkt(poly, fmt=6)
 #'
 #' # multipoint
-#' mp <- list(type = 'MultiPoint', coordinates=list( c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
+#' mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
 #' geojson2wkt(mp)
 
 geojson2wkt <- function(obj, fmt = 16){

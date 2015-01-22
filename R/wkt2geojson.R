@@ -20,17 +20,28 @@
 #' wkt2geojson(str, feature=FALSE)
 #'
 #' # multipoint
-#' mp <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
+#' str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
+#' wkt2geojson(str)
+#' wkt2geojson(str, feature=FALSE)
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE){
-  type <- cw(types[sapply(types, grepl, x = str)], onlyfirst = TRUE)
+  type <- get_type(str)
   switch(type,
          Point = load_point(str, fmt, feature),
-         Polygon = load_polygon(str, fmt, feature)
+         Polygon = load_polygon(str, fmt, feature),
+         Multipoint = load_multipoint(str, fmt, feature)
   )
 }
 
 types <- c("POINT","POLYGON","LINESTRING",'MULTIPOINT',"MULTIPOLYGON")
+
+get_type <- function(x){
+  type <- cw(types[sapply(types, grepl, x = x)], onlyfirst = TRUE)
+  if(length(type) > 1)
+    grep(tolower(strextract(x, "[A-Za-z]+")), type, ignore.case = TRUE, value = TRUE)
+  else
+    type
+}
 
 #' Convert WKT to GeoJSON-like POINT object.
 #'
@@ -38,7 +49,7 @@ types <- c("POINT","POLYGON","LINESTRING",'MULTIPOINT',"MULTIPOLYGON")
 #' @keywords internal
 load_point <- function(str, fmt = 16, feature = TRUE){
   str_coord <- gsub("POINT|\\(|\\)", "", str)
-  coords <- strsplit(strtrim(str_coord), "\\s")[[1]]
+  coords <- strsplit(str_trim_(str_coord), "\\s")[[1]]
   tmp <- list(type='Point', coordinates=as.numeric(coords))
   if(feature)
     list(type="Feature", geometry=tmp)
@@ -51,11 +62,11 @@ load_point <- function(str, fmt = 16, feature = TRUE){
 #' @inheritParams wkt2geojson
 #' @keywords internal
 load_polygon <- function(str, fmt = 16, feature = TRUE){
-  str_coord <- strtrim(gsub("POLYGON\\s", "", str))
+  str_coord <- str_trim_(gsub("POLYGON\\s", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
   coords <- lapply(str_coord, function(z){
-    pairs <- strsplit(strsplit(gsub("\\(|\\)", "", strtrim(z)), ",|,\\s")[[1]], "\\s")
+    pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, as.numeric)
   })
   tmp <- list(type='Polygon', coordinates=coords)
@@ -65,17 +76,22 @@ load_polygon <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
-#' Add properties to a geojson object
+#' Convert WKT to GeoJSON-like MULTIPOINT object.
 #'
-#' @export
-#'
-#' @param x Input
-#' @param style List of color, fillColor, etc., or NULL
-#' @param popup Popup text, or NULL
-#' @examples
-#' str <- "POINT (-116.4000000000000057 45.2000000000000028)"
-#' x <- wkt2geojson(str)
-#' properties(x, style=list(color = "red"))
-properties <- function(x, style = NULL, popup = NULL){
-  modifyList(x, list(properties = list(style = style, popup = popup)))
+#' @inheritParams wkt2geojson
+#' @keywords internal
+load_multipoint <- function(str, fmt = 16, feature = TRUE){
+  str_coord <- str_trim_(gsub("MULTIPOINT\\s", "", str))
+  str_coord <- gsub("^\\(|\\)$", "", str_coord)
+  str_coord <- strsplit(str_coord, "\\),")[[1]]
+  coords <- lapply(str_coord, function(z){
+    pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
+    lapply(pairs, as.numeric)
+  })
+  tmp <- list(type='Multipoint', coordinates=coords)
+  if(feature)
+    list(type="Feature", geometry=tmp)
+  else
+    tmp
 }
+
