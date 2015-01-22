@@ -1,0 +1,7 @@
+Package: wellknown
+Title: WKT to GeoJSON
+Description: WKT to GeoJSON
+Version: 0.0.1.99
+Authors@R: "Scott Chamberlain <myrmecocystus@gmail.com> [aut, cre]"
+License: MIT + file LICENSE
+LazyData: true
