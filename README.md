@@ -3,7 +3,7 @@ wellknown
 
 
 
-`wellknown` - convert WKT and WKB to GeoJSON and vice versa.
+`wellknown` - convert WKT <!-- and WKB --> to GeoJSON and vice versa.
 
 ## Install
 
