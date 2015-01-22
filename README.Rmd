@@ -29,7 +29,7 @@ library("wellknown")
 
 ```{r}
 point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
-dump_point(point)
+gj2wkt(point)
 ```
 
 ### LineString
@@ -38,7 +38,7 @@ dump_point(point)
 st <- list(type = 'LineString',
             coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
                               c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))
-dump_linestring(st, fmt=0)
+gj2wkt(st, fmt=0)
 ```
 
 ### Polygon
@@ -49,6 +49,6 @@ poly <- list(type = 'Polygon',
         list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)),
         list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801), c(100.201, 0.201))
 ))
-dump_polygon(poly)
+gj2wkt(poly)
 ```
 
