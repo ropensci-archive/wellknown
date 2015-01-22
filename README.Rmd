@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`wellknown` - convert WKT <!-- and WKB --> to GeoJSON and vice versa.
+`wellknown` - convert WKT to GeoJSON and vice versa.
 
 ## Install
 
