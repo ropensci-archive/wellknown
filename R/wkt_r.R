@@ -41,3 +41,28 @@ dump_linestring <- function(obj, fmt = 16){
   }), collapse = ", ")
   sprintf('LINESTRING (%s)', str)
 }
+
+#' Convert GeoJSON-like Polygon object to WKT.
+#'
+#' @export
+#'
+#' @param obj A GeoJSON-like `dict` representing a LineString
+#' @param fmt Format string which indicates the number of digits to display after the
+#' decimal point when formatting coordinates.
+#' @examples
+#' poly <- list(type = 'Polygon',
+#'      coordinates=list(
+#'        list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)),
+#'        list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801), c(100.201, 0.201))
+#' ))
+#' dump_polygon(poly)
+#' dump_polygon(poly, fmt=6)
+dump_polygon <- function(obj, fmt = 16){
+  coords <- obj$coordinates
+  str <- paste0(lapply(coords, function(z){
+    sprintf("(%s)", paste0(lapply(z, function(w){
+      paste0(gsub("\\s", "", format(w, nsmall = fmt)), collapse = " ")
+    }), collapse = ", "))
+  }), collapse = ", ")
+  sprintf('POLYGON (%s)', str)
+}
