@@ -2,9 +2,9 @@
 % Please edit documentation in R/wkt_r.R
 \name{dump_point}
 \alias{dump_point}
-\title{Dump a GeoJSON-like Point object to WKT.}
+\title{Convert GeoJSON-like POINT object to WKT.}
 \usage{
-dump_point(obj, fmt)
+dump_point(obj, fmt = 16)
 }
 \arguments{
 \item{obj}{A GeoJSON-like `dict` representing a Point.}
@@ -16,7 +16,7 @@ decimal point when formatting coordinates.}
 WKT representation of the input GeoJSON Point ``obj``.
 }
 \description{
-Dump a GeoJSON-like Point object to WKT.
+Convert GeoJSON-like POINT object to WKT.
 }
 \examples{
 point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))

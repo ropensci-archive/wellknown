@@ -1,6 +1,15 @@
 wellknown
 =======
 
+```{r echo=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
 `wellknown` - convert WKT and WKB to GeoJSON.
 
 ## Install
@@ -22,3 +31,13 @@ library("wellknown")
 point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
 dump_point(point)
 ```
+
+### LineString
+
+```{r}
+st <- list(type = 'LineString',
+            coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
+                              c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))
+dump_linestring(st, fmt=0)
+```
+
