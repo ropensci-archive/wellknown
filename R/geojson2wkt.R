@@ -11,11 +11,23 @@
 #' point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2))
 #' geojson2wkt(point)
 #'
+#' # multipoint
+#' mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
+#' geojson2wkt(mp)
+#'
 #' # linestring
 #' st <- list(type = 'LineString',
 #'            coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
 #'                              c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))
 #' geojson2wkt(st)
+#'
+#' # multilinestring
+#' multist <- list(type = 'MultiLineString',
+#'      coordinates = list(
+#'        list(c(0.0, -1.0), c(-2.0, -3.0), c(-4.0, -5.0)),
+#'        list(c(1.66, -31023.5), c(10000.9999, 3.0), c(100.9, 1.1), c(0.0, 0.0))
+#'      ))
+#' geojson2wkt(multist)
 #'
 #' # polygon
 #' poly <- list(type = 'Polygon',
@@ -26,14 +38,13 @@
 #' geojson2wkt(poly)
 #' geojson2wkt(poly, fmt=6)
 #'
-#' # multipoint
-#' mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
-#' geojson2wkt(mp)
+
 
 geojson2wkt <- function(obj, fmt = 16){
   switch(tolower(obj$type),
          point = dump_point(obj, fmt),
          linestring = dump_linestring(obj, fmt),
+         multilinestring = dump_multilinestring(obj, fmt),
          polygon = dump_polygon(obj, fmt),
          multipoint = dump_multipoint(obj, fmt)
   )
@@ -48,6 +59,18 @@ dump_point <- function(obj, fmt = 16){
   sprintf('POINT (%s)', paste0(format(coords, nsmall = fmt), collapse = ""))
 }
 
+#' Convert GeoJSON-like MULTIPOINT object to WKT.
+#'
+#' @inheritParams geojson2wkt
+#' @keywords internal
+dump_multipoint <- function(obj, fmt = 16){
+  coords <- obj$coordinates
+  str <- paste0(lapply(coords, function(z){
+    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt)), collapse = " "))
+  }), collapse = ", ")
+  sprintf('MULTIPOINT (%s)', str)
+}
+
 #' Convert GeoJSON-like LineString object to WKT.
 #'
 #' @inheritParams geojson2wkt
@@ -58,6 +81,18 @@ dump_linestring <- function(obj, fmt = 16){
     paste0(gsub("\\s", "", format(z, nsmall = fmt)), collapse = " ")
   }), collapse = ", ")
   sprintf('LINESTRING (%s)', str)
+}
+
+#' Convert GeoJSON-like MultiLineString object to WKT.
+#'
+#' @inheritParams geojson2wkt
+#' @keywords internal
+dump_multilinestring <- function(obj, fmt = 16){
+  coords <- obj$coordinates
+  str <- paste0(lapply(coords, function(z){
+    sprintf("(%s)", paste0(gsub(",", "", unname(sapply(str_trim_(format(z, nsmall = fmt)), paste0, collapse = " "))), collapse = ", "))
+  }), collapse = ", ")
+  sprintf('MULTILINESTRING (%s)', str)
 }
 
 #' Convert GeoJSON-like Polygon object to WKT.
@@ -72,16 +107,4 @@ dump_polygon <- function(obj, fmt = 16){
     }), collapse = ", "))
   }), collapse = ", ")
   sprintf('POLYGON (%s)', str)
-}
-
-#' Convert GeoJSON-like MULTIPOINT object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
-dump_multipoint <- function(obj, fmt = 16){
-  coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt)), collapse = " "))
-  }), collapse = ", ")
-  sprintf('MULTIPOINT (%s)', str)
 }

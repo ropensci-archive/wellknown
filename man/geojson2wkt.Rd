@@ -20,11 +20,23 @@ Convert GeoJSON-like objects to WKT.
 point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2))
 geojson2wkt(point)
 
+# multipoint
+mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
+geojson2wkt(mp)
+
 # linestring
 st <- list(type = 'LineString',
            coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
                              c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))
 geojson2wkt(st)
+
+# multilinestring
+multist <- list(type = 'MultiLineString',
+     coordinates = list(
+       list(c(0.0, -1.0), c(-2.0, -3.0), c(-4.0, -5.0)),
+       list(c(1.66, -31023.5), c(10000.9999, 3.0), c(100.9, 1.1), c(0.0, 0.0))
+     ))
+geojson2wkt(multist)
 
 # polygon
 poly <- list(type = 'Polygon',
@@ -34,10 +46,6 @@ poly <- list(type = 'Polygon',
 ))
 geojson2wkt(poly)
 geojson2wkt(poly, fmt=6)
-
-# multipoint
-mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
-geojson2wkt(mp)
 }
 \seealso{
 \code{\link{wkt2geojson}}
