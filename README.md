@@ -28,14 +28,14 @@ library("wellknown")
 ```r
 point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
 geojson2wkt(point)
-#> [1] "POINT (116.4000000000000057 45.2000000000000028 11.0999999999999996)"
+#> [1] "POINT (116.4000000000000057  45.2000000000000028  11.0999999999999996)"
 ```
 
 ### Multipoint
 
 
 ```r
-mp <- list(type = 'MultiPoint', 
+mp <- list(type = 'MultiPoint',
            coordinates=list( c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)
 ))
 geojson2wkt(mp)
@@ -91,6 +91,22 @@ geojson2wkt(mpoly, fmt=1)
 #> [1] "MULTIPOLYGON (((30.0 20.0, 45.0 40.0, 10.0 40.0, 30.0 20.0)), ((15.0 5.0, 40.0 10.0, 10.0 20.0, 5.0 10.0, 15.0 5.0)))"
 ```
 
+### GeometryCollection
+
+
+```r
+gmcoll <- list(type = 'GeometryCollection',
+   geometries = list(
+     list(type = "Point", coordinates = list(0.0, 1.0)),
+     list(type = 'LineString', coordinates = list(c(-100.0, 0.0), c(-101.0, -1.0))),
+     list(type = 'MultiPoint',
+          'coordinates' = list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18))
+          )
+     )
+   )
+geojson2wkt(gmcoll, fmt=0)
+#> [1] "GEOMETRYCOLLECTION (POINT (0 1), LINESTRING (-100 0, -101 -1), MULTIPOINT ((100.000 3.101), (101.0 2.1), (3.14 2.18)))"
+```
 
 ## WKT to GeoJSON
 
