@@ -148,6 +148,20 @@ Not `Feature`
 wkt2geojson(str, feature=FALSE)
 ```
 
+### Linestring
+
+As a `Feature`
+
+```{r}
+wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
+```
+
+Not `Feature`
+
+```{r}
+wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
+```
+
 ## Meta
 
 * Please report any issues or bugs](https://github.com/ropensci/wellknown/issues).

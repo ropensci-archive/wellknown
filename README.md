@@ -279,6 +279,52 @@ wkt2geojson(str, feature=FALSE)
 #> [1] 103.2   0.2
 ```
 
+### Linestring
+
+As a `Feature`
+
+
+```r
+wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
+#> $type
+#> [1] "Feature"
+#> 
+#> $geometry
+#> $geometry$type
+#> [1] "Linestring"
+#> 
+#> $geometry$coordinates
+#> $geometry$coordinates[[1]]
+#> $geometry$coordinates[[1]][[1]]
+#> [1]  0 -1
+#> 
+#> $geometry$coordinates[[1]][[2]]
+#> [1] -2 -3
+#> 
+#> $geometry$coordinates[[1]][[3]]
+#> [1] -4  5
+```
+
+Not `Feature`
+
+
+```r
+wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
+#> $type
+#> [1] "Linestring"
+#> 
+#> $coordinates
+#> $coordinates[[1]]
+#> $coordinates[[1]][[1]]
+#> [1]  0 -1
+#> 
+#> $coordinates[[1]][[2]]
+#> [1] -2 -3
+#> 
+#> $coordinates[[1]][[3]]
+#> [1] -4  5
+```
+
 ## Meta
 
 * Please report any issues or bugs](https://github.com/ropensci/wellknown/issues).
