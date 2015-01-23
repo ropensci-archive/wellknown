@@ -23,14 +23,21 @@
 #'    (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
-
+#'
+#' # linestring
+#' str <- "LINESTRING (100.000 0.000, 101.000 1.000)"
+#' wkt2geojson(str)
+#' wkt2geojson(str, feature=FALSE)
+#' wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
+#' wkt2geojson("LINESTRING (0 1 2 3, 4 5 6 7)")
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE){
   type <- get_type(str)
   switch(type,
          Point = load_point(str, fmt, feature),
          Polygon = load_polygon(str, fmt, feature),
-         Multipoint = load_multipoint(str, fmt, feature)
+         Multipoint = load_multipoint(str, fmt, feature),
+         Linestring = load_linestring(str, fmt, feature)
   )
 }
 
@@ -90,6 +97,25 @@ load_polygon <- function(str, fmt = 16, feature = TRUE){
     lapply(pairs, as.numeric)
   })
   tmp <- list(type='Polygon', coordinates=coords)
+  if(feature)
+    list(type="Feature", geometry=tmp)
+  else
+    tmp
+}
+
+#' Convert WKT to GeoJSON-like LINESTRING object.
+#'
+#' @inheritParams wkt2geojson
+#' @keywords internal
+load_linestring <- function(str, fmt = 16, feature = TRUE){
+  str_coord <- str_trim_(gsub("LINESTRING\\s", "", str))
+  str_coord <- gsub("^\\(|\\)$", "", str_coord)
+  str_coord <- strsplit(str_coord, "\\),")[[1]]
+  coords <- lapply(str_coord, function(z){
+    pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
+    lapply(pairs, as.numeric)
+  })
+  tmp <- list(type='Linestring', coordinates=coords)
   if(feature)
     list(type="Feature", geometry=tmp)
   else

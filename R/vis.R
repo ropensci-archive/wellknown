@@ -15,12 +15,35 @@
 #'  addGeoJSON(geojson)
 #'
 #' ## polygons
+#' str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
+#'    (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 #' geojson <- wkt2geojson(str) %>% properties(style=list(color = "red"))
 #' cen <- centroid(geojson)
 #' leaflet() %>%
 #'  addTiles() %>%
 #'  setView(lng = cen[2], lat = cen[1], zoom = 6) %>%
 #'  addGeoJSON(geojson)
+#'
+#' ## linestring
+#' geojson <- wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=TRUE) %>% properties(style=list(color = "red"))
+#' cen <- centroid(geojson)
+#' leaflet() %>%
+#'  addTiles() %>%
+#'  setView(lng = cen[2], lat = cen[1], zoom = 6) %>%
+#'  addGeoJSON(geojson)
+#'
+#' st <- list(type = "Feature",
+#'            geometry = list(
+#'              type = 'LineString',
+#'              coordinates = list(c(0.0, 0.0), c(2.0, 1.0),
+#'                              c(4.0, 2.0), c(5.0, 4.0)))
+#' )
+#' st <- st %>% properties(style=list(color = "red"))
+#' cen <- centroid(st)
+#' leaflet() %>%
+#'  addTiles() %>%
+#'  setView(lng = cen[2], lat = cen[1], zoom = 6) %>%
+#'  addGeoJSON(st)
 #' }
 NULL
 
@@ -80,10 +103,15 @@ getcentr <- function(x){
 
 centroid <- function(x){
   if("geometry" %in% names(x)) {
-    c(
-      mean(sapply(x$geometry$coordinates, function(z) sapply(z, function(b) b[2]))),
-      mean(sapply(x$geometry$coordinates, function(z) sapply(z, function(b) b[1])))
-    )
+    obj <- x$geometry$coordinates
+    if(is(obj, "numeric")){
+      obj
+    } else {
+      c(
+        mean(sapply(obj, function(z) sapply(z, function(b) b[2]))),
+        mean(sapply(obj, function(z) sapply(z, function(b) b[1])))
+      )
+    }
   } else {
     c(
       mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[2]))),

@@ -33,6 +33,13 @@ str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
    (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
+
+# linestring
+str <- "LINESTRING (100.000 0.000, 101.000 1.000)"
+wkt2geojson(str)
+wkt2geojson(str, feature=FALSE)
+wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
+wkt2geojson("LINESTRING (0 1 2 3, 4 5 6 7)")
 }
 \seealso{
 \code{\link{geojson2wkt}}
