@@ -13,16 +13,17 @@
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
 #'
+#' # multipoint
+#' str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
+#' wkt2geojson(str)
+#' wkt2geojson(str, feature=FALSE)
+#'
 #' # polygon
 #' str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
 #'    (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
-#'
-#' # multipoint
-#' str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
-#' wkt2geojson(str)
-#' wkt2geojson(str, feature=FALSE)
+
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE){
   type <- get_type(str)
@@ -57,25 +58,6 @@ load_point <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
-#' Convert WKT to GeoJSON-like POLYGON object.
-#'
-#' @inheritParams wkt2geojson
-#' @keywords internal
-load_polygon <- function(str, fmt = 16, feature = TRUE){
-  str_coord <- str_trim_(gsub("POLYGON\\s", "", str))
-  str_coord <- gsub("^\\(|\\)$", "", str_coord)
-  str_coord <- strsplit(str_coord, "\\),")[[1]]
-  coords <- lapply(str_coord, function(z){
-    pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
-    lapply(pairs, as.numeric)
-  })
-  tmp <- list(type='Polygon', coordinates=coords)
-  if(feature)
-    list(type="Feature", geometry=tmp)
-  else
-    tmp
-}
-
 #' Convert WKT to GeoJSON-like MULTIPOINT object.
 #'
 #' @inheritParams wkt2geojson
@@ -95,3 +77,21 @@ load_multipoint <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
+#' Convert WKT to GeoJSON-like POLYGON object.
+#'
+#' @inheritParams wkt2geojson
+#' @keywords internal
+load_polygon <- function(str, fmt = 16, feature = TRUE){
+  str_coord <- str_trim_(gsub("POLYGON\\s", "", str))
+  str_coord <- gsub("^\\(|\\)$", "", str_coord)
+  str_coord <- strsplit(str_coord, "\\),")[[1]]
+  coords <- lapply(str_coord, function(z){
+    pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
+    lapply(pairs, as.numeric)
+  })
+  tmp <- list(type='Polygon', coordinates=coords)
+  if(feature)
+    list(type="Feature", geometry=tmp)
+  else
+    tmp
+}
