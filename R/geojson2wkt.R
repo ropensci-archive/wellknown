@@ -55,6 +55,50 @@
 #'                                  list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
 #' )
 #' geojson2wkt(mpoly2, fmt=1)
+#'
+#' # geometrycollection
+#' gmcoll <- list(type = 'GeometryCollection',
+#'  geometries = list(
+#'      list(type = "Point", coordinates = list(0.0, 1.0)),
+#'      list(type = 'LineString', coordinates = list(c(-100.0, 0.0), c(-101.0, -1.0))),
+#'      list(type = 'Polygon',
+#'        'coordinates' = list(list(c(100.001, 0.001),
+#'                        c(101.1235, 0.001),
+#'                        c(101.001, 1.001),
+#'                        c(100.001, 0.001)),
+#'                       list(c(100.201, 0.201),
+#'                        c(100.801, 0.201),
+#'                        c(100.801, 0.801),
+#'                        c(100.201, 0.201)))
+#'      ),
+#'      list(type = 'MultiPoint',
+#'        'coordinates' = list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18))
+#'      ),
+#'      list(type = 'MultiLineString',
+#'        coordinates = list(list(c(0.0, -1.0), c(-2.0, -3.0), c(-4.0, -5.0)),
+#'                       list(c(1.66, -31023.5, 1.1),
+#'                        c(10000.9999, 3.0, 2.2),
+#'                        c(100.9, 1.1, 3.3),
+#'                        c(0.0, 0.0, 4.4)))
+#'      ),
+#'      list(type = 'MultiPolygon',
+#'           coordinates = list(
+#'             list(list(c(100.001, 0.001),
+#'                       c(101.001, 0.001),
+#'                       c(101.001, 1.001),
+#'                       c(100.001, 0.001)),
+#'                  list(c(100.201, 0.201),
+#'                       c(100.801, 0.201),
+#'                       c(100.801, 0.801),
+#'                       c(100.201, 0.201)) ),
+#'             list(list(c(1.0, 2.0, 3.0, 4.0),
+#'                       c(5.0, 6.0, 7.0, 8.0),
+#'                       c(9.0, 10.0, 11.0, 12.0),
+#'                       c(1.0, 2.0, 3.0, 4.0))))
+#'      )
+#'  )
+#' )
+#' geojson2wkt(gmcoll, fmt=0)
 
 geojson2wkt <- function(obj, fmt = 16){
   switch(tolower(obj$type),
@@ -63,7 +107,8 @@ geojson2wkt <- function(obj, fmt = 16){
          linestring = dump_linestring(obj, fmt),
          multilinestring = dump_multilinestring(obj, fmt),
          polygon = dump_polygon(obj, fmt),
-         multipolygon = dump_multipolygon(obj, fmt)
+         multipolygon = dump_multipolygon(obj, fmt),
+         geometrycollection = dump_geometrycollection(obj, fmt)
   )
 }
 
@@ -73,7 +118,7 @@ geojson2wkt <- function(obj, fmt = 16){
 #' @keywords internal
 dump_point <- function(obj, fmt = 16){
   coords <- obj$coordinates
-  sprintf('POINT (%s)', paste0(format(coords, nsmall = fmt), collapse = ""))
+  sprintf('POINT (%s)', paste0(format(coords, nsmall = fmt), collapse = " "))
 }
 
 #' Convert GeoJSON-like MULTIPOINT object to WKT.
@@ -138,4 +183,27 @@ dump_multipolygon <- function(obj, fmt = 16){
     })), collapse=", "))
   }), collapse=", ")
   sprintf('MULTIPOLYGON (%s)', str)
+}
+
+#' Convert GeoJSON-like GeometryCollection object to WKT.
+#'
+#' @inheritParams geojson2wkt
+#' @keywords internal
+dump_geometrycollection <- function(obj, fmt = 16){
+  geoms <- obj$geometries
+  str <- paste0(lapply(geoms, function(z){
+    get_fxn(tolower(z$type))(z, fmt)
+  }), collapse = ", ")
+  sprintf('GEOMETRYCOLLECTION (%s)', str)
+}
+
+get_fxn <- function(type){
+  switch(type,
+         point = dump_point,
+         multipoint = dump_multipoint,
+         linestring = dump_linestring,
+         multilinestring = dump_multilinestring,
+         polygon = dump_polygon,
+         multipolygon = dump_multipolygon,
+         geometrycollection = dump_geometrycollection)
 }
