@@ -38,15 +38,32 @@
 #' geojson2wkt(poly)
 #' geojson2wkt(poly, fmt=6)
 #'
-
+#' # multipolygon
+#' mpoly <- list(type = 'MultiPolygon',
+#'               coordinates=list(
+#'                 list(list(c(100.001, 0.001), c(101.001, 0.001), c(101.001, 1.001),
+#'                           c(100.001, 0.001)),
+#'                      list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801),
+#'                           c(100.201, 0.201))),
+#'                 list(list(c(1.0, 2.0, 3.0, 4.0), c(5.0, 6.0, 7.0, 8.0),
+#'                           c(9.0, 10.0, 11.0, 12.0), c(1.0, 2.0, 3.0, 4.0)))
+#' ))
+#' geojson2wkt(mpoly, fmt=2)
+#'
+#' mpoly2 <- list(type = "MultiPolygon",
+#'               coordinates = list(list(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20))),
+#'                                  list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
+#' )
+#' geojson2wkt(mpoly2, fmt=1)
 
 geojson2wkt <- function(obj, fmt = 16){
   switch(tolower(obj$type),
          point = dump_point(obj, fmt),
+         multipoint = dump_multipoint(obj, fmt),
          linestring = dump_linestring(obj, fmt),
          multilinestring = dump_multilinestring(obj, fmt),
          polygon = dump_polygon(obj, fmt),
-         multipoint = dump_multipoint(obj, fmt)
+         multipolygon = dump_multipolygon(obj, fmt)
   )
 }
 
@@ -107,4 +124,18 @@ dump_polygon <- function(obj, fmt = 16){
     }), collapse = ", "))
   }), collapse = ", ")
   sprintf('POLYGON (%s)', str)
+}
+
+#' Convert GeoJSON-like MultiPolygon object to WKT.
+#'
+#' @inheritParams geojson2wkt
+#' @keywords internal
+dump_multipolygon <- function(obj, fmt = 16){
+  coords <- obj$coordinates
+  str <- paste0(lapply(coords, function(z){
+    sprintf("(%s)", paste0(sprintf("(%s)", lapply(z, function(w){
+      paste0(gsub(",", "", unname(sapply(str_trim_(format(w, nsmall = fmt)), paste0, collapse = " "))), collapse = ", ")
+    })), collapse=", "))
+  }), collapse=", ")
+  sprintf('MULTIPOLYGON (%s)', str)
 }

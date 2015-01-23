@@ -46,6 +46,24 @@ poly <- list(type = 'Polygon',
 ))
 geojson2wkt(poly)
 geojson2wkt(poly, fmt=6)
+
+# multipolygon
+mpoly <- list(type = 'MultiPolygon',
+              coordinates=list(
+                list(list(c(100.001, 0.001), c(101.001, 0.001), c(101.001, 1.001),
+                          c(100.001, 0.001)),
+                     list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801),
+                          c(100.201, 0.201))),
+                list(list(c(1.0, 2.0, 3.0, 4.0), c(5.0, 6.0, 7.0, 8.0),
+                          c(9.0, 10.0, 11.0, 12.0), c(1.0, 2.0, 3.0, 4.0)))
+))
+geojson2wkt(mpoly, fmt=2)
+
+mpoly2 <- list(type = "MultiPolygon",
+              coordinates = list(list(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20))),
+                                 list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
+)
+geojson2wkt(mpoly2, fmt=1)
 }
 \seealso{
 \code{\link{wkt2geojson}}

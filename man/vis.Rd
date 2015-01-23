@@ -20,7 +20,7 @@ leaflet() \%>\%
  addGeoJSON(geojson)
 
 ## polygons
-geojson <- x \%>\% properties(style=list(color = "red"))
+geojson <- wkt2geojson(str) \%>\% properties(style=list(color = "red"))
 cen <- centroid(geojson)
 leaflet() \%>\%
  addTiles() \%>\%
