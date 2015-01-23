@@ -3,6 +3,8 @@ wellknown
 
 
 
+[![Build Status](https://travis-ci.org/ropensci/wellknown.svg)](https://travis-ci.org/ropensci/wellknown)
+
 `wellknown` - convert WKT to GeoJSON and vice versa.
 
 Inspiration partly comes from Python's [geomet/geomet](https://github.com/geomet/geomet) - and the name from Javascript's [wellknown](https://github.com/mapbox/wellknown) (it's a good name).
