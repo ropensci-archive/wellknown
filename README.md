@@ -129,6 +129,10 @@ wkt2geojson(str)
 #> 
 #> $geometry$coordinates
 #> [1] -116.4   45.2
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 Not `Feature`
@@ -141,6 +145,9 @@ wkt2geojson(str, feature=FALSE)
 #> 
 #> $coordinates
 #> [1] -116.4   45.2
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 ### Multipoint
@@ -172,6 +179,12 @@ wkt2geojson(str)
 #> $geometry$coordinates[[3]]
 #> $geometry$coordinates[[3]][[1]]
 #> [1] 3.14 2.18
+#> 
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 Not `Feature`
@@ -196,6 +209,11 @@ wkt2geojson(str, feature=FALSE)
 #> $coordinates[[3]]
 #> $coordinates[[3]][[1]]
 #> [1] 3.14 2.18
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 ### Polygon
@@ -240,6 +258,12 @@ wkt2geojson(str)
 #> 
 #> $geometry$coordinates[[2]][[4]]
 #> [1] 103.2   0.2
+#> 
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 Not `Feature`
@@ -277,6 +301,152 @@ wkt2geojson(str, feature=FALSE)
 #> 
 #> $coordinates[[2]][[4]]
 #> [1] 103.2   0.2
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
+```
+
+### MultiPolygon
+
+As a `Feature`
+
+
+```r
+str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
+    ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
+wkt2geojson(str)
+#> $type
+#> [1] "Feature"
+#> 
+#> $geometry
+#> $geometry$type
+#> [1] "MultiPolygon"
+#> 
+#> $geometry$coordinates
+#> $geometry$coordinates[[1]]
+#> $geometry$coordinates[[1]][[1]]
+#> $geometry$coordinates[[1]][[1]][[1]]
+#> [1] 40 40
+#> 
+#> $geometry$coordinates[[1]][[1]][[2]]
+#> [1] 20 45
+#> 
+#> $geometry$coordinates[[1]][[1]][[3]]
+#> [1] 45 30
+#> 
+#> $geometry$coordinates[[1]][[1]][[4]]
+#> [1] 40 40
+#> 
+#> 
+#> 
+#> $geometry$coordinates[[2]]
+#> $geometry$coordinates[[2]][[1]]
+#> $geometry$coordinates[[2]][[1]][[1]]
+#> [1] 20 35
+#> 
+#> $geometry$coordinates[[2]][[1]][[2]]
+#> [1] 45 20
+#> 
+#> $geometry$coordinates[[2]][[1]][[3]]
+#> [1] 30  5
+#> 
+#> $geometry$coordinates[[2]][[1]][[4]]
+#> [1] 10 10
+#> 
+#> $geometry$coordinates[[2]][[1]][[5]]
+#> [1] 10 30
+#> 
+#> $geometry$coordinates[[2]][[1]][[6]]
+#> [1] 20 35
+#> 
+#> 
+#> $geometry$coordinates[[2]][[2]]
+#> $geometry$coordinates[[2]][[2]][[1]]
+#> [1] 30 20
+#> 
+#> $geometry$coordinates[[2]][[2]][[2]]
+#> [1] 20 25
+#> 
+#> $geometry$coordinates[[2]][[2]][[3]]
+#> [1] 20 15
+#> 
+#> $geometry$coordinates[[2]][[2]][[4]]
+#> [1] 30 20
+#> 
+#> 
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
+```
+
+Not `Feature`
+
+
+```r
+wkt2geojson(str, feature=FALSE)
+#> $type
+#> [1] "MultiPolygon"
+#> 
+#> $coordinates
+#> $coordinates[[1]]
+#> $coordinates[[1]][[1]]
+#> $coordinates[[1]][[1]][[1]]
+#> [1] 40 40
+#> 
+#> $coordinates[[1]][[1]][[2]]
+#> [1] 20 45
+#> 
+#> $coordinates[[1]][[1]][[3]]
+#> [1] 45 30
+#> 
+#> $coordinates[[1]][[1]][[4]]
+#> [1] 40 40
+#> 
+#> 
+#> 
+#> $coordinates[[2]]
+#> $coordinates[[2]][[1]]
+#> $coordinates[[2]][[1]][[1]]
+#> [1] 20 35
+#> 
+#> $coordinates[[2]][[1]][[2]]
+#> [1] 45 20
+#> 
+#> $coordinates[[2]][[1]][[3]]
+#> [1] 30  5
+#> 
+#> $coordinates[[2]][[1]][[4]]
+#> [1] 10 10
+#> 
+#> $coordinates[[2]][[1]][[5]]
+#> [1] 10 30
+#> 
+#> $coordinates[[2]][[1]][[6]]
+#> [1] 20 35
+#> 
+#> 
+#> $coordinates[[2]][[2]]
+#> $coordinates[[2]][[2]][[1]]
+#> [1] 30 20
+#> 
+#> $coordinates[[2]][[2]][[2]]
+#> [1] 20 25
+#> 
+#> $coordinates[[2]][[2]][[3]]
+#> [1] 20 15
+#> 
+#> $coordinates[[2]][[2]][[4]]
+#> [1] 30 20
+#> 
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 ### Linestring
@@ -303,6 +473,12 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
 #> 
 #> $geometry$coordinates[[1]][[3]]
 #> [1] -4  5
+#> 
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 Not `Feature`
@@ -323,11 +499,16 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 #> 
 #> $coordinates[[1]][[3]]
 #> [1] -4  5
+#> 
+#> 
+#> 
+#> attr(,"class")
+#> [1] "geojson"
 ```
 
 ## Meta
 
-* Please report any issues or bugs](https://github.com/ropensci/wellknown/issues).
+* Please [report any issues or bugs](https://github.com/ropensci/wellknown/issues).
 * License: MIT
 * Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
 
