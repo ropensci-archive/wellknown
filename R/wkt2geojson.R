@@ -24,6 +24,12 @@
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
 #'
+#' # multipolygon
+#' str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
+#'    ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
+#' wkt2geojson(str)
+#' wkt2geojson(str, feature=FALSE)
+#'
 #' # linestring
 #' str <- "LINESTRING (100.000 0.000, 101.000 1.000)"
 #' wkt2geojson(str)
@@ -33,15 +39,17 @@
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE){
   type <- get_type(str)
-  switch(type,
+  res <- switch(type,
          Point = load_point(str, fmt, feature),
          Polygon = load_polygon(str, fmt, feature),
+         Multipolygon = load_multipolygon(str, fmt, feature),
          Multipoint = load_multipoint(str, fmt, feature),
          Linestring = load_linestring(str, fmt, feature)
   )
+  structure(res, class="geojson")
 }
 
-types <- c("POINT","POLYGON","LINESTRING",'MULTIPOINT',"MULTIPOLYGON")
+types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON","LINESTRING")
 
 get_type <- function(x){
   type <- cw(types[sapply(types, grepl, x = x)], onlyfirst = TRUE)
@@ -97,6 +105,28 @@ load_polygon <- function(str, fmt = 16, feature = TRUE){
     lapply(pairs, as.numeric)
   })
   tmp <- list(type='Polygon', coordinates=coords)
+  if(feature)
+    list(type="Feature", geometry=tmp)
+  else
+    tmp
+}
+
+#' Convert WKT to GeoJSON-like MULTIPOLYGON object.
+#'
+#' @inheritParams wkt2geojson
+#' @keywords internal
+load_multipolygon <- function(str, fmt = 16, feature = TRUE){
+  str <- gsub("\n", "", str)
+  str_coord <- str_trim_(gsub("MULTIPOLYGON\\s", "", str))
+  str_coord <- gsub("^\\(|\\)$", "", str_coord)
+  str_coord <- strsplit(str_coord, "\\)),")[[1]]
+  coords <- lapply(str_coord, function(z){
+    pairs <- strsplit( gsub("\\(|\\)", "", strsplit(str_trim_(z), "\\),")[[1]]), ",|,\\s")
+    lapply(pairs, function(zz){
+      unname(lapply(sapply(str_trim_(zz), strsplit, split="\\s"), as.numeric))
+    })
+  })
+  tmp <- list(type='MultiPolygon', coordinates=coords)
   if(feature)
     list(type="Feature", geometry=tmp)
   else

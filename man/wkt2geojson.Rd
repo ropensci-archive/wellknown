@@ -34,6 +34,12 @@ str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 
+# multipolygon
+str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
+   ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
+wkt2geojson(str)
+wkt2geojson(str, feature=FALSE)
+
 # linestring
 str <- "LINESTRING (100.000 0.000, 101.000 1.000)"
 wkt2geojson(str)

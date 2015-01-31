@@ -164,7 +164,7 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 
 ## Meta
 
-* Please report any issues or bugs](https://github.com/ropensci/wellknown/issues).
+* Please [report any issues or bugs](https://github.com/ropensci/wellknown/issues).
 * License: MIT
 * Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
 
