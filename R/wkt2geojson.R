@@ -81,10 +81,10 @@ load_multipoint <- function(str, fmt = 16, feature = TRUE){
   str_coord <- str_trim_(gsub("MULTIPOINT\\s", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
-  coords <- lapply(str_coord, function(z){
+  coords <- unname(sapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, as.numeric)
-  })
+  }))
   tmp <- list(type='Multipoint', coordinates=coords)
   if(feature)
     list(type="Feature", geometry=tmp)
@@ -144,7 +144,7 @@ load_linestring <- function(str, fmt = 16, feature = TRUE){
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, as.numeric)
-  })
+  })[[1]]
   tmp <- list(type='Linestring', coordinates=coords)
   if(feature)
     list(type="Feature", geometry=tmp)
