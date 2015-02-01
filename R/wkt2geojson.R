@@ -36,20 +36,32 @@
 #' wkt2geojson(str, feature=FALSE)
 #' wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
 #' wkt2geojson("LINESTRING (0 1 2 3, 4 5 6 7)")
+#'
+#' # multilinestring
+#' str <- "MULTILINESTRING MULTILINESTRING ((30 1, 40 30, 50 20)(10 0, 20 1))"
+#' wkt2geojson(str)
+#'
+#' str <- "MULTILINESTRING (
+#'    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5),
+#'    (-105.0 39.5, -105.0 39.5, -105.0 39.5),
+#'    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5),
+#'    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5))"
+#' wkt2geojson(str)
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE){
   type <- get_type(str)
   res <- switch(type,
          Point = load_point(str, fmt, feature),
+         Multipoint = load_multipoint(str, fmt, feature),
          Polygon = load_polygon(str, fmt, feature),
          Multipolygon = load_multipolygon(str, fmt, feature),
-         Multipoint = load_multipoint(str, fmt, feature),
-         Linestring = load_linestring(str, fmt, feature)
+         Linestring = load_linestring(str, fmt, feature),
+         Multilinestring = load_multilinestring(str, fmt, feature)
   )
   structure(res, class="geojson")
 }
 
-types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON","LINESTRING")
+types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON","LINESTRING","MULTILINESTRING")
 
 get_type <- function(x){
   type <- cw(types[sapply(types, grepl, x = x)], onlyfirst = TRUE)
@@ -146,6 +158,25 @@ load_linestring <- function(str, fmt = 16, feature = TRUE){
     lapply(pairs, as.numeric)
   })[[1]]
   tmp <- list(type='Linestring', coordinates=coords)
+  if(feature)
+    list(type="Feature", geometry=tmp)
+  else
+    tmp
+}
+
+#' Convert WKT to GeoJSON-like MULTILINESTRING object.
+#'
+#' @inheritParams wkt2geojson
+#' @keywords internal
+load_multilinestring <- function(str, fmt = 16, feature = TRUE){
+  str_coord <- str_trim_(gsub("MULTILINESTRING\\s", "", str))
+  str_coord <- gsub("^\\(|\\)$", "", str_coord)
+  str_coord <- strsplit(str_coord, "\\),|\\)\\(")[[1]]
+  coords <- lapply(str_coord, function(z){
+    pairs <- strsplit(strsplit(str_trim_(gsub("\\(|\\)", "", str_trim_(z))), ",|,\\s")[[1]], "\\s")
+    lapply(pairs, as.numeric)
+  })[[1]]
+  tmp <- list(type='MultiLineString', coordinates=coords)
   if(feature)
     list(type="Feature", geometry=tmp)
   else

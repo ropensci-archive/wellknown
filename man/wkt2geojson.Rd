@@ -46,6 +46,17 @@ wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
 wkt2geojson("LINESTRING (0 1 2 3, 4 5 6 7)")
+
+# multilinestring
+str <- "MULTILINESTRING MULTILINESTRING ((30 1, 40 30, 50 20)(10 0, 20 1))"
+wkt2geojson(str)
+
+str <- "MULTILINESTRING (
+   (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5),
+   (-105.0 39.5, -105.0 39.5, -105.0 39.5),
+   (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5),
+   (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5))"
+wkt2geojson(str)
 }
 \seealso{
 \code{\link{geojson2wkt}}
