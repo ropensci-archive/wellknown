@@ -121,17 +121,22 @@
 #' json <- toJSON(list(type="Point", coordinates=c(-105,39)))
 #' geojson2wkt(json)
 #'
-
 geojson2wkt <- function(obj, fmt = 16, ...) UseMethod("geojson2wkt")
 
+#' @export
+#' @rdname geojson2wkt
 geojson2wkt.character <- function(obj, fmt = 16, ...){
   geojson2wkt(jsonlite::fromJSON(obj, FALSE, ...), fmt)
 }
 
+#' @export
+#' @rdname geojson2wkt
 geojson2wkt.json <- function(obj, fmt = 16, ...){
   geojson2wkt(jsonlite::fromJSON(obj, FALSE, ...), fmt)
 }
 
+#' @export
+#' @rdname geojson2wkt
 geojson2wkt.list <- function(obj, fmt = 16, ...){
   switch(tolower(obj$type),
          point = dump_point(obj, fmt),
