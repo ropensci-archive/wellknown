@@ -90,11 +90,7 @@ get_type <- function(x){
 load_point <- function(str, fmt = 16, feature = TRUE){
   str_coord <- gsub("POINT|\\(|\\)", "", str)
   coords <- strsplit(str_trim_(str_coord), "\\s")[[1]]
-  tmp <- list(type='Point', coordinates=as.numeric(coords))
-  if(feature)
-    list(type="Feature", geometry=tmp)
-  else
-    tmp
+  iffeat('Point', as.numeric(coords), feature)
 }
 
 load_multipoint <- function(str, fmt = 16, feature = TRUE){
@@ -105,11 +101,7 @@ load_multipoint <- function(str, fmt = 16, feature = TRUE){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, as.numeric)
   }))
-  tmp <- list(type='Multipoint', coordinates=coords)
-  if(feature)
-    list(type="Feature", geometry=tmp)
-  else
-    tmp
+  iffeat('Multipoint', coords, feature)
 }
 
 load_polygon <- function(str, fmt = 16, feature = TRUE){
@@ -120,11 +112,7 @@ load_polygon <- function(str, fmt = 16, feature = TRUE){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, as.numeric)
   })
-  tmp <- list(type='Polygon', coordinates=coords)
-  if(feature)
-    list(type="Feature", geometry=tmp)
-  else
-    tmp
+  iffeat('Polygon', coords, feature)
 }
 
 load_multipolygon <- function(str, fmt = 16, feature = TRUE){
@@ -138,11 +126,7 @@ load_multipolygon <- function(str, fmt = 16, feature = TRUE){
       unname(lapply(sapply(str_trim_(zz), strsplit, split="\\s"), as.numeric))
     })
   })
-  tmp <- list(type='MultiPolygon', coordinates=coords)
-  if(feature)
-    list(type="Feature", geometry=tmp)
-  else
-    tmp
+  iffeat('MultiPolygon', coords, feature)
 }
 
 load_linestring <- function(str, fmt = 16, feature = TRUE){
@@ -153,11 +137,7 @@ load_linestring <- function(str, fmt = 16, feature = TRUE){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, as.numeric)
   })[[1]]
-  tmp <- list(type='Linestring', coordinates=coords)
-  if(feature)
-    list(type="Feature", geometry=tmp)
-  else
-    tmp
+  iffeat('Linestring', coords, feature)
 }
 
 load_multilinestring <- function(str, fmt = 16, feature = TRUE){
@@ -168,11 +148,7 @@ load_multilinestring <- function(str, fmt = 16, feature = TRUE){
     pairs <- strsplit(strsplit(str_trim_(gsub("\\(|\\)", "", str_trim_(z))), ",|,\\s")[[1]], "\\s")
     lapply(pairs, as.numeric)
   })[[1]]
-  tmp <- list(type='MultiLineString', coordinates=coords)
-  if(feature)
-    list(type="Feature", geometry=tmp)
-  else
-    tmp
+  iffeat('MultiLineString', coords, feature)
 }
 
 load_geometrycollection <- function(str, fmt = 16, feature = TRUE){
@@ -200,3 +176,11 @@ get_load_fxn <- function(type){
 }
 
 noneg <- function(x) x[!x < 0]
+
+iffeat <- function(type, cd, feature){
+  tmp <- list(type=type, coordinates=cd)
+  if(feature)
+    list(type="Feature", geometry=tmp)
+  else
+    tmp
+}
