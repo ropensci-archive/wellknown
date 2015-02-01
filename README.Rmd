@@ -127,16 +127,12 @@ wkt2geojson(str, feature=FALSE)
 
 ### Polygon
 
-As a `Feature`
-
 ```{r}
 str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 wkt2geojson(str, feature=FALSE)
 ```
 
 ### MultiPolygon
-
-As a `Feature`
 
 ```{r}
 str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
