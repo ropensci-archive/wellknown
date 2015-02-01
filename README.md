@@ -152,64 +152,22 @@ wkt2geojson(str, feature=FALSE)
 
 ### Multipoint
 
-As a `Feature`
-
 
 ```r
 str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
-wkt2geojson(str)
-#> $type
-#> [1] "Feature"
-#> 
-#> $geometry
-#> $geometry$type
-#> [1] "Multipoint"
-#> 
-#> $geometry$coordinates
-#> $geometry$coordinates[[1]]
-#> $geometry$coordinates[[1]][[1]]
-#> [1] 100.000   3.101
-#> 
-#> 
-#> $geometry$coordinates[[2]]
-#> $geometry$coordinates[[2]][[1]]
-#> [1] 101.0   2.1
-#> 
-#> 
-#> $geometry$coordinates[[3]]
-#> $geometry$coordinates[[3]][[1]]
-#> [1] 3.14 2.18
-#> 
-#> 
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
-```
-
-Not `Feature`
-
-
-```r
 wkt2geojson(str, feature=FALSE)
 #> $type
 #> [1] "Multipoint"
 #> 
 #> $coordinates
 #> $coordinates[[1]]
-#> $coordinates[[1]][[1]]
 #> [1] 100.000   3.101
 #> 
-#> 
 #> $coordinates[[2]]
-#> $coordinates[[2]][[1]]
 #> [1] 101.0   2.1
 #> 
-#> 
 #> $coordinates[[3]]
-#> $coordinates[[3]][[1]]
 #> [1] 3.14 2.18
-#> 
 #> 
 #> 
 #> attr(,"class")
@@ -223,53 +181,6 @@ As a `Feature`
 
 ```r
 str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
-wkt2geojson(str)
-#> $type
-#> [1] "Feature"
-#> 
-#> $geometry
-#> $geometry$type
-#> [1] "Polygon"
-#> 
-#> $geometry$coordinates
-#> $geometry$coordinates[[1]]
-#> $geometry$coordinates[[1]][[1]]
-#> [1] 100.0   0.1
-#> 
-#> $geometry$coordinates[[1]][[2]]
-#> [1] 101.1   0.3
-#> 
-#> $geometry$coordinates[[1]][[3]]
-#> [1] 101.0   0.5
-#> 
-#> $geometry$coordinates[[1]][[4]]
-#> [1] 100.0   0.1
-#> 
-#> 
-#> $geometry$coordinates[[2]]
-#> $geometry$coordinates[[2]][[1]]
-#> [1] 103.2   0.2
-#> 
-#> $geometry$coordinates[[2]][[2]]
-#> [1] 104.8   0.2
-#> 
-#> $geometry$coordinates[[2]][[3]]
-#> [1] 100.8   0.8
-#> 
-#> $geometry$coordinates[[2]][[4]]
-#> [1] 103.2   0.2
-#> 
-#> 
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
-```
-
-Not `Feature`
-
-
-```r
 wkt2geojson(str, feature=FALSE)
 #> $type
 #> [1] "Polygon"
@@ -316,77 +227,6 @@ As a `Feature`
 ```r
 str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
     ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
-wkt2geojson(str)
-#> $type
-#> [1] "Feature"
-#> 
-#> $geometry
-#> $geometry$type
-#> [1] "MultiPolygon"
-#> 
-#> $geometry$coordinates
-#> $geometry$coordinates[[1]]
-#> $geometry$coordinates[[1]][[1]]
-#> $geometry$coordinates[[1]][[1]][[1]]
-#> [1] 40 40
-#> 
-#> $geometry$coordinates[[1]][[1]][[2]]
-#> [1] 20 45
-#> 
-#> $geometry$coordinates[[1]][[1]][[3]]
-#> [1] 45 30
-#> 
-#> $geometry$coordinates[[1]][[1]][[4]]
-#> [1] 40 40
-#> 
-#> 
-#> 
-#> $geometry$coordinates[[2]]
-#> $geometry$coordinates[[2]][[1]]
-#> $geometry$coordinates[[2]][[1]][[1]]
-#> [1] 20 35
-#> 
-#> $geometry$coordinates[[2]][[1]][[2]]
-#> [1] 45 20
-#> 
-#> $geometry$coordinates[[2]][[1]][[3]]
-#> [1] 30  5
-#> 
-#> $geometry$coordinates[[2]][[1]][[4]]
-#> [1] 10 10
-#> 
-#> $geometry$coordinates[[2]][[1]][[5]]
-#> [1] 10 30
-#> 
-#> $geometry$coordinates[[2]][[1]][[6]]
-#> [1] 20 35
-#> 
-#> 
-#> $geometry$coordinates[[2]][[2]]
-#> $geometry$coordinates[[2]][[2]][[1]]
-#> [1] 30 20
-#> 
-#> $geometry$coordinates[[2]][[2]][[2]]
-#> [1] 20 25
-#> 
-#> $geometry$coordinates[[2]][[2]][[3]]
-#> [1] 20 15
-#> 
-#> $geometry$coordinates[[2]][[2]][[4]]
-#> [1] 30 20
-#> 
-#> 
-#> 
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
-```
-
-Not `Feature`
-
-
-```r
 wkt2geojson(str, feature=FALSE)
 #> $type
 #> [1] "MultiPolygon"
@@ -451,38 +291,6 @@ wkt2geojson(str, feature=FALSE)
 
 ### Linestring
 
-As a `Feature`
-
-
-```r
-wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
-#> $type
-#> [1] "Feature"
-#> 
-#> $geometry
-#> $geometry$type
-#> [1] "Linestring"
-#> 
-#> $geometry$coordinates
-#> $geometry$coordinates[[1]]
-#> $geometry$coordinates[[1]][[1]]
-#> [1]  0 -1
-#> 
-#> $geometry$coordinates[[1]][[2]]
-#> [1] -2 -3
-#> 
-#> $geometry$coordinates[[1]][[3]]
-#> [1] -4  5
-#> 
-#> 
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
-```
-
-Not `Feature`
-
 
 ```r
 wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
@@ -491,15 +299,13 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 #> 
 #> $coordinates
 #> $coordinates[[1]]
-#> $coordinates[[1]][[1]]
 #> [1]  0 -1
 #> 
-#> $coordinates[[1]][[2]]
+#> $coordinates[[2]]
 #> [1] -2 -3
 #> 
-#> $coordinates[[1]][[3]]
+#> $coordinates[[3]]
 #> [1] -4  5
-#> 
 #> 
 #> 
 #> attr(,"class")
