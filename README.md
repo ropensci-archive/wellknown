@@ -110,6 +110,32 @@ geojson2wkt(gmcoll, fmt=0)
 #> [1] "GEOMETRYCOLLECTION (POINT (0 1), LINESTRING (-100 0, -101 -1), MULTIPOINT ((100.000 3.101), (101.0 2.1), (3.14 2.18)))"
 ```
 
+### Convert json or character objects
+
+You can convert directly from an object of class `json`, which is output from `jsonlite::toJSON()`. 
+
+
+```r
+library("jsonlite")
+(json <- toJSON(list(type="Point", coordinates=c(-105,39))))
+#> {"type":["Point"],"coordinates":[-105,39]}
+```
+
+
+```r
+geojson2wkt(json)
+#> [1] "POINT (-105 39)"
+```
+
+And you can convert from a geojson character string:
+
+
+```r
+str <- '{"type":["LineString"],"coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
+geojson2wkt(str)
+#> [1] "LINESTRING (0 0 10, 2 1 20, 4 2 30, 5 4 40)"
+```
+
 ## WKT to GeoJSON
 
 ### Point
