@@ -47,6 +47,20 @@
 #'    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5),
 #'    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5))"
 #' wkt2geojson(str)
+#'
+#' # Geometrycollection
+#' str <- "GEOMETRYCOLLECTION (
+#'    POINT (0 1),
+#'    LINESTRING (-100 0, -101 -1),
+#'    POLYGON ((100.001 0.001, 101.1235 0.0010, 101.001 1.001, 100.001 0.001),
+#'            (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)),
+#'    MULTIPOINT ((100.000 3.101), (101.0 2.1), (3.14 2.18)),
+#'    MULTILINESTRING ((0 -1, -2 -3, -4 -5),
+#'                    (1.66 -31023.50 1.10, 10001.0 3.0 2.2, 100.9 1.1 3.3, 0.0 0.0 4.4)),
+#'    MULTIPOLYGON (((100.001 0.001, 101.001 0.001, 101.001 1.001, 100.001 0.001),
+#'                  (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)),
+#'                  ((1 2 3 4, 5 6 7 8, 9 10 11 12, 1 2 3 4))))"
+#' wkt2geojson(str)
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE){
   type <- get_type(str)
@@ -56,12 +70,14 @@ wkt2geojson <- function(str, fmt = 16, feature = TRUE){
          Polygon = load_polygon(str, fmt, feature),
          Multipolygon = load_multipolygon(str, fmt, feature),
          Linestring = load_linestring(str, fmt, feature),
-         Multilinestring = load_multilinestring(str, fmt, feature)
+         Multilinestring = load_multilinestring(str, fmt, feature),
+         Geometrycollection = load_geometrycollection(str, fmt, feature)
   )
   structure(res, class="geojson")
 }
 
-types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON","LINESTRING","MULTILINESTRING")
+types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
+           "LINESTRING","MULTILINESTRING","GEOMETRYCOLLECTION")
 
 get_type <- function(x){
   type <- cw(types[sapply(types, grepl, x = x)], onlyfirst = TRUE)
@@ -158,3 +174,29 @@ load_multilinestring <- function(str, fmt = 16, feature = TRUE){
   else
     tmp
 }
+
+load_geometrycollection <- function(str, fmt = 16, feature = TRUE){
+  str_coord <- str_trim_(gsub("GEOMETRYCOLLECTION\\s", "", gsub("\n", "", str)))
+  str_coord <- gsub("^\\(|\\)$", "", str_coord)
+  matches <- noneg(sort(sapply(types, regexpr, text=str_coord)))
+  out <- list()
+  for(i in seq_along(matches)){
+    end <- if(i == length(matches)) nchar(str_coord) else matches[[i+1]]-1
+    strg <- substr(str_coord, matches[[i]], end)
+    out[[ i ]] <- get_load_fxn(tolower(names(matches[i])))(strg, fmt)
+  }
+  list(type='GeometryCollection', geometries=out)
+}
+
+get_load_fxn <- function(type){
+  switch(type,
+         point = load_point,
+         multipoint = load_multipoint,
+         linestring = load_linestring,
+         multilinestring = load_multilinestring,
+         polygon = load_polygon,
+         multipolygon = load_multipolygon,
+         geometrycollection = load_geometrycollection)
+}
+
+noneg <- function(x) x[!x < 0]
