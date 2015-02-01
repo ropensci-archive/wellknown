@@ -112,19 +112,11 @@ geojson2wkt <- function(obj, fmt = 16){
   )
 }
 
-#' Convert GeoJSON-like POINT object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
 dump_point <- function(obj, fmt = 16){
   coords <- obj$coordinates
   sprintf('POINT (%s)', paste0(format(coords, nsmall = fmt), collapse = " "))
 }
 
-#' Convert GeoJSON-like MULTIPOINT object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
 dump_multipoint <- function(obj, fmt = 16){
   coords <- obj$coordinates
   str <- paste0(lapply(coords, function(z){
@@ -133,10 +125,6 @@ dump_multipoint <- function(obj, fmt = 16){
   sprintf('MULTIPOINT (%s)', str)
 }
 
-#' Convert GeoJSON-like LineString object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
 dump_linestring <- function(obj, fmt = 16){
   coords <- obj$coordinates
   str <- paste0(lapply(coords, function(z){
@@ -145,10 +133,6 @@ dump_linestring <- function(obj, fmt = 16){
   sprintf('LINESTRING (%s)', str)
 }
 
-#' Convert GeoJSON-like MultiLineString object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
 dump_multilinestring <- function(obj, fmt = 16){
   coords <- obj$coordinates
   str <- paste0(lapply(coords, function(z){
@@ -157,10 +141,6 @@ dump_multilinestring <- function(obj, fmt = 16){
   sprintf('MULTILINESTRING (%s)', str)
 }
 
-#' Convert GeoJSON-like Polygon object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
 dump_polygon <- function(obj, fmt = 16){
   coords <- obj$coordinates
   str <- paste0(lapply(coords, function(z){
@@ -171,10 +151,6 @@ dump_polygon <- function(obj, fmt = 16){
   sprintf('POLYGON (%s)', str)
 }
 
-#' Convert GeoJSON-like MultiPolygon object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
 dump_multipolygon <- function(obj, fmt = 16){
   coords <- obj$coordinates
   str <- paste0(lapply(coords, function(z){
@@ -185,10 +161,6 @@ dump_multipolygon <- function(obj, fmt = 16){
   sprintf('MULTIPOLYGON (%s)', str)
 }
 
-#' Convert GeoJSON-like GeometryCollection object to WKT.
-#'
-#' @inheritParams geojson2wkt
-#' @keywords internal
 dump_geometrycollection <- function(obj, fmt = 16){
   geoms <- obj$geometries
   str <- paste0(lapply(geoms, function(z){

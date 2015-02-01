@@ -71,10 +71,6 @@ get_type <- function(x){
     type
 }
 
-#' Convert WKT to GeoJSON-like POINT object.
-#'
-#' @inheritParams wkt2geojson
-#' @keywords internal
 load_point <- function(str, fmt = 16, feature = TRUE){
   str_coord <- gsub("POINT|\\(|\\)", "", str)
   coords <- strsplit(str_trim_(str_coord), "\\s")[[1]]
@@ -85,10 +81,6 @@ load_point <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
-#' Convert WKT to GeoJSON-like MULTIPOINT object.
-#'
-#' @inheritParams wkt2geojson
-#' @keywords internal
 load_multipoint <- function(str, fmt = 16, feature = TRUE){
   str_coord <- str_trim_(gsub("MULTIPOINT\\s", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
@@ -104,10 +96,6 @@ load_multipoint <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
-#' Convert WKT to GeoJSON-like POLYGON object.
-#'
-#' @inheritParams wkt2geojson
-#' @keywords internal
 load_polygon <- function(str, fmt = 16, feature = TRUE){
   str_coord <- str_trim_(gsub("POLYGON\\s", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
@@ -123,10 +111,6 @@ load_polygon <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
-#' Convert WKT to GeoJSON-like MULTIPOLYGON object.
-#'
-#' @inheritParams wkt2geojson
-#' @keywords internal
 load_multipolygon <- function(str, fmt = 16, feature = TRUE){
   str <- gsub("\n", "", str)
   str_coord <- str_trim_(gsub("MULTIPOLYGON\\s", "", str))
@@ -145,10 +129,6 @@ load_multipolygon <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
-#' Convert WKT to GeoJSON-like LINESTRING object.
-#'
-#' @inheritParams wkt2geojson
-#' @keywords internal
 load_linestring <- function(str, fmt = 16, feature = TRUE){
   str_coord <- str_trim_(gsub("LINESTRING\\s", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
@@ -164,10 +144,6 @@ load_linestring <- function(str, fmt = 16, feature = TRUE){
     tmp
 }
 
-#' Convert WKT to GeoJSON-like MULTILINESTRING object.
-#'
-#' @inheritParams wkt2geojson
-#' @keywords internal
 load_multilinestring <- function(str, fmt = 16, feature = TRUE){
   str_coord <- str_trim_(gsub("MULTILINESTRING\\s", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
