@@ -30,7 +30,8 @@ leaflet() \%>\%
  addGeoJSON(geojson)
 
 ## linestring
-geojson <- wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=TRUE) \%>\% properties(style=list(color = "red"))
+geojson <- wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=TRUE) \%>\%
+   properties(style=list(color = "red"))
 cen <- centroid(geojson)
 leaflet() \%>\%
  addTiles() \%>\%
