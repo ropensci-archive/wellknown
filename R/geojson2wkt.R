@@ -5,6 +5,8 @@
 #' @param obj A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates.
+#' @param ... Further args passed on to \code{\link[jsonlite]{fromJSON}} only in the event of json
+#' passed as a character string.
 #' @seealso \code{\link{wkt2geojson}}
 #' @examples
 #' # point
@@ -99,8 +101,38 @@
 #'  )
 #' )
 #' geojson2wkt(gmcoll, fmt=0)
+#'
+#' # Convert geojson as character string to WKT
+#' str <- '
+#' {
+#'    "type": "Point",
+#'    "coordinates": [
+#'        -105.01621,
+#'        39.57422
+#'    ]
+#' }'
+#' geojson2wkt(str)
+#'
+#' str <- '{"type":["LineString"],"coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
+#' geojson2wkt(str)
+#'
+#' # From a jsonlite json object
+#' library("jsonlite")
+#' json <- toJSON(list(type="Point", coordinates=c(-105,39)))
+#' geojson2wkt(json)
+#'
 
-geojson2wkt <- function(obj, fmt = 16){
+geojson2wkt <- function(obj, fmt = 16, ...) UseMethod("geojson2wkt")
+
+geojson2wkt.character <- function(obj, fmt = 16, ...){
+  geojson2wkt(jsonlite::fromJSON(obj, FALSE, ...), fmt)
+}
+
+geojson2wkt.json <- function(obj, fmt = 16, ...){
+  geojson2wkt(jsonlite::fromJSON(obj, FALSE, ...), fmt)
+}
+
+geojson2wkt.list <- function(obj, fmt = 16, ...){
   switch(tolower(obj$type),
          point = dump_point(obj, fmt),
          multipoint = dump_multipoint(obj, fmt),
