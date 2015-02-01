@@ -1,6 +1,6 @@
 Package: wellknown
-Title: WKT to GeoJSON
-Description: WKT to GeoJSON
+Title: Convert between WKT to GeoJSON
+Description: Convert between WKT to GeoJSON
 Version: 0.0.2.99
 Date: 2015-01-23
 Authors@R: "Scott Chamberlain <myrmecocystus@gmail.com> [aut, cre]"
