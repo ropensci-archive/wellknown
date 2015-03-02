@@ -10,5 +10,13 @@
 #' x <- wkt2geojson(str)
 #' properties(x, style=list(color = "red"))
 properties <- function(x, style = NULL, popup = NULL){
-  modifyList(x, list(properties = list(style = style, popup = popup)))
+  if(is.null(style) && is.null(popup)) {
+    stop("You must supply a list of named options to either style, popup, or both", call. = FALSE)
+  } else {
+    if(is(style, "list") || is(popup, "list")){
+      if(length(style) == 0 && length(popup) == 0)
+        stop("At least one of style or popup needs a non-empty list", call. = FALSE)
+    }
+    modifyList(x, list(properties = list(style = style, popup = popup)))
+  }
 }
