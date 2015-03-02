@@ -4,6 +4,7 @@ wellknown
 
 
 [![Build Status](https://travis-ci.org/ropensci/wellknown.svg)](https://travis-ci.org/ropensci/wellknown)
+[![Coverage Status](https://coveralls.io/repos/ropensci/wellknown/badge.svg)](https://coveralls.io/r/ropensci/wellknown)
 
 `wellknown` - convert WKT to GeoJSON and vice versa.
 
