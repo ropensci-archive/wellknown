@@ -2,18 +2,9 @@
 % Please edit documentation in R/geojson2wkt.R
 \name{geojson2wkt}
 \alias{geojson2wkt}
-\alias{geojson2wkt.character}
-\alias{geojson2wkt.json}
-\alias{geojson2wkt.list}
 \title{Convert GeoJSON-like objects to WKT.}
 \usage{
 geojson2wkt(obj, fmt = 16, ...)
-
-\method{geojson2wkt}{character}(obj, fmt = 16, ...)
-
-\method{geojson2wkt}{json}(obj, fmt = 16, ...)
-
-\method{geojson2wkt}{list}(obj, fmt = 16, ...)
 }
 \arguments{
 \item{obj}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
