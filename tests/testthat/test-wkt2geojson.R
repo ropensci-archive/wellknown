@@ -44,3 +44,22 @@ test_that("convert polygon works", {
   expect_match(e$geometry$type, "Polygon")
   expect_equal(unclass(e), tomatch)
 })
+
+test_that("errors in wkt specification handled correctly", {
+  # no spacing between wkt type and coords is okay
+  expect_is(wkt2geojson("POINT(116.4000000000000057 45.2000000000000028)"), "geojson")
+  # space after coordinates and parentheses is okay
+  expect_is(wkt2geojson("POINT(116.4000000000000057 45.2000000000000028)  "), "geojson")
+  # space between coordinates is okay
+  expect_is(wkt2geojson("POINT(116.4000000000000057      45.2000000000000028)"), "geojson")
+  # no space between coordiantes is not okay
+  expect_error(wkt2geojson("POIN(116.400000000000005745.2000000000000028"), "EXPR must be a length 1 vector")
+  # mis-spelled wkt type is NOT okay
+  expect_error(wkt2geojson("POIN(116.4000000000000057 45.2000000000000028"), "EXPR must be a length 1 vector")
+  # lower case wkt type is NOT okay
+  expect_error(wkt2geojson("point (116.4000000000000057 45.2000000000000028"), "EXPR must be a length 1 vector")
+  # no spacing between wkt type and coords is okay
+  expect_is(wkt2geojson("LINESTRING(0 0 10, 2 1 20, 4 2 30, 5 4 40)"), "geojson")
+  # no spacing between wkt type and coords is okay
+  expect_is(wkt2geojson("LINESTRING(0 0 10, 2 1 20, 4 2 30, 5 4 40)"), "geojson")
+})

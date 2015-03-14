@@ -1,3 +1,4 @@
+# capitalize words
 cw <- function(s, strict = FALSE, onlyfirst = FALSE) {
   cap <- function(s) paste(toupper(substring(s,1,1)),
         {s <- substring(s,2); if(strict) tolower(s) else s}, sep = "", collapse = " " )
@@ -11,5 +12,13 @@ cw <- function(s, strict = FALSE, onlyfirst = FALSE) {
   }
 }
 
+# extract pattern from a string
 strextract <- function(str, pattern) regmatches(str, regexpr(pattern, str))
+
+# trim space from beginning and end of strings
 str_trim_ <- function(str) gsub("^\\s+|\\s+$", "", str)
+
+# remove zero length strings
+nozero <- function(x) {
+  x[nzchar(x)]
+}

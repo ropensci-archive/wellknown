@@ -89,70 +89,81 @@ get_type <- function(x){
 
 load_point <- function(str, fmt = 16, feature = TRUE){
   str_coord <- gsub("POINT|\\(|\\)", "", str)
-  coords <- strsplit(str_trim_(str_coord), "\\s")[[1]]
+  coords <- strsplit(gsub("[[:punct:]]$", "", str_trim_(str_coord)), "\\s")[[1]]
+  coords <- nozero(coords)
   iffeat('Point', as.numeric(coords), feature)
 }
 
 load_multipoint <- function(str, fmt = 16, feature = TRUE){
-  str_coord <- str_trim_(gsub("MULTIPOINT\\s", "", str))
+  str_coord <- str_trim_(gsub("MULTIPOINT\\s?", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
   coords <- unname(sapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
-    lapply(pairs, as.numeric)
+    lapply(pairs, function(x) {
+      as.numeric(nozero(x))
+    })
   }))
   iffeat('Multipoint', coords, feature)
 }
 
 load_polygon <- function(str, fmt = 16, feature = TRUE){
-  str_coord <- str_trim_(gsub("POLYGON\\s", "", str))
+  str_coord <- str_trim_(gsub("POLYGON\\s?", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
-    lapply(pairs, as.numeric)
+    lapply(pairs, function(x) {
+      as.numeric(nozero(x))
+    })
   })
   iffeat('Polygon', coords, feature)
 }
 
 load_multipolygon <- function(str, fmt = 16, feature = TRUE){
   str <- gsub("\n", "", str)
-  str_coord <- str_trim_(gsub("MULTIPOLYGON\\s", "", str))
+  str_coord <- str_trim_(gsub("MULTIPOLYGON\\s?", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\)),")[[1]]
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit( gsub("\\(|\\)", "", strsplit(str_trim_(z), "\\),")[[1]]), ",|,\\s")
     lapply(pairs, function(zz){
-      unname(lapply(sapply(str_trim_(zz), strsplit, split="\\s"), as.numeric))
+      unname(lapply(sapply(str_trim_(zz), strsplit, split="\\s"), function(x) {
+        as.numeric(nozero(x))
+      }))
     })
   })
   iffeat('MultiPolygon', coords, feature)
 }
 
 load_linestring <- function(str, fmt = 16, feature = TRUE){
-  str_coord <- str_trim_(gsub("LINESTRING\\s", "", str))
+  str_coord <- str_trim_(gsub("LINESTRING\\s?", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
-    lapply(pairs, as.numeric)
+    lapply(pairs, function(x) {
+      as.numeric(nozero(x))
+    })
   })[[1]]
   iffeat('Linestring', coords, feature)
 }
 
 load_multilinestring <- function(str, fmt = 16, feature = TRUE){
-  str_coord <- str_trim_(gsub("MULTILINESTRING\\s", "", str))
+  str_coord <- str_trim_(gsub("MULTILINESTRING\\s?", "", str))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),|\\)\\(")[[1]]
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(str_trim_(gsub("\\(|\\)", "", str_trim_(z))), ",|,\\s")[[1]], "\\s")
-    lapply(pairs, as.numeric)
+    lapply(pairs, function(x) {
+      as.numeric(nozero(x))
+    })
   })[[1]]
   iffeat('MultiLineString', coords, feature)
 }
 
 load_geometrycollection <- function(str, fmt = 16, feature = TRUE){
-  str_coord <- str_trim_(gsub("GEOMETRYCOLLECTION\\s", "", gsub("\n", "", str)))
+  str_coord <- str_trim_(gsub("GEOMETRYCOLLECTION\\s?", "", gsub("\n", "", str)))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   matches <- noneg(sort(sapply(types, regexpr, text=str_coord)))
   out <- list()
