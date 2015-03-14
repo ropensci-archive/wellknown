@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
 ```
 
 [![Build Status](https://travis-ci.org/ropensci/wellknown.svg)](https://travis-ci.org/ropensci/wellknown)
+[![Build status](https://ci.appveyor.com/api/projects/status/ot3lth177a6f8jgg?svg=true)](https://ci.appveyor.com/project/sckott/wellknown)
 [![Coverage Status](https://coveralls.io/repos/ropensci/wellknown/badge.svg)](https://coveralls.io/r/ropensci/wellknown)
 
 `wellknown` - convert WKT to GeoJSON and vice versa.
@@ -173,4 +174,4 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 * License: MIT
 * Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
 
-[![ropensci footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
+[![ropensci_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
