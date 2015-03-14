@@ -2,12 +2,9 @@
 % Please edit documentation in R/as.json.R
 \name{as.json}
 \alias{as.json}
-\alias{as.json.geojson}
 \title{Convert geojson R list to JSON}
 \usage{
 as.json(x, pretty = TRUE, auto_unbox = TRUE, ...)
-
-\method{as.json}{geojson}(x, pretty = TRUE, auto_unbox = TRUE, ...)
 }
 \arguments{
 \item{x}{Output from \code{\link{wkt2geojson}}}
