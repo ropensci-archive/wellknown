@@ -15,9 +15,7 @@
 #' point(df)
 #'
 #' ## many points, from data.frame
-#' library("maps")
-#' data(us.cities)
-#' df <- us.cities[1:5,c('lat','long')]
+#' df <- us_cities[1:5,c('lat','long')]
 #' point(df)
 #'
 #' ## single point, from a list

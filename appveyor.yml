@@ -11,8 +11,6 @@ install:
   ps: Bootstrap
 
 build_script:
-  - travis-tool.sh r_install maps
-  - travis-tool.sh install_github rstudio/leaflet
   - travis-tool.sh install_deps
 
 test_script:

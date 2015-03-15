@@ -19,9 +19,7 @@ test_that("convert point works", {
   expect_equal(df_a[1], "POINT (-116.40 45.20)")
 
   ## many points, from data.frame
-  library("maps")
-  data(us.cities)
-  df2 <- us.cities[1:5,c('lat','long')]
+  df2 <- us_cities[1:5,c('lat','long')]
   df_b <- point(df2)
   expect_is(df_b, "character")
   expect_is(df_b[1], "character")

@@ -14,5 +14,4 @@ Suggests:
     testthat
 Enhances:
     htmlwidgets,
-    leaflet,
-    maps
+    leaflet

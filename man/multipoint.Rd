@@ -19,9 +19,7 @@ Make WKT multipoint objects
 multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
 
 # data.frame
-library("maps")
-data(us.cities)
-df <- us.cities[1:25,c('long','lat')]
+df <- us_cities[1:25,c('long','lat')]
 multipoint(df)
 }
 
