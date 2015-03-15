@@ -22,3 +22,19 @@ str_trim_ <- function(str) gsub("^\\s+|\\s+$", "", str)
 nozero <- function(x) {
   x[nzchar(x)]
 }
+
+checker <- function(x, type, len) {
+  if(length(x) != len)
+    stop(sprintf("%s input should be of length %s", type, len), call. = FALSE)
+  if(!is.double(x))
+    stop(sprintf("%s input should be of type double (a number)", type), call. = FALSE)
+}
+
+fmtcheck <- function(x) {
+  if(!is.double(x) || is.na(x)) stop("fmt must be an integer value", call. = FALSE)
+  if(x < 0 || x > 20) stop("fmt must be 0 and 20", call. = FALSE)
+}
+
+# decfmt <- function(pts, fmt) {
+#   rapply(pts, format, nsmall = fmt, trim = TRUE, how = "list")
+# }

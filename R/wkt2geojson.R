@@ -6,6 +6,9 @@
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates.
 #' @param feature (logical) Make a feature geojson object. Default: TRUE
+#' @details Should be robust against a variety of typing errors, including extra spaces between
+#' coordinates, no space between WKT type and coordinates. However, some things won't pass,
+#' includingn lowercase WKT types, no spaces between coordinates.
 #' @seealso \code{\link{geojson2wkt}}
 #' @examples
 #' # point

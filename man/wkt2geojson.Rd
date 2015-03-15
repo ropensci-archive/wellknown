@@ -17,6 +17,11 @@ decimal point when formatting coordinates.}
 \description{
 Convert WKT to GeoJSON-like objects.
 }
+\details{
+Should be robust against a variety of typing errors, including extra spaces between
+coordinates, no space between WKT type and coordinates. However, some things won't pass,
+includingn lowercase WKT types, no spaces between coordinates.
+}
 \examples{
 # point
 str <- "POINT (-116.4000000000000057 45.2000000000000028)"
