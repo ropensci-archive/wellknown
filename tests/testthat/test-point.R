@@ -13,10 +13,10 @@ test_that("convert point works", {
 
   ## single point, from data.frame
   df <- data.frame(lon=-116.4, lat=45.2)
-  df_a <- point(df)
+  df_a <- point(df, fmt = 2)
   expect_is(df_a, "character")
   expect_is(df_a[1], "character")
-  expect_equal(df_a[1], "POINT (32.4500000000000028 -99.7399999999999949)")
+  expect_equal(df_a[1], "POINT (-116.40 45.20)")
 
   ## many points, from data.frame
   library("maps")
