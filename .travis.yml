@@ -1,5 +1,8 @@
 language: r
 
+r_packages:
+ - maps
+
 r_github_packages:
  - jimhester/covr
 
