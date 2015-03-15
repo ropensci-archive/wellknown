@@ -14,8 +14,8 @@ test_that("convert multipoint works", {
   b <- wkt2geojson(mp)
   expect_is(b, "geojson")
   expect_that(typeof(b), equals("list"))
-  expect_match(b$geometry$type, "Multipoint")
-  expect_equal(unclass(b), list(type="Feature", geometry=list(type = 'Multipoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))))
+  expect_match(b$geometry$type, "MultiPoint")
+  expect_equal(unclass(b), list(type="Feature", geometry=list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))))
 })
 
 test_that("convert linestring works", {
