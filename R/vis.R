@@ -27,10 +27,9 @@
 #' ## linestring
 #' geojson <- wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=TRUE) %>%
 #'    properties(style=list(color = "red"))
-#' cen <- centroid(geojson)
 #' leaflet() %>%
 #'  addTiles() %>%
-#'  setView(lng = cen[2], lat = cen[1], zoom = 6) %>%
+#'  setView(lng = -2, lat = 2, zoom = 6) %>%
 #'  addGeoJSON(geojson)
 #'
 #' st <- list(type = "Feature",

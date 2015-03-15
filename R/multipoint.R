@@ -7,11 +7,12 @@
 #' decimal point when formatting coordinates. Max: 20
 #' @examples
 #' multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
-#' # multipoint(0, 1)
-#' # point(-116.4)
-#' # point()
-#' # point(NA)
-#' # point(NA, NULL)
+#'
+#' # data.frame
+#' library("maps")
+#' data(us.cities)
+#' df <- us.cities[1:25,c('long','lat')]
+#' multipoint(df)
 multipoint <- function(..., fmt = 16) {
   UseMethod("multipoint")
 }
@@ -22,6 +23,17 @@ multipoint.numeric <- function(..., fmt = 16){
   fmtcheck(fmt)
   invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
   str <- paste0(lapply(pts, function(z){
+    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+  }), collapse = ", ")
+  sprintf('MULTIPOINT (%s)', str)
+}
+
+#' @export
+multipoint.data.frame <- function(..., fmt = 16){
+  pts <- list(...)
+  fmtcheck(fmt)
+  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  str <- paste0(apply(pts[[1]], 1, function(z){
     sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
   }), collapse = ", ")
   sprintf('MULTIPOINT (%s)', str)

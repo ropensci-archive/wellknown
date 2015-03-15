@@ -107,7 +107,7 @@ load_multipoint <- function(str, fmt = 16, feature = TRUE){
       as.numeric(nozero(x))
     })
   }))
-  iffeat('Multipoint', coords, feature)
+  iffeat('MultiPoint', coords, feature)
 }
 
 load_polygon <- function(str, fmt = 16, feature = TRUE){

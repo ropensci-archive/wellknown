@@ -17,10 +17,11 @@ Make WKT multipoint objects
 }
 \examples{
 multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
-# multipoint(0, 1)
-# point(-116.4)
-# point()
-# point(NA)
-# point(NA, NULL)
+
+# data.frame
+library("maps")
+data(us.cities)
+df <- us.cities[1:25,c('long','lat')]
+multipoint(df)
 }
 
