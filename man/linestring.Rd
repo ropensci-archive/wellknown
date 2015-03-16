@@ -16,6 +16,10 @@ decimal point when formatting coordinates. Max: 20}
 Make WKT linestring objects
 }
 \examples{
+## empty linestring
+linestring("empty")
+# linestring("stuff")
+
 # numeric
 ## 2D
 linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2)

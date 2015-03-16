@@ -6,6 +6,10 @@
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates. Max: 20
 #' @examples
+#' ## empty linestring
+#' linestring("empty")
+#' # linestring("stuff")
+#'
 #' # numeric
 #' ## 2D
 #' linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2)
@@ -27,6 +31,18 @@
 #' linestring(list(c(100.000, 0.000), c(101.000, 1.000)), fmt=2)
 linestring <- function(..., fmt = 16) {
   UseMethod("linestring")
+}
+
+#' @export
+linestring.character <- function(..., fmt = 16) {
+  pts <- list(...)
+  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+    return('LINESTRING EMPTY')
+  } else {
+    stop("character inputs accept only variants of 'empty'", call. = FALSE)
+  }
+  # FIX ME - allow input of a character string that's already WKT string
+  ## that returns itself if validated, make validate functionality first
 }
 
 #' @export

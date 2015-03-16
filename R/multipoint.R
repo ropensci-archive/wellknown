@@ -6,6 +6,10 @@
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates. Max: 20
 #' @examples
+#' ## empty multipoint
+#' multipoint("empty")
+#' # multipoint("stuff")
+#'
 #' # numeric
 #' multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
 #'
@@ -17,6 +21,18 @@
 #' multipoint(list(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180)))
 multipoint <- function(..., fmt = 16) {
   UseMethod("multipoint")
+}
+
+#' @export
+multipoint.character <- function(..., fmt = 16) {
+  pts <- list(...)
+  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+    return('MULTIPOINT EMPTY')
+  } else {
+    stop("character inputs accept only variants of 'empty'", call. = FALSE)
+  }
+  # FIX ME - allow input of a character string that's already WKT string
+  ## that returns itself if validated, make validate functionality first
 }
 
 #' @export

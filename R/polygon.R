@@ -6,6 +6,10 @@
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates. Max: 20
 #' @examples
+#' ## empty polygon
+#' polygon("empty")
+#' # polygon("stuff")
+#'
 #' # numeric
 #' polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001), fmt=2)
 #'
@@ -19,6 +23,18 @@
 #'   wktview(zoom=7)
 polygon <- function(..., fmt = 16) {
   UseMethod("polygon")
+}
+
+#' @export
+polygon.character <- function(..., fmt = 16) {
+  pts <- list(...)
+  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+    return('POLYGON EMPTY')
+  } else {
+    stop("character inputs accept only variants of 'empty'", call. = FALSE)
+  }
+  # FIX ME - allow input of a character string that's already WKT string
+  ## that returns itself if validated, make validate functionality first
 }
 
 #' @export

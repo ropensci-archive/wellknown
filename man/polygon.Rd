@@ -16,6 +16,10 @@ decimal point when formatting coordinates. Max: 20}
 Make WKT polygon objects
 }
 \examples{
+## empty polygon
+polygon("empty")
+# polygon("stuff")
+
 # numeric
 polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001), fmt=2)
 

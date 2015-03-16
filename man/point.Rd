@@ -16,6 +16,10 @@ decimal point when formatting coordinates. Max: 20}
 Make WKT point objects
 }
 \examples{
+## empty point
+point("empty")
+# point("stuff")
+
 ## single point
 point(-116.4, 45.2)
 point(0, 1)

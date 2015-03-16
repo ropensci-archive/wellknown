@@ -16,6 +16,10 @@ decimal point when formatting coordinates. Max: 20}
 Make WKT multipoint objects
 }
 \examples{
+## empty multipoint
+multipoint("empty")
+# multipoint("stuff")
+
 # numeric
 multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
 

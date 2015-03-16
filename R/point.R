@@ -6,6 +6,10 @@
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates. Max: 20
 #' @examples
+#' ## empty point
+#' point("empty")
+#' # point("stuff")
+#'
 #' ## single point
 #' point(-116.4, 45.2)
 #' point(0, 1)
@@ -25,6 +29,18 @@
 #' point(list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
 point <- function(..., fmt = 16) {
   UseMethod("point")
+}
+
+#' @export
+point.character <- function(..., fmt = 16) {
+  pts <- list(...)
+  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+    return('POINT EMPTY')
+  } else {
+    stop("character inputs accept only variants of 'empty'", call. = FALSE)
+  }
+  # FIX ME - allow input of a character string that's already WKT string
+  ## that returns itself if validated, make validate functionality first
 }
 
 #' @export
