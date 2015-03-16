@@ -1,4 +1,4 @@
-#' Make WKT multipoint objects
+#' Make WKT polygon objects
 #'
 #' @export
 #'
@@ -7,46 +7,46 @@
 #' decimal point when formatting coordinates. Max: 20
 #' @examples
 #' # numeric
-#' multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
+#' polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))
 #'
 #' # data.frame
 #' df <- us_cities[1:25,c('long','lat')]
-#' multipoint(df)
+#' polygon(df)
 #'
 #' # list
-#' multipoint(list(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180)))
-multipoint <- function(..., fmt = 16) {
-  UseMethod("multipoint")
+#' polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)))
+polygon <- function(..., fmt = 16) {
+  UseMethod("polygon")
 }
 
 #' @export
-multipoint.numeric <- function(..., fmt = 16){
+polygon.numeric <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
-  invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  invisible(lapply(pts, checker, type='POLYGON', len=2))
   str <- paste0(lapply(pts, function(z){
     sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
   }), collapse = ", ")
-  sprintf('MULTIPOINT (%s)', str)
+  sprintf('POLYGON (%s)', str)
 }
 
 #' @export
-multipoint.data.frame <- function(..., fmt = 16){
+polygon.data.frame <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
   # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
   str <- paste0(apply(pts[[1]], 1, function(z){
     sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
   }), collapse = ", ")
-  sprintf('MULTIPOINT (%s)', str)
+  sprintf('POLYGON (%s)', str)
 }
 
 #' @export
-multipoint.list <- function(..., fmt = 16) {
+polygon.list <- function(..., fmt = 16) {
   pts <- list(...)[[1]]
   fmtcheck(fmt)
   str <- paste0(lapply(pts, function(z) {
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+    paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
   }), collapse = ", ")
-  sprintf('MULTIPOINT (%s)', str)
+  sprintf('POLYGON (%s)', str)
 }

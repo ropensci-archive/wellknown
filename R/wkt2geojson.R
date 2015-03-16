@@ -149,7 +149,7 @@ load_linestring <- function(str, fmt = 16, feature = TRUE){
       as.numeric(nozero(x))
     })
   })[[1]]
-  iffeat('Linestring', coords, feature)
+  iffeat('LineString', coords, feature)
 }
 
 load_multilinestring <- function(str, fmt = 16, feature = TRUE){

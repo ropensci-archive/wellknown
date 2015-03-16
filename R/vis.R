@@ -100,22 +100,3 @@ getcentr <- function(x){
     mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[1])))
   )
 }
-
-centroid <- function(x){
-  if("geometry" %in% names(x)) {
-    obj <- x$geometry$coordinates
-    if(is(obj, "numeric")){
-      obj
-    } else {
-      c(
-        mean(sapply(obj, function(z) sapply(z, function(b) b[2]))),
-        mean(sapply(obj, function(z) sapply(z, function(b) b[1])))
-      )
-    }
-  } else {
-    c(
-      mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[2]))),
-      mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[1])))
-    )
-  }
-}

@@ -23,8 +23,8 @@ test_that("convert linestring works", {
   c <- wkt2geojson(st)
   expect_is(c, "geojson")
   expect_that(typeof(c), equals("list"))
-  expect_match(c$geometry$type, "Linestring")
-  expect_equal(unclass(c), list(type="Feature", geometry=list(type = 'Linestring',
+  expect_match(c$geometry$type, "LineString")
+  expect_equal(unclass(c), list(type="Feature", geometry=list(type = 'LineString',
                         coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
                                            c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))))
 })

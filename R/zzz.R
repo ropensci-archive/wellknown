@@ -38,3 +38,28 @@ fmtcheck <- function(x) {
 # decfmt <- function(pts, fmt) {
 #   rapply(pts, format, nsmall = fmt, trim = TRUE, how = "list")
 # }
+
+centroid <- function(x, center){
+  if(!is.null(center)) {
+    stopifnot(is.numeric(center))
+    return(center)
+  } else {
+    if("geometry" %in% names(x)) {
+      obj <- x$geometry$coordinates
+      if(is(obj, "numeric")){
+        obj
+      } else {
+        # sapply(obj, function(z) sapply(z, function(b) b[2]))
+        lngs <- rapply(obj, function(x) x[1])
+        # sapply(obj, function(z) sapply(z, function(b) b[1]))
+        lats <- rapply(obj, function(x) x[2])
+        c(mean(lngs), mean(lats))
+      }
+    } else {
+      c(
+        mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[2]))),
+        mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[1])))
+      )
+    }
+  }
+}
