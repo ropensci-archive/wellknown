@@ -17,13 +17,15 @@ Make WKT polygon objects
 }
 \examples{
 # numeric
-polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))
+polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001), fmt=2)
 
 # data.frame
-df <- us_cities[1:25,c('long','lat')]
-polygon(df)
+df <- us_cities[2:5,c('long','lat')]
+df <- rbind(df, df[1,])
+polygon(df) \%>\% wktview(zoom=4)
 
 # list
-polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)))
+polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))) \%>\%
+  wktview(zoom=7)
 }
 

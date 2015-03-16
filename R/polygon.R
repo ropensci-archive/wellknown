@@ -7,14 +7,16 @@
 #' decimal point when formatting coordinates. Max: 20
 #' @examples
 #' # numeric
-#' polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))
+#' polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001), fmt=2)
 #'
 #' # data.frame
-#' df <- us_cities[1:25,c('long','lat')]
-#' polygon(df)
+#' df <- us_cities[2:5,c('long','lat')]
+#' df <- rbind(df, df[1,])
+#' polygon(df) %>% wktview(zoom=4)
 #'
 #' # list
-#' polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)))
+#' polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))) %>%
+#'   wktview(zoom=7)
 polygon <- function(..., fmt = 16) {
   UseMethod("polygon")
 }
@@ -25,7 +27,7 @@ polygon.numeric <- function(..., fmt = 16){
   fmtcheck(fmt)
   invisible(lapply(pts, checker, type='POLYGON', len=2))
   str <- paste0(lapply(pts, function(z){
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+    paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
   }), collapse = ", ")
   sprintf('POLYGON (%s)', str)
 }
@@ -36,7 +38,7 @@ polygon.data.frame <- function(..., fmt = 16){
   fmtcheck(fmt)
   # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
   str <- paste0(apply(pts[[1]], 1, function(z){
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+    paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
   }), collapse = ", ")
   sprintf('POLYGON (%s)', str)
 }

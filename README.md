@@ -11,6 +11,37 @@ wellknown
 
 Inspiration partly comes from Python's [geomet/geomet](https://github.com/geomet/geomet) - and the name from Javascript's [wellknown](https://github.com/mapbox/wellknown) (it's a good name).
 
+## Different interfaces
+
+### WKT from R stuctures
+
+Since we are most familiar, as R users, with R objects like lists and data.frames, it makes sense to make it easy to make WKT from them. 
+
+* `point()` - make a point, e.g., `POINT (-116 45)`
+* `multipoint()` - make a multipoint, e.g., `MULTIPOINT ((100 3), (101 2))`
+* `linestring()` - make a linestring, e.g., `LINESTRING (100 0, 101 1)`
+* `polygon()` - make a polygon, e.g., `POLYGON ((100 0), (101 0), (101 1), (100 0))`
+
+### Geojson to WKT and vice versa
+
+`geojson2wkt()` and `wkt2geojson()` cover a subset of the various formats available:
+
+* `Point`
+* `MultiPoint`
+* `Polygon`
+* `MultiPolygon`
+* `LineString`
+* `MultilineString`
+* `Geometrycollection`
+
+#### Geojson to WKT
+
+`geojson2wkt()` converts any geojson as a list to a WKT string (the same format )
+
+#### WKT to Geojson
+
+`wkt2geojson()` converts any WKT string into geojson as a list. This list format for geojson can be used downstream e.g., in the `leaflet` package.
+
 ## Install
 
 
@@ -185,7 +216,7 @@ wkt2geojson(str, feature=FALSE)
 str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
 wkt2geojson(str, feature=FALSE)
 #> $type
-#> [1] "Multipoint"
+#> [1] "MultiPoint"
 #> 
 #> $coordinates
 #> $coordinates[[1]]
@@ -319,7 +350,7 @@ wkt2geojson(str, feature=FALSE)
 ```r
 wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 #> $type
-#> [1] "Linestring"
+#> [1] "LineString"
 #> 
 #> $coordinates
 #> $coordinates[[1]]
