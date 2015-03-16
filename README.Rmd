@@ -29,7 +29,8 @@ There's a family of functions that make it easy to go from familiar R objects li
 * `linestring()` - make a linestring, e.g., `LINESTRING (100 0, 101 1)`
 * `polygon()` - make a polygon, e.g., `POLYGON ((100 0), (101 0), (101 1), (100 0))`
 
-The above all currently accept `numeric`, `list`, and `data.frame`.
+The above all currently accept `numeric`, `list`, and `data.frame` (and `character` for special
+case of `EMPTY` WKT objects).
 
 ### Geojson to WKT and vice versa
 

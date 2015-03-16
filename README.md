@@ -15,12 +15,15 @@ Inspiration partly comes from Python's [geomet/geomet](https://github.com/geomet
 
 ### WKT from R stuctures
 
-Since we are most familiar, as R users, with R objects like lists and data.frames, it makes sense to make it easy to make WKT from them. 
+There's a family of functions that make it easy to go from familiar R objects like lists and data.frames to WKT, including:
 
 * `point()` - make a point, e.g., `POINT (-116 45)`
 * `multipoint()` - make a multipoint, e.g., `MULTIPOINT ((100 3), (101 2))`
 * `linestring()` - make a linestring, e.g., `LINESTRING (100 0, 101 1)`
 * `polygon()` - make a polygon, e.g., `POLYGON ((100 0), (101 0), (101 1), (100 0))`
+
+The above all currently accept `numeric`, `list`, and `data.frame` (and `character` for special
+case of `EMPTY` WKT objects).
 
 ### Geojson to WKT and vice versa
 
