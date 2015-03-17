@@ -47,7 +47,7 @@ polygon.character <- function(..., fmt = 16) {
   if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('POLYGON EMPTY')
   } else {
-    lint(pts[[1]])
+    return(pts[[1]])
   }
 }
 
