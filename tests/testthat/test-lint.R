@@ -54,3 +54,35 @@ test_that("lint works for valid WKT strings - linestring", {
   expect_false(lint("Linestring (1 2)"))
   expect_false(lint("LineString (1 2)"))
 })
+
+
+test_that("lint works for valid WKT strings - polygon", {
+  # good
+  expect_true(lint("POLYGON EMPTY"))
+  expect_true(lint("POLYGON ((1 2, 3 4, 0 5, 1 2))"))
+  expect_true(lint("POLYGON ((1 2, 3 4, 0 5, 6 7, 1 2))"))
+  expect_true(lint("POLYGON((1 2, 3 4, 0 5, 1 2))"))
+  expect_true(lint("POLYGON ((1.23 2.23, 3.45 4.23, 0.5 5.12, 1.1 2.78))"))
+  expect_true(lint("POLYGON((1.2784092128276825 30.31684905459481,12.792081087827682 31.373251008758597,12.704190462827682 18.167678453227037,-0.1278407871723175 27.392164134909823,1.2784092128276825 30.31684905459481))"))
+})
+
+test_that("lint works for valid WKT strings - polygon", {
+  # bad
+  expect_false(lint("POLYGON (100 3 4)"))
+  expect_false(lint("POLYGON ((1 2, 3 4, 0 5, 1 a))"))
+  expect_false(lint("POLYGON ((1 2, 3 4, 0 a.3, 1 3))"))
+  expect_false(lint("POLYGON ((1 2, 3 4, 0 5, 1 a)"))
+  expect_false(lint("POLYGON ((1 2, 3 4, 0 5, 1 6)))"))
+  expect_false(lint("POLYGON ((1 2, 3 4, 05, 1 5))"))
+  expect_false(lint("POLYGON (100)"))
+  expect_false(lint("POLYGON ()"))
+  expect_false(lint("POLYGON "))
+  expect_false(lint("POLYGON ("))
+  expect_false(lint("POLYGON )"))
+  expect_false(lint("POLYGON"))
+  expect_false(lint("POLYGON (100 4, 1)"))
+  expect_false(lint("POLYGON (100 4, 1 ad)"))
+  expect_false(lint("POLYGON (100 4, 1, 1)"))
+  expect_false(lint("polygon (1 2)"))
+  expect_false(lint("Polygon (1 2)"))
+})

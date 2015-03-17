@@ -20,5 +20,10 @@ lint("POINT (1 2)")
 lint("POINT (1 2 3)")
 lint("LINESTRING EMPTY")
 lint("LINESTRING (100 0, 101 1)")
+lint("MULTIPOINT EMPTY")
+lint("MULTIPOINT ((1 2), (3 4))")
+lint("MULTIPOINT ((1 2), (3 4), (-10 100))")
+lint("POLYGON ((1 2, 3 4, 0 5, 1 2))")
+lint("POLYGON((20.3 28.6, 20.3 19.6, 8.5 19.6, 8.5 28.6, 20.3 28.6))")
 }
 
