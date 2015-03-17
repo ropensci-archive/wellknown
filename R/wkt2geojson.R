@@ -82,8 +82,8 @@ wkt2geojson <- function(str, fmt = 16, feature = TRUE){
 types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
            "LINESTRING","MULTILINESTRING","GEOMETRYCOLLECTION")
 
-get_type <- function(x){
-  type <- cw(types[sapply(types, grepl, x = x)], onlyfirst = TRUE)
+get_type <- function(x, ignore_case=FALSE){
+  type <- cw(types[sapply(types, grepl, x = x, ignore.case = ignore_case)], onlyfirst = TRUE)
   if(length(type) > 1)
     grep(tolower(strextract(x, "[A-Za-z]+")), type, ignore.case = TRUE, value = TRUE)
   else
