@@ -370,6 +370,24 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 #> [1] "geojson"
 ```
 
+## lint WKT
+
+
+```r
+lint("POINT (1 2)")
+#> [1] TRUE
+lint("LINESTRING EMPTY")
+#> [1] TRUE
+lint("MULTIPOINT ((1 2), (3 4), (-10 100))")
+#> [1] TRUE
+lint("POLYGON((20.3 28.6, 20.3 19.6, 8.5 19.6, 8.5 28.6, 20.3 28.6))")
+#> [1] TRUE
+lint("POINT (1 2 3 4 5)")
+#> [1] FALSE
+lint("LINESTRING (100)")
+#> [1] FALSE
+```
+
 ## Meta
 
 * Please [report any issues or bugs](https://github.com/ropensci/wellknown/issues).
