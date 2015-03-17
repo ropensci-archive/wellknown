@@ -21,8 +21,9 @@ There's a family of functions that make it easy to go from familiar R objects li
 * `multipoint()` - make a multipoint, e.g., `MULTIPOINT ((100 3), (101 2))`
 * `linestring()` - make a linestring, e.g., `LINESTRING (100 0, 101 1)`
 * `polygon()` - make a polygon, e.g., `POLYGON ((100 0), (101 0), (101 1), (100 0))`
+* `multipolygon()` - make a multipolygon, e.g., `MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))`
 
-The above all currently accept `numeric`, `list`, and `data.frame` (and `character` for special
+The above currently accept (depending on the fxn) `numeric`, `list`, and `data.frame` (and `character` for special
 case of `EMPTY` WKT objects).
 
 ### Geojson to WKT and vice versa
@@ -382,9 +383,13 @@ lint("MULTIPOINT ((1 2), (3 4), (-10 100))")
 #> [1] TRUE
 lint("POLYGON((20.3 28.6, 20.3 19.6, 8.5 19.6, 8.5 28.6, 20.3 28.6))")
 #> [1] TRUE
+lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))")
+#> [1] TRUE
 lint("POINT (1 2 3 4 5)")
 #> [1] FALSE
 lint("LINESTRING (100)")
+#> [1] FALSE
+lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, a b, 10 20, 5 10, 15 5)))")
 #> [1] FALSE
 ```
 
