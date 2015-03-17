@@ -1,5 +1,7 @@
 context("lint")
 
+
+# points --------------------
 test_that("lint works for valid WKT strings - points", {
   # good
   expect_true(lint("POINT (1 2)"))
@@ -22,6 +24,8 @@ test_that("lint works for invalid WKT strings - points", {
   expect_false(lint("point (1 2)"))
 })
 
+
+# linestring --------------------
 test_that("lint works for valid WKT strings - linestring", {
   # good
   expect_true(lint("LINESTRING EMPTY"))
@@ -55,7 +59,7 @@ test_that("lint works for valid WKT strings - linestring", {
   expect_false(lint("LineString (1 2)"))
 })
 
-
+# polygon --------------------
 test_that("lint works for valid WKT strings - polygon", {
   # good
   expect_true(lint("POLYGON EMPTY"))
@@ -85,4 +89,37 @@ test_that("lint works for valid WKT strings - polygon", {
   expect_false(lint("POLYGON (100 4, 1, 1)"))
   expect_false(lint("polygon (1 2)"))
   expect_false(lint("Polygon (1 2)"))
+})
+
+# multipolygon --------------------
+test_that("lint works for valid WKT strings - multipolygon", {
+  # good
+  expect_true(lint("MULTIPOLYGON EMPTY"))
+  expect_true(lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)))"))
+  expect_true(lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))"))
+  expect_true(lint("MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35)))"))
+})
+
+test_that("lint works for valid WKT strings - multipolygon", {
+  # should be good
+  expect_false(lint("MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"))
+
+  # bad
+  expect_false(lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30)))"))
+  expect_false(lint("MULTIPOLYGON (((30 20, 45 40, 10 40,)))"))
+  expect_false(lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 a)))"))
+  expect_false(lint("MULTIPOLYGON (((30 20, 45 40, 10.adsfaf 40, 30 20)))"))
+  expect_false(lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 )"))
+  expect_false(lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 3020)))"))
+  expect_false(lint("MULTIPOLYGON (((30)))"))
+  expect_false(lint("MULTIPOLYGON ((()))"))
+  expect_false(lint("MULTIPOLYGON "))
+  expect_false(lint("MULTIPOLYGON ("))
+  expect_false(lint("MULTIPOLYGON )"))
+  expect_false(lint("MULTIPOLYGON"))
+  expect_false(lint("MULTIPOLYGON (100 4, 1)"))
+  expect_false(lint("MULTIPOLYGON (100 4, 1 ad)"))
+  expect_false(lint("MULTIPOLYGON (100 4, 1, 1)"))
+  expect_false(lint("MULTIpolygon (((30 20, 45 40, 10 40, 30 20)))"))
+  expect_false(lint("MULTIPolygon (((30 20, 45 40, 10 40, 30 20)))"))
 })

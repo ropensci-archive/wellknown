@@ -78,8 +78,8 @@ polygon.data.frame <- function(..., fmt = 16){
 #' @export
 polygon.list <- function(..., fmt = 16) {
   pts <- list(...)
-  pts <- un_nest(pts)
   fmtcheck(fmt)
+  pts <- un_nest(pts)
   str <- sprintf("(%s)", lapply(pts, function(z) {
     paste0(lapply(z, function(b) paste0(str_trim_(format(b, nsmall = fmt, trim = TRUE)), collapse = " ")), collapse = ", ")
   }))
