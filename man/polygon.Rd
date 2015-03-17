@@ -15,6 +15,10 @@ decimal point when formatting coordinates. Max: 20}
 \description{
 Make WKT polygon objects
 }
+\details{
+You can create nested polygons with \code{list} and \code{data.frame} inputs,
+but not from \code{numeric} inputs. See examples.
+}
 \examples{
 ## empty polygon
 polygon("empty")
@@ -24,12 +28,26 @@ polygon("empty")
 polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001), fmt=2)
 
 # data.frame
+## single polygon
 df <- us_cities[2:5,c('long','lat')]
 df <- rbind(df, df[1,])
-polygon(df) \%>\% wktview(zoom=4)
+polygon(df, fmt=2) \%>\% wktview(zoom=4)
+## nested polygons
+df2 <- data.frame(long = c(-85.9, -85.9, -93, -93, -85.9),
+                  lat = c(37.5, 35.3, 35.3, 37.5, 37.5))
+polygon(df, df2, fmt=2) \%>\% wktview(zoom=4)
 
 # list
-polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))) \%>\%
-  wktview(zoom=7)
+# single list - creates single polygon
+ply <- list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))
+polygon(ply, fmt=2) \%>\% wktview(zoom=7)
+# nested list - creates nested polygon
+polygon(list(c(35, 10), c(45, 45), c(15, 40), c(10, 20), c(35, 10)),
+   list(c(20, 30), c(35, 35), c(30, 20), c(20, 30)), fmt=2) \%>\%
+   wktview(zoom=3)
+# multiple lists nested within a list
+polygon(list(list(c(35, 10), c(45, 45), c(15, 40), c(10, 20), c(35, 10)),
+   list(c(20, 30), c(35, 35), c(30, 20), c(20, 30))), fmt=2) \%>\%
+   wktview(zoom=3)
 }
 
