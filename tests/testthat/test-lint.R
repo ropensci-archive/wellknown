@@ -123,3 +123,34 @@ test_that("lint works for valid WKT strings - multipolygon", {
   expect_false(lint("MULTIpolygon (((30 20, 45 40, 10 40, 30 20)))"))
   expect_false(lint("MULTIPolygon (((30 20, 45 40, 10 40, 30 20)))"))
 })
+
+
+# triangle --------------------
+test_that("lint works for valid WKT strings - triangle", {
+  # good
+  expect_true(lint("TRIANGLE EMPTY"))
+  expect_true(lint("TRIANGLE ((0 0, 0 1, 1 1, 0 0))"))
+  expect_true(lint("TRIANGLE ((0 0, 0 1, 1 1))"))
+  expect_true(lint("TRIANGLE ((0 0, 0 1))"))
+})
+
+test_that("lint works for valid WKT strings - triangle", {
+  # bad
+  expect_false(lint("TRIANGLE ((30 20, 45 40, 10 40, 30))"))
+  expect_false(lint("TRIANGLE ((30 20, 45 40, 10 40,))"))
+  expect_false(lint("TRIANGLE ((30 20, 45 40, 10 40, 30 a))"))
+  expect_false(lint("TRIANGLE ((30 20, 45 40, 10.adsfaf 40, 30 20))"))
+  expect_false(lint("TRIANGLE ((30 20, 45 40, 10 40, 30 )"))
+  expect_false(lint("TRIANGLE ((30 20, 45 40, 10 40, 3020))"))
+  expect_false(lint("TRIANGLE ((30))"))
+  expect_false(lint("TRIANGLE (())"))
+  expect_false(lint("TRIANGLE "))
+  expect_false(lint("TRIANGLE ("))
+  expect_false(lint("TRIANGLE )"))
+  expect_false(lint("TRIANGLE"))
+  expect_false(lint("TRIANGLE (100 4, 1)"))
+  expect_false(lint("TRIANGLE (100 4, 1 ad)"))
+  expect_false(lint("TRIANGLE (100 4, 1, 1)"))
+  expect_false(lint("TRIANGLE (((30 20, 45 40, 10 40, 30 20)))"))
+  expect_false(lint("TRIANGLE (((30 20, 45 40, 10 40, 30 20)))"))
+})
