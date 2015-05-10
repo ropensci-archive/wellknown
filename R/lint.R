@@ -18,6 +18,7 @@
 #' lint("TRIANGLE ((0.1 0.1, 0.1 1.1, 1.1 1.1, 0.1 0.1))")
 #' lint("CIRCULARSTRING (1 5, 6 2, 7 3)")
 #' lint("CIRCULARSTRING (1 5, 6 2, 7 3, 5 6, 4 3)")
+#' lint('COMPOUNDCURVE (CIRCULARSTRING (1 0, 0 1, -1 0), (-1 0, 2 0))')
 lint <- function(str) {
   type <- get_type(str, ignore_case = TRUE)
   str <- str_trim_(gsub(toupper(type), "", str))
@@ -28,7 +29,8 @@ lint <- function(str) {
                  Polygon = rule_polygon,
                  Multipolygon = rule_multipolygon,
                  Triangle = rule_triangle,
-                 Circularstring = rule_circularstring)
+                 Circularstring = rule_circularstring,
+                 Compoundcurve = rule_compoundcurve)
   all(unlist(Map(function(x, y) eval(parse(text = x))(str, y), names(rule), rule)))
 }
 
@@ -79,6 +81,13 @@ reppolygonstr <- c(lp_, linestr, rp_, repeat_(commapolygon))
 commamultipt <- c(comma, spaceif, multipt)
 commalinestr <- c(comma, spaceif, linestr)
 commapt3 <- c(comma, spaceif, pt3)
+trep_point <- 'POINT'
+trep_polygon <- 'POLYGON'
+trep_multipolygon <- 'MULTIPOLYGON'
+trep_linestring <- 'LINESTRING'
+trep_multilinestring <- 'MULTILINESTRING'
+trep_triangle <- 'TRIANGLE'
+trep_circularstring <- 'CIRCULARSTRING'
 
 # point rules
 rule_point_2d <- c(lp, pt, rp)
@@ -114,6 +123,15 @@ rule_triangle <- list(grepl2 = vor(empty, rule_triangle_2d))
 rule_circularstring_2d <- c(lp, pt, repeat_(commapt), rp)
 rule_circularstring <- list(grepl2 = vor(empty, rule_circularstring_2d), check_circularstring = NULL)
 
+# compoundcurve rules
+rule_compoundcurve_2d <- c(lp, trep_circularstring,  lp_, pt, repeat_(commapt), rp_, rp)
+rule_compoundcurve <- list(grepl2 = vor(empty, rule_compoundcurve_2d))
+
 check_circularstring <- function(x, ...) {
   length(strsplit(x, ",")[[1]]) == 3
 }
+
+'COMPOUNDCURVE EMPTY'
+'COMPOUNDCURVE (CIRCULARSTRING (1 0, 0 1, -1 0), (-1 0, 2 0))'
+'COMPOUNDCURVE (CIRCULARSTRING (1 1, 1 1, 1 1), (1 1, 3 5, 5 4))'
+
