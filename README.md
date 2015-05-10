@@ -193,9 +193,7 @@ wkt2geojson(str)
 #> $geometry$coordinates
 #> [1] -116.4   45.2
 #> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
+...
 ```
 
 Not `Feature`
@@ -229,12 +227,7 @@ wkt2geojson(str, feature=FALSE)
 #> $coordinates[[2]]
 #> [1] 101.0   2.1
 #> 
-#> $coordinates[[3]]
-#> [1] 3.14 2.18
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
+...
 ```
 
 ### Polygon
@@ -253,31 +246,7 @@ wkt2geojson(str, feature=FALSE)
 #> 
 #> $coordinates[[1]][[2]]
 #> [1] 101.1   0.3
-#> 
-#> $coordinates[[1]][[3]]
-#> [1] 101.0   0.5
-#> 
-#> $coordinates[[1]][[4]]
-#> [1] 100.0   0.1
-#> 
-#> 
-#> $coordinates[[2]]
-#> $coordinates[[2]][[1]]
-#> [1] 103.2   0.2
-#> 
-#> $coordinates[[2]][[2]]
-#> [1] 104.8   0.2
-#> 
-#> $coordinates[[2]][[3]]
-#> [1] 100.8   0.8
-#> 
-#> $coordinates[[2]][[4]]
-#> [1] 103.2   0.2
-#> 
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
+...
 ```
 
 ### MultiPolygon
@@ -297,55 +266,7 @@ wkt2geojson(str, feature=FALSE)
 #> [1] 40 40
 #> 
 #> $coordinates[[1]][[1]][[2]]
-#> [1] 20 45
-#> 
-#> $coordinates[[1]][[1]][[3]]
-#> [1] 45 30
-#> 
-#> $coordinates[[1]][[1]][[4]]
-#> [1] 40 40
-#> 
-#> 
-#> 
-#> $coordinates[[2]]
-#> $coordinates[[2]][[1]]
-#> $coordinates[[2]][[1]][[1]]
-#> [1] 20 35
-#> 
-#> $coordinates[[2]][[1]][[2]]
-#> [1] 45 20
-#> 
-#> $coordinates[[2]][[1]][[3]]
-#> [1] 30  5
-#> 
-#> $coordinates[[2]][[1]][[4]]
-#> [1] 10 10
-#> 
-#> $coordinates[[2]][[1]][[5]]
-#> [1] 10 30
-#> 
-#> $coordinates[[2]][[1]][[6]]
-#> [1] 20 35
-#> 
-#> 
-#> $coordinates[[2]][[2]]
-#> $coordinates[[2]][[2]][[1]]
-#> [1] 30 20
-#> 
-#> $coordinates[[2]][[2]][[2]]
-#> [1] 20 25
-#> 
-#> $coordinates[[2]][[2]][[3]]
-#> [1] 20 15
-#> 
-#> $coordinates[[2]][[2]][[4]]
-#> [1] 30 20
-#> 
-#> 
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
+...
 ```
 
 ### Linestring
@@ -363,12 +284,7 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 #> $coordinates[[2]]
 #> [1] -2 -3
 #> 
-#> $coordinates[[3]]
-#> [1] -4  5
-#> 
-#> 
-#> attr(,"class")
-#> [1] "geojson"
+...
 ```
 
 ## lint WKT

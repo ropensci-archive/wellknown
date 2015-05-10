@@ -2,6 +2,31 @@ wellknown
 =======
 
 ```{r echo=FALSE}
+library("knitr")
+hook_output <- knitr::knit_hooks$get("output")
+knitr::knit_hooks$set(output = function(x, options) {
+   lines <- options$output.lines
+   if (is.null(lines)) {
+     return(hook_output(x, options))  # pass to default hook
+   }
+   x <- unlist(strsplit(x, "\n"))
+   more <- "..."
+   if (length(lines)==1) {        # first n lines
+     if (length(x) > lines) {
+       # truncate the output, but add ....
+       x <- c(head(x, lines), more)
+     }
+   } else {
+     x <- c(if (abs(lines[1])>1) more else NULL,
+            x[lines],
+            if (length(x)>lines[abs(length(lines))]) more else NULL
+           )
+   }
+   # paste these lines together
+   x <- paste(c(x, ""), collapse = "\n")
+   hook_output(x, options)
+ })
+
 knitr::opts_chunk$set(
   comment = "#>",
   collapse = TRUE,
@@ -164,7 +189,7 @@ geojson2wkt(str)
 
 As a `Feature`
 
-```{r}
+```{r output.lines=1:10}
 str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 wkt2geojson(str)
 ```
@@ -177,21 +202,21 @@ wkt2geojson(str, feature=FALSE)
 
 ### Multipoint
 
-```{r}
+```{r output.lines=1:10}
 str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
 wkt2geojson(str, feature=FALSE)
 ```
 
 ### Polygon
 
-```{r}
+```{r output.lines=1:10}
 str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 wkt2geojson(str, feature=FALSE)
 ```
 
 ### MultiPolygon
 
-```{r}
+```{r output.lines=1:10}
 str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
     ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
 wkt2geojson(str, feature=FALSE)
@@ -199,7 +224,7 @@ wkt2geojson(str, feature=FALSE)
 
 ### Linestring
 
-```{r}
+```{r output.lines=1:10}
 wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 ```
 
