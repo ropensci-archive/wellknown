@@ -24,8 +24,12 @@ multipoint("empty")
 multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
 
 # data.frame
-df <- us_cities[1:25,c('long','lat')]
+df <- us_cities[1:25, c('long', 'lat')]
 multipoint(df)
+
+# matrix
+mat <- matrix(c(df$long, df$lat), ncol = 2)
+multipoint(mat)
 
 # list
 multipoint(list(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180)))

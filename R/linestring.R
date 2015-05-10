@@ -27,6 +27,12 @@
 #' df <- data.frame(lon=c(-116.4,-118,-120), lat=c(45.2,47,49))
 #' linestring(df, fmt=1)
 #'
+#' # matrix
+#' mat <- matrix(c(-116.4,-118, 45.2, 47), ncol = 2)
+#' linestring(mat, fmt=1)
+#' mat2 <- matrix(c(-116.4, -118, -120, 45.2, 47, 49), ncol = 2)
+#' linestring(mat2, fmt=1)
+#'
 #' # list
 #' linestring(list(c(100.000, 0.000), c(101.000, 1.000)), fmt=2)
 linestring <- function(..., fmt = 16) {
@@ -36,7 +42,7 @@ linestring <- function(..., fmt = 16) {
 #' @export
 linestring.character <- function(..., fmt = 16) {
   pts <- list(...)
-  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+  if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('LINESTRING EMPTY')
   } else {
     stop("character inputs accept only variants of 'empty'", call. = FALSE)
@@ -58,6 +64,14 @@ linestring.numeric <- function(..., fmt = 16) {
 
 #' @export
 linestring.data.frame <- function(..., fmt = 16) {
+  pts <- list(...)
+  fmtcheck(fmt)
+  str <- paste0(apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " ")), collapse = ", ")
+  sprintf('LINESTRING (%s)', str)
+}
+
+#' @export
+linestring.matrix <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
   str <- paste0(apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " ")), collapse = ", ")

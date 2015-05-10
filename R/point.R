@@ -18,9 +18,14 @@
 #' df <- data.frame(lon=-116.4, lat=45.2)
 #' point(df)
 #'
-#' ## many points, from data.frame
-#' df <- us_cities[1:5,c('lat','long')]
+#' ## many points, from a data.frame
+#' ussmall <- us_cities[1:5, ]
+#' df <- data.frame(long = ussmall$long, lat = ussmall$lat)
 #' point(df)
+#'
+#' ## many points, from a matrix
+#' mat <- matrix(c(df$long, df$lat), ncol = 2)
+#' point(mat)
 #'
 #' ## single point, from a list
 #' point(list(c(100.0, 3.101)))
@@ -34,7 +39,7 @@ point <- function(..., fmt = 16) {
 #' @export
 point.character <- function(..., fmt = 16) {
   pts <- list(...)
-  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+  if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('POINT EMPTY')
   } else {
     stop("character inputs accept only variants of 'empty'", call. = FALSE)
@@ -53,6 +58,14 @@ point.numeric <- function(..., fmt = 16) {
 
 #' @export
 point.data.frame <- function(..., fmt = 16) {
+  pts <- list(...)
+  fmtcheck(fmt)
+  str <- apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))
+  sprintf('POINT (%s)', str)
+}
+
+#' @export
+point.matrix <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
   str <- apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))

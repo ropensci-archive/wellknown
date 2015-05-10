@@ -37,6 +37,10 @@ df2 <- data.frame(long = c(-85.9, -85.9, -93, -93, -85.9),
                   lat = c(37.5, 35.3, 35.3, 37.5, 37.5))
 polygon(df, df2, fmt=2) \%>\% wktview(zoom=4)
 
+# matrix
+mat <- matrix(c(df$long, df$lat), ncol = 2)
+polygon(mat)
+
 # list
 # single list - creates single polygon
 ply <- list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))

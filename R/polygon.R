@@ -25,6 +25,10 @@
 #'                   lat = c(37.5, 35.3, 35.3, 37.5, 37.5))
 #' polygon(df, df2, fmt=2) %>% wktview(zoom=4)
 #'
+#' # matrix
+#' mat <- matrix(c(df$long, df$lat), ncol = 2)
+#' polygon(mat)
+#'
 #' # list
 #' # single list - creates single polygon
 #' ply <- list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))
@@ -44,7 +48,7 @@ polygon <- function(..., fmt = 16) {
 #' @export
 polygon.character <- function(..., fmt = 16) {
   pts <- list(...)
-  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+  if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('POLYGON EMPTY')
   } else {
     return(pts[[1]])
@@ -55,7 +59,7 @@ polygon.character <- function(..., fmt = 16) {
 polygon.numeric <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
-  invisible(lapply(pts, checker, type='POLYGON', len=2))
+  invisible(lapply(pts, checker, type = 'POLYGON', len = 2))
   str <- paste0(lapply(pts, function(z){
     paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
   }), collapse = ", ")
@@ -64,6 +68,19 @@ polygon.numeric <- function(..., fmt = 16){
 
 #' @export
 polygon.data.frame <- function(..., fmt = 16){
+  pts <- list(...)
+  fmtcheck(fmt)
+  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  str <- lapply(pts, function(v) {
+    sprintf("(%s)", paste0(apply(v, 1, function(z){
+      paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
+    }), collapse = ", "))
+  })
+  sprintf('POLYGON (%s)', paste0(str, collapse = ", "))
+}
+
+#' @export
+polygon.matrix <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
   # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))

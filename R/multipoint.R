@@ -14,8 +14,12 @@
 #' multipoint(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180))
 #'
 #' # data.frame
-#' df <- us_cities[1:25,c('long','lat')]
+#' df <- us_cities[1:25, c('long', 'lat')]
 #' multipoint(df)
+#'
+#' # matrix
+#' mat <- matrix(c(df$long, df$lat), ncol = 2)
+#' multipoint(mat)
 #'
 #' # list
 #' multipoint(list(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180)))
@@ -26,7 +30,7 @@ multipoint <- function(..., fmt = 16) {
 #' @export
 multipoint.character <- function(..., fmt = 16) {
   pts <- list(...)
-  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+  if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('MULTIPOINT EMPTY')
   } else {
     stop("character inputs accept only variants of 'empty'", call. = FALSE)
@@ -39,7 +43,7 @@ multipoint.character <- function(..., fmt = 16) {
 multipoint.numeric <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
-  invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  invisible(lapply(pts, checker, type = 'MULTIPOINT', len = 2))
   str <- paste0(lapply(pts, function(z){
     sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
   }), collapse = ", ")
@@ -48,6 +52,17 @@ multipoint.numeric <- function(..., fmt = 16){
 
 #' @export
 multipoint.data.frame <- function(..., fmt = 16){
+  pts <- list(...)
+  fmtcheck(fmt)
+  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  str <- paste0(apply(pts[[1]], 1, function(z){
+    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+  }), collapse = ", ")
+  sprintf('MULTIPOINT (%s)', str)
+}
+
+#' @export
+multipoint.matrix <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
   # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))

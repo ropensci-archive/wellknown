@@ -37,6 +37,12 @@ linestring(df, fmt=1)
 df <- data.frame(lon=c(-116.4,-118,-120), lat=c(45.2,47,49))
 linestring(df, fmt=1)
 
+# matrix
+mat <- matrix(c(-116.4,-118, 45.2, 47), ncol = 2)
+linestring(mat, fmt=1)
+mat2 <- matrix(c(-116.4, -118, -120, 45.2, 47, 49), ncol = 2)
+linestring(mat2, fmt=1)
+
 # list
 linestring(list(c(100.000, 0.000), c(101.000, 1.000)), fmt=2)
 }

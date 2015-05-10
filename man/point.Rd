@@ -28,9 +28,14 @@ point(0, 1)
 df <- data.frame(lon=-116.4, lat=45.2)
 point(df)
 
-## many points, from data.frame
-df <- us_cities[1:5,c('lat','long')]
+## many points, from a data.frame
+ussmall <- us_cities[1:5, ]
+df <- data.frame(long = ussmall$long, lat = ussmall$lat)
 point(df)
+
+## many points, from a matrix
+mat <- matrix(c(df$long, df$lat), ncol = 2)
+point(mat)
 
 ## single point, from a list
 point(list(c(100.0, 3.101)))

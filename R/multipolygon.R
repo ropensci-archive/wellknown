@@ -20,6 +20,11 @@
 #' multipolygon(df, df2, fmt=0) %>% lint
 #' multipolygon(df, df2) %>% wktview(zoom=3)
 #'
+#' # matrix
+#' mat <- matrix(c(df$long, df$lat), ncol = 2)
+#' mat2 <- matrix(c(df2$long, df2$lat), ncol = 2)
+#' multipolygon(mat, mat2, fmt=0)
+#'
 #' # list
 #' multipolygon(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20)),
 #'   list(c(15, 5), c(40, 10), c(10, 20), c(5, 10), c(15, 5)), fmt=2)
@@ -48,7 +53,7 @@ multipolygon <- function(..., fmt = 16) {
 #' @export
 multipolygon.character <- function(..., fmt = 16) {
   pts <- list(...)
-  if(grepl("empty", pts[[1]], ignore.case = TRUE)) {
+  if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('MULTIPOLYGON EMPTY')
   } else {
     return(pts[[1]])
@@ -72,13 +77,29 @@ multipolygon.data.frame <- function(..., fmt = 16){
 }
 
 #' @export
+multipolygon.matrix <- function(..., fmt = 16){
+  pts <- list(...)
+  fmtcheck(fmt)
+  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  str <- lapply(pts, function(v) {
+    sprintf("((%s))", paste0(apply(v, 1, function(z){
+      paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
+    }), collapse = ", "))
+  })
+  #   str <- paste0(apply(pts[[1]], 1, function(z){
+  #     paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
+  #   }), collapse = ", ")
+  sprintf('MULTIPOLYGON (%s)', paste0(str, collapse = ", "))
+}
+
+#' @export
 multipolygon.list <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
   pts <- un_nest(pts)
   str <- lapply(pts, function(z) {
-    if(length(z) > 1 && sapply(z, class)[1] != "numeric") {
-      inparens(paste0(lapply(z, make1multipoly, fmt=fmt), collapse = ", "))
+    if (length(z) > 1 && sapply(z, class)[1] != "numeric") {
+      inparens(paste0(lapply(z, make1multipoly, fmt = fmt), collapse = ", "))
     } else {
       inparens(make1multipoly(z, fmt))
     }

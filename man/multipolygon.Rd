@@ -32,6 +32,11 @@ multipolygon(df, df2, fmt=0)
 multipolygon(df, df2, fmt=0) \%>\% lint
 multipolygon(df, df2) \%>\% wktview(zoom=3)
 
+# matrix
+mat <- matrix(c(df$long, df$lat), ncol = 2)
+mat2 <- matrix(c(df2$long, df2$lat), ncol = 2)
+multipolygon(mat, mat2, fmt=0)
+
 # list
 multipolygon(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20)),
   list(c(15, 5), c(40, 10), c(10, 20), c(5, 10), c(15, 5)), fmt=2)
