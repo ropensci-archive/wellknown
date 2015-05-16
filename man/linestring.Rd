@@ -20,6 +20,9 @@ Make WKT linestring objects
 linestring("empty")
 # linestring("stuff")
 
+## character string
+linestring("LINESTRING (-116.4 45.2, -118.0 47.0)")
+
 # numeric
 ## 2D
 linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2)
@@ -45,5 +48,12 @@ linestring(mat2, fmt=1)
 
 # list
 linestring(list(c(100.000, 0.000), c(101.000, 1.000)), fmt=2)
+}
+\seealso{
+Other R.objects: \code{\link{circularstring}};
+  \code{\link{geometrycollection}};
+  \code{\link{multilinestring}}; \code{\link{multipoint}};
+  \code{\link{multipolygon}}; \code{\link{point}};
+  \code{\link{polygon}}
 }
 

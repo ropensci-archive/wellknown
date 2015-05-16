@@ -5,10 +5,14 @@
 #' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates. Max: 20
+#' @family R-objects
 #' @examples
 #' ## empty linestring
 #' linestring("empty")
 #' # linestring("stuff")
+#'
+#' ## character string
+#' linestring("LINESTRING (-116.4 45.2, -118.0 47.0)")
 #'
 #' # numeric
 #' ## 2D
@@ -45,17 +49,14 @@ linestring.character <- function(..., fmt = 16) {
   if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('LINESTRING EMPTY')
   } else {
-    stop("character inputs accept only variants of 'empty'", call. = FALSE)
+    check_str(pts)
   }
-  # FIX ME - allow input of a character string that's already WKT string
-  ## that returns itself if validated, make validate functionality first
 }
 
 #' @export
 linestring.numeric <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
-  # invisible(lapply(pts, checker, type='LINESTRING', len=2))
   str <- paste0(lapply(pts, function(z){
     paste0(gsub("\\s", "", format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
   }), collapse = ", ")

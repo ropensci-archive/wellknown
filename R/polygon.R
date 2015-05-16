@@ -7,6 +7,7 @@
 #' decimal point when formatting coordinates. Max: 20
 #' @details You can create nested polygons with \code{list} and \code{data.frame} inputs,
 #' but not from \code{numeric} inputs. See examples.
+#' @family R-objects
 #' @examples
 #' ## empty polygon
 #' polygon("empty")
@@ -51,7 +52,7 @@ polygon.character <- function(..., fmt = 16) {
   if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('POLYGON EMPTY')
   } else {
-    return(pts[[1]])
+    check_str(pts)
   }
 }
 
@@ -105,8 +106,8 @@ polygon.list <- function(..., fmt = 16) {
 
 un_nest <- function(x) {
   first <- sapply(x, class)
-  if(length(first) == 1 && first == "list") {
-    if(sapply(x[[1]], class)[1] == "list") {
+  if (length(first) == 1 && first == "list") {
+    if (sapply(x[[1]], class)[1] == "list") {
       unlist(x, recursive = FALSE)
     } else {
       return(x)

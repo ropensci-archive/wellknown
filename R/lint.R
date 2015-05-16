@@ -131,7 +131,6 @@ check_circularstring <- function(x, ...) {
   length(strsplit(x, ",")[[1]]) == 3
 }
 
-'COMPOUNDCURVE EMPTY'
-'COMPOUNDCURVE (CIRCULARSTRING (1 0, 0 1, -1 0), (-1 0, 2 0))'
-'COMPOUNDCURVE (CIRCULARSTRING (1 1, 1 1, 1 1), (1 1, 3 5, 5 4))'
-
+# 'COMPOUNDCURVE EMPTY'
+# 'COMPOUNDCURVE (CIRCULARSTRING (1 0, 0 1, -1 0), (-1 0, 2 0))'
+# 'COMPOUNDCURVE (CIRCULARSTRING (1 1, 1 1, 1 1), (1 1, 3 5, 5 4))'

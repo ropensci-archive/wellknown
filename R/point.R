@@ -5,6 +5,7 @@
 #' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
 #' @param fmt Format string which indicates the number of digits to display after the
 #' decimal point when formatting coordinates. Max: 20
+#' @family R-objects
 #' @examples
 #' ## empty point
 #' point("empty")
@@ -42,10 +43,8 @@ point.character <- function(..., fmt = 16) {
   if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('POINT EMPTY')
   } else {
-    stop("character inputs accept only variants of 'empty'", call. = FALSE)
+    check_str(pts)
   }
-  # FIX ME - allow input of a character string that's already WKT string
-  ## that returns itself if validated, make validate functionality first
 }
 
 #' @export

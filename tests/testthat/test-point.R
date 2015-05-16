@@ -36,5 +36,5 @@ test_that("point fails correctly", {
   expect_error(point(-116.4), "POINT input should be of length 2")
   expect_error(point(), "no applicable method")
   expect_error(point(NA), "no applicable method")
-  expect_error(point("a", "Adf"), "character inputs accept only variants of 'empty'")
+  expect_error(point("a", "Adf"), "invalid 'pattern' argument")
 })

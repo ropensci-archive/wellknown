@@ -59,4 +59,11 @@ polys <- list(
 multipolygon(polys, fmt=0)
 multipolygon(polys, fmt=0) \%>\% lint
 }
+\seealso{
+Other R.objects: \code{\link{circularstring}};
+  \code{\link{geometrycollection}};
+  \code{\link{linestring}}; \code{\link{multilinestring}};
+  \code{\link{multipoint}}; \code{\link{point}};
+  \code{\link{polygon}}
+}
 

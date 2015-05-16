@@ -34,4 +34,11 @@ multipoint(mat)
 # list
 multipoint(list(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180)))
 }
+\seealso{
+Other R.objects: \code{\link{circularstring}};
+  \code{\link{geometrycollection}};
+  \code{\link{linestring}}; \code{\link{multilinestring}};
+  \code{\link{multipolygon}}; \code{\link{point}};
+  \code{\link{polygon}}
+}
 

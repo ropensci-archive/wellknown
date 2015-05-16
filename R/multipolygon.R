@@ -8,6 +8,7 @@
 #' @details There is no \code{numeric} input option for multipolygon. There is no way as of
 #' yet to make a nested multipolygon with \code{data.frame} input, but you can do so
 #' with list input. See examples.
+#' @family R-objects
 #' @examples
 #' ## empty multipolygon
 #' multipolygon("empty")
@@ -56,7 +57,7 @@ multipolygon.character <- function(..., fmt = 16) {
   if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('MULTIPOLYGON EMPTY')
   } else {
-    return(pts[[1]])
+    check_str(pts)
   }
 }
 

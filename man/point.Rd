@@ -43,4 +43,11 @@ point(list(c(100.0, 3.101)))
 ## many points, from a list
 point(list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
 }
+\seealso{
+Other R.objects: \code{\link{circularstring}};
+  \code{\link{geometrycollection}};
+  \code{\link{linestring}}; \code{\link{multilinestring}};
+  \code{\link{multipoint}}; \code{\link{multipolygon}};
+  \code{\link{polygon}}
+}
 

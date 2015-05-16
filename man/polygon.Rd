@@ -54,4 +54,11 @@ polygon(list(list(c(35, 10), c(45, 45), c(15, 40), c(10, 20), c(35, 10)),
    list(c(20, 30), c(35, 35), c(30, 20), c(20, 30))), fmt=2) \%>\%
    wktview(zoom=3)
 }
+\seealso{
+Other R.objects: \code{\link{circularstring}};
+  \code{\link{geometrycollection}};
+  \code{\link{linestring}}; \code{\link{multilinestring}};
+  \code{\link{multipoint}}; \code{\link{multipolygon}};
+  \code{\link{point}}
+}
 
