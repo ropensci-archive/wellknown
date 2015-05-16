@@ -21,6 +21,7 @@
 #' lint('COMPOUNDCURVE (CIRCULARSTRING (1 0, 0 1, -1 0), (-1 0, 2 0))')
 lint <- function(str) {
   type <- get_type(str, ignore_case = TRUE)
+  if (length(type) == 0) return(FALSE)
   str <- str_trim_(gsub(toupper(type), "", str))
   rule <- switch(type,
                  Point = rule_point,

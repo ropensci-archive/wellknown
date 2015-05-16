@@ -12,7 +12,7 @@ test_that("convert point works", {
   expect_equal(point(-116.4, 45.2, fmt = 1), "POINT (-116.4 45.2)")
 
   ## single point, from data.frame
-  df <- data.frame(lon=-116.4, lat=45.2)
+  df <- data.frame(lon = -116.4, lat = 45.2)
   df_a <- point(df, fmt = 2)
   expect_is(df_a, "character")
   expect_is(df_a[1], "character")
@@ -36,5 +36,5 @@ test_that("point fails correctly", {
   expect_error(point(-116.4), "POINT input should be of length 2")
   expect_error(point(), "no applicable method")
   expect_error(point(NA), "no applicable method")
-  expect_error(point("a", "Adf"), "invalid 'pattern' argument")
+  expect_error(point("a", "Adf"), "is not TRUE")
 })

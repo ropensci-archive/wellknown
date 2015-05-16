@@ -109,10 +109,3 @@ make1multilinestr <- function(m, fmt) {
     }), collapse = ", ")
   )
 }
-
-check_str <- function(x) {
-  str <- unlist(x)
-  stopifnot(lint(str))
-  stopifnot(length(str) == 1)
-  str
-}

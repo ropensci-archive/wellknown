@@ -63,3 +63,10 @@ centroid <- function(x, center){
     }
   }
 }
+
+check_str <- function(x) {
+  str <- unlist(x)
+  stopifnot(all( vapply(str, lint, logical(1)) ))
+  stopifnot(length(str) == 1)
+  str
+}
