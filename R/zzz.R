@@ -24,15 +24,15 @@ nozero <- function(x) {
 }
 
 checker <- function(x, type, len) {
-  if(length(x) != len)
-    stop(sprintf("%s input should be of length %s", type, len), call. = FALSE)
-  if(!is.double(x))
+  if (!length(x) %in% len)
+    stop(sprintf("%s input should be of length %s", type, p0c(len)), call. = FALSE)
+  if (!is.double(x))
     stop(sprintf("%s input should be of type double (a number)", type), call. = FALSE)
 }
 
 fmtcheck <- function(x) {
-  if(!is.double(x) || is.na(x)) stop("fmt must be an integer value", call. = FALSE)
-  if(x < 0 || x > 20) stop("fmt must be 0 and 20", call. = FALSE)
+  if (!is.double(x) || is.na(x)) stop("fmt must be an integer value", call. = FALSE)
+  if (x < 0 || x > 20) stop("fmt must be 0 and 20", call. = FALSE)
 }
 
 # decfmt <- function(pts, fmt) {
@@ -40,13 +40,13 @@ fmtcheck <- function(x) {
 # }
 
 centroid <- function(x, center){
-  if(!is.null(center)) {
+  if (!is.null(center)) {
     stopifnot(is.numeric(center))
     return(center)
   } else {
-    if("geometry" %in% names(x)) {
+    if ("geometry" %in% names(x)) {
       obj <- x$geometry$coordinates
-      if(is(obj, "numeric")){
+      if (is(obj, "numeric")) {
         obj
       } else {
         # sapply(obj, function(z) sapply(z, function(b) b[2]))
@@ -65,12 +65,14 @@ centroid <- function(x, center){
 }
 
 check_str <- function(x) {
-  str <- unlist(x)
-  checklog <- vapply(str, lint, logical(1))
+  checklog <- vapply(x, lint, logical(1))
   if (!all(checklog)) {
-    notwkt <- paste0(str[!checklog], collapse = "\n")
+    notwkt <- x[!checklog]
+    notwkt_cs <- vapply(notwkt, class, "")
+    notwkt[notwkt_cs != "character"] <- notwkt_cs[notwkt_cs != "character"]
+    notwkt <- paste0(notwkt, collapse = "\n")
     stop("The following strings are not WKT:\n", notwkt, call. = FALSE)
   }
-  stopifnot(length(str) == 1)
-  str
+  stopifnot(length(x[[1]]) == 1)
+  x[[1]]
 }

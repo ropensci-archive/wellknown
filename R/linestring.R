@@ -57,6 +57,7 @@ linestring.character <- function(..., fmt = 16) {
 linestring.numeric <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
+  invisible(lapply(pts, checker, type = 'LINESTRING', len = 2:4))
   str <- paste0(lapply(pts, function(z){
     paste0(gsub("\\s", "", format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
   }), collapse = ", ")
