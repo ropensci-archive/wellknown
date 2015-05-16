@@ -66,7 +66,11 @@ centroid <- function(x, center){
 
 check_str <- function(x) {
   str <- unlist(x)
-  stopifnot(all( vapply(str, lint, logical(1)) ))
+  checklog <- vapply(str, lint, logical(1))
+  if (!all(checklog)) {
+    notwkt <- paste0(str[!checklog], collapse = "\n")
+    stop("The following strings are not WKT:\n", notwkt, call. = FALSE)
+  }
   stopifnot(length(str) == 1)
   str
 }
