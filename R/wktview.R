@@ -32,14 +32,24 @@ wktview <- function(x, center = NULL, zoom = 5) {
 
 #' @export
 wktview.character <- function(x, center = NULL, zoom = 5) {
+  not_some(x)
   make_view(x, center = center, zoom = zoom)
 }
 
 make_view <- function(x, center = NULL, zoom = 5) {
-  geojson <- wkt2geojson(x) %>% properties(style=list(NULL))
+  geojson <- wkt2geojson(x) %>% properties(style = list(NULL))
   cen <- centroid(geojson, center)
   leaflet() %>%
     addTiles() %>%
     setView(lng = cen[1], lat = cen[2], zoom = zoom) %>%
     addGeoJSON(geojson)
 }
+
+not_some <- function(x) {
+  types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
+             "LINESTRING","MULTILINESTRING","GEOMETRYCOLLECTION")
+  if (!grepl(paste0(types, collapse = "|"), x)) {
+    stop("Only these supported:\n", paste0(types, collapse = ", "), call. = FALSE)
+  }
+}
+
