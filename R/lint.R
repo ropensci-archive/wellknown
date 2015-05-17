@@ -46,7 +46,7 @@ grepl2 <- function(str, x) {
 # put rules in vector separated by OR's
 vor <- function(...) {
   rlz <- list(...)
-  unlist(Map(function(x,y) c(x,y), rlz, c(rep("|", length(rlz)-1), "") ))
+  unlist(Map(function(x,y) c(x,y), rlz, c(rep("|", length(rlz) - 1), "") ))
 }
 
 # use grepl on many tests, and give logical for all tests
@@ -122,7 +122,8 @@ rule_triangle <- list(grepl2 = vor(empty, rule_triangle_2d))
 
 # circularstring rules
 rule_circularstring_2d <- c(lp, pt, repeat_(commapt), rp)
-rule_circularstring <- list(grepl2 = vor(empty, rule_circularstring_2d), check_circularstring = NULL)
+rule_circularstring <- list(grepl2 = vor(empty, rule_circularstring_2d))
+# rule_circularstring <- list(grepl2 = vor(empty, rule_circularstring_2d), check_circularstring = NULL)
 
 # compoundcurve rules
 rule_compoundcurve_2d <- c(lp, trep_circularstring,  lp_, pt, repeat_(commapt), rp_, rp)

@@ -1,6 +1,5 @@
 context("lint")
 
-
 # points --------------------
 test_that("lint works for valid WKT strings - points", {
   # good
@@ -154,3 +153,69 @@ test_that("lint works for valid WKT strings - triangle", {
   expect_false(lint("TRIANGLE (((30 20, 45 40, 10 40, 30 20)))"))
   expect_false(lint("TRIANGLE (((30 20, 45 40, 10 40, 30 20)))"))
 })
+
+
+
+# circularstring --------------------
+test_that("lint works for valid WKT strings - circularstring", {
+  # good
+  expect_true(lint("CIRCULARSTRING EMPTY"))
+  expect_true(lint("CIRCULARSTRING(1 5, 6 2, 7 3)"))
+})
+
+test_that("lint works for valid WKT strings - circularstring", {
+  # bad
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40,)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 a)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10.adsfaf 40, 30 20)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 )"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 3020)"))
+  expect_false(lint("CIRCULARSTRING (30)"))
+  expect_false(lint("CIRCULARSTRING ()"))
+  expect_false(lint("CIRCULARSTRING "))
+  expect_false(lint("CIRCULARSTRING ("))
+  expect_false(lint("CIRCULARSTRING )"))
+  expect_false(lint("CIRCULARSTRING"))
+  expect_false(lint("CIRCULARSTRING (100 4, 1)"))
+  expect_false(lint("CIRCULARSTRING (100 4, 1 ad)"))
+  expect_false(lint("CIRCULARSTRING (100 4, 1, 1)"))
+  ## fixme - these shouldn't pass linting
+  # expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 20)"))
+  # expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 20)"))
+})
+
+
+# circularstring --------------------
+test_that("lint works for valid WKT strings - circularstring", {
+  # good
+  expect_true(lint("CIRCULARSTRING EMPTY"))
+  expect_true(lint("CIRCULARSTRING(1 5, 6 2, 7 3)"))
+})
+
+test_that("lint works for valid WKT strings - circularstring", {
+  # bad
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40,)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 a)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10.adsfaf 40, 30 20)"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 )"))
+  expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 3020)"))
+  expect_false(lint("CIRCULARSTRING (30)"))
+  expect_false(lint("CIRCULARSTRING ()"))
+  expect_false(lint("CIRCULARSTRING "))
+  expect_false(lint("CIRCULARSTRING ("))
+  expect_false(lint("CIRCULARSTRING )"))
+  expect_false(lint("CIRCULARSTRING"))
+  expect_false(lint("CIRCULARSTRING (100 4, 1)"))
+  expect_false(lint("CIRCULARSTRING (100 4, 1 ad)"))
+  expect_false(lint("CIRCULARSTRING (100 4, 1, 1)"))
+  ## fixme - these shouldn't pass linting
+  # expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 20)"))
+  # expect_false(lint("CIRCULARSTRING (30 20, 45 40, 10 40, 30 20)"))
+})
+
+
+#' lint("CIRCULARSTRING (1 5, 6 2, 7 3)")
+#' lint("CIRCULARSTRING (1 5, 6 2, 7 3, 5 6, 4 3)")
+#' lint('COMPOUNDCURVE (CIRCULARSTRING (1 0, 0 1, -1 0), (-1 0, 2 0))')

@@ -1,7 +1,12 @@
 context("point")
 
 test_that("convert point works", {
-  ## single point
+  # empty point
+  empty <- point("empty")
+  expect_is(empty, "character")
+  expect_equal(empty, "POINT EMPTY")
+
+  ## numeric, single point
   pt_a <- point(-116.4, 45.2)
   pt_b <- point(0, 1)
   expect_is(pt_a, "character")
@@ -24,6 +29,15 @@ test_that("convert point works", {
   expect_is(df_b, "character")
   expect_is(df_b[1], "character")
   expect_equal(df_b[1], "POINT (32.4500000000000028 -99.7399999999999949)")
+
+  ## matrix
+  ussmall <- us_cities[1:5, ]
+  df <- data.frame(long = ussmall$long, lat = ussmall$lat)
+  mat <- matrix(c(df$long, df$lat), ncol = 2)
+  ptmat <- point(mat, fmt = 0)
+  expect_is(ptmat[1], "character")
+  expect_is(ptmat[2], "character")
+  expect_equal(ptmat[1], "POINT (-99.74 32.45)")
 
   ## single point, from a list
   ls_a <- point(list(c(100.0, 3.1)), fmt = 2)

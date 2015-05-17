@@ -94,9 +94,9 @@ NULL
 #   browseURL(tmpfile)
 # }
 
-getcentr <- function(x){
-  c(
-    mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[2]))),
-    mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[1])))
-  )
-}
+# getcentr <- function(x){
+#   c(
+#     mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[2]))),
+#     mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[1])))
+#   )
+# }
