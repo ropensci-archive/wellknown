@@ -4,7 +4,7 @@
 \alias{wktview}
 \title{Visualize geojson from a character string or list}
 \usage{
-wktview(x, center = NULL, zoom = 5)
+wktview(x, center = NULL, zoom = 5, fmt = 16)
 }
 \arguments{
 \item{x}{Input, a geojson character string or list}
@@ -12,9 +12,12 @@ wktview(x, center = NULL, zoom = 5)
 \item{center}{(numeric) A length two vector of the form: \code{longitude, latitude}}
 
 \item{zoom}{(integer) A number between 1 and 18 (1 zoomed out, 18 zoomed in)}
+
+\item{fmt}{Number of digits to display after the decimal point when formatting
+coordinates.}
 }
 \value{
-Opens a map with the geojson object(s)
+Opens a map with the geojson object(s) using \code{\link{leaflet}}
 }
 \description{
 Visualize geojson from a character string or list
@@ -40,5 +43,8 @@ a <- polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(1
 wktview(a)
 wktview(a, zoom=9)
 }
+}
+\seealso{
+\code{\link{as_featurecollection}}
 }
 

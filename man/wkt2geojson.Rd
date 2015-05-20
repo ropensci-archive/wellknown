@@ -9,8 +9,8 @@ wkt2geojson(str, fmt = 16, feature = TRUE)
 \arguments{
 \item{str}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
 
-\item{fmt}{Format string which indicates the number of digits to display after the
-decimal point when formatting coordinates.}
+\item{fmt}{Number of digits to display after the decimal point when formatting
+coordinates.}
 
 \item{feature}{(logical) Make a feature geojson object. Default: TRUE}
 }

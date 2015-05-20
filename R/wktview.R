@@ -5,7 +5,10 @@
 #' @param x Input, a geojson character string or list
 #' @param center (numeric) A length two vector of the form: \code{longitude, latitude}
 #' @param zoom (integer) A number between 1 and 18 (1 zoomed out, 18 zoomed in)
-#' @return Opens a map with the geojson object(s)
+#' @param fmt Number of digits to display after the decimal point when formatting
+#' coordinates.
+#' @seealso \code{\link{as_featurecollection}}
+#' @return Opens a map with the geojson object(s) using \code{\link{leaflet}}
 #' @examples \dontrun{
 #' # point
 #' str <- "POINT (-116.4000000000000057 45.2000000000000028)"
@@ -26,18 +29,18 @@
 #' wktview(a)
 #' wktview(a, zoom=9)
 #' }
-wktview <- function(x, center = NULL, zoom = 5) {
+wktview <- function(x, center = NULL, zoom = 5, fmt = 16) {
   UseMethod("wktview")
 }
 
 #' @export
-wktview.character <- function(x, center = NULL, zoom = 5) {
+wktview.character <- function(x, center = NULL, zoom = 5, fmt = 16) {
   not_some(x)
-  make_view(x, center = center, zoom = zoom)
+  make_view(x, center = center, zoom = zoom, fmt = fmt)
 }
 
-make_view <- function(x, center = NULL, zoom = 5) {
-  geojson <- wkt2geojson(x) %>% properties(style = list(NULL))
+make_view <- function(x, center = NULL, zoom = 5, fmt = 16) {
+  geojson <- wkt2geojson(x, fmt = fmt) %>% properties(style = list(NULL))
   cen <- centroid(geojson, center)
   leaflet() %>%
     addTiles() %>%
@@ -52,4 +55,3 @@ not_some <- function(x) {
     stop("Only these supported:\n", paste0(types, collapse = ", "), call. = FALSE)
   }
 }
-
