@@ -18,8 +18,8 @@
 #'
 #' # multipoint
 #' str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
-#' wkt2geojson(str)
-#' wkt2geojson(str, feature=FALSE)
+#' wkt2geojson(str, fmt = 2)
+#' wkt2geojson(str, fmt = 2, feature=FALSE)
 #'
 #' # polygon
 #' str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
@@ -96,7 +96,12 @@ load_point <- function(str, fmt = 16, feature = TRUE){
   str_coord <- gsub("POINT|\\(|\\)", "", str)
   coords <- strsplit(gsub("[[:punct:]]$", "", str_trim_(str_coord)), "\\s")[[1]]
   coords <- nozero(coords)
-  iffeat('Point', as.numeric(coords), feature)
+  # iffeat('Point', as.numeric(coords, fmt), feature)
+  iffeat('Point', format_num(coords, fmt), feature)
+}
+
+format_num <- function(x, fmt) {
+  sprintf(paste0("%.", fmt, "f"), as.numeric(x))
 }
 
 load_multipoint <- function(str, fmt = 16, feature = TRUE){
@@ -106,7 +111,7 @@ load_multipoint <- function(str, fmt = 16, feature = TRUE){
   coords <- unname(sapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, function(x) {
-      as.numeric(nozero(x))
+      format_num(nozero(x), fmt)
     })
   }))
   iffeat('MultiPoint', coords, feature)
@@ -119,7 +124,7 @@ load_polygon <- function(str, fmt = 16, feature = TRUE){
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, function(x) {
-      as.numeric(nozero(x))
+      format_num(nozero(x), fmt)
     })
   })
   iffeat('Polygon', coords, feature)
@@ -134,7 +139,7 @@ load_multipolygon <- function(str, fmt = 16, feature = TRUE){
     pairs <- strsplit( gsub("\\(|\\)", "", strsplit(str_trim_(z), "\\),")[[1]]), ",|,\\s")
     lapply(pairs, function(zz){
       unname(lapply(sapply(str_trim_(zz), strsplit, split = "\\s"), function(x) {
-        as.numeric(nozero(x))
+        format_num(nozero(x), fmt)
       }))
     })
   })
@@ -148,7 +153,7 @@ load_linestring <- function(str, fmt = 16, feature = TRUE){
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     lapply(pairs, function(x) {
-      as.numeric(nozero(x))
+      format_num(nozero(x), fmt)
     })
   })[[1]]
   iffeat('LineString', coords, feature)
@@ -161,7 +166,7 @@ load_multilinestring <- function(str, fmt = 16, feature = TRUE){
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(str_trim_(gsub("\\(|\\)", "", str_trim_(z))), ",|,\\s")[[1]], "\\s")
     lapply(pairs, function(x) {
-      as.numeric(nozero(x))
+      format_num(nozero(x), fmt)
     })
   })
   iffeat('MultiLineString', coords, feature)

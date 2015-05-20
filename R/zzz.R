@@ -46,19 +46,20 @@ centroid <- function(x, center){
   } else {
     if ("geometry" %in% names(x)) {
       obj <- x$geometry$coordinates
-      if (is(obj, "numeric")) {
+      # tryasnum <- tryCatch(as.numeric(obj), warning = function(w) w)
+      if (!is(obj, "list")) {
         obj
       } else {
         # sapply(obj, function(z) sapply(z, function(b) b[2]))
         lngs <- rapply(obj, function(x) x[1])
         # sapply(obj, function(z) sapply(z, function(b) b[1]))
         lats <- rapply(obj, function(x) x[2])
-        c(mean(lngs), mean(lats))
+        c(mean(as.numeric(lngs)), mean(as.numeric(lats)))
       }
     } else {
       c(
-        mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[2]))),
-        mean(sapply(x$coordinates, function(z) sapply(z, function(b) b[1])))
+        mean(as.numeric(sapply(x$coordinates, function(z) sapply(z, function(b) b[2])))),
+        mean(as.numeric(sapply(x$coordinates, function(z) sapply(z, function(b) b[1]))))
       )
     }
   }
