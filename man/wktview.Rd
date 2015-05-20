@@ -36,7 +36,7 @@ wktview(str, center = c(-100,40))
 wktview(str, zoom = 3)
 
 # linestring
-view(linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2))
+wktview(linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2))
 
 # polygon
 a <- polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)))
