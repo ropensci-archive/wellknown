@@ -12,6 +12,7 @@ install:
 
 build_script:
   - travis-tool.sh install_deps
+  - travis-tool.sh r_install lawn
   - travis-tool.sh github_package rstudio/leaflet
 
 test_script:
