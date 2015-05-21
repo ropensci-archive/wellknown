@@ -19,8 +19,8 @@ in vizualizing, e.g., with \code{\link{leaflet}}
 \examples{
 str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180),
 (31.140 6.180), (31.140 78.180))'
-wkt2geojson(str, fmt = 2) \%>\%
-  as_featurecollection() \%>\%
-  lawn::view()
+# wkt2geojson(str, fmt = 2) \%>\%
+#   as_featurecollection() \%>\%
+#   lawn::view()
 }
 
