@@ -149,7 +149,7 @@ geojson2wkt(gmcoll, fmt=0)
 
 ### Convert json or character objects
 
-You can convert directly from an object of class `json`, which is output from `jsonlite::toJSON()`. 
+You can convert directly from an object of class `json`, which is output from `jsonlite::toJSON()`.
 
 
 ```r
@@ -314,5 +314,6 @@ lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, a b, 10 20, 5 10, 15
 * Please [report any issues or bugs](https://github.com/ropensci/wellknown/issues).
 * License: MIT
 * Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
+* Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 [![ropensci_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
