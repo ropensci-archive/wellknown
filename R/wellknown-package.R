@@ -1,5 +1,7 @@
 #' WKT to GeoJSON and vice versa
 #'
+#' @importFrom methods is
+#' @importFrom utils modifyList
 #' @name wellknown-package
 #' @aliases wellknown
 #' @docType package
