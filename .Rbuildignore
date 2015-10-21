@@ -1,6 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-README.Rmd
-.travis.yml
+man-roxygen
 appveyor.yml
+Makefile
 ^CONDUCT\.md$
+^\.travis\.yml$
+^cran-comments\.md$
+^README\.Rmd$
+NEWS\.md
