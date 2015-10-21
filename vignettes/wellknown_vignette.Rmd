@@ -40,7 +40,7 @@ knitr::opts_chunk$set(
 wellknown introduction
 ======================
 
-`wellknown` is an R client to convert WKT to GeoJSON, and GeoJSON to WKT. [Well-known text](http://en.wikipedia.org/wiki/Well-known_text) is perhaps not as widely known as GeoJSON, but is widely used when storing geosptial data in SQL databases. [Many RDBMS engines provide support](http://en.wikipedia.org/wiki/Well-known_text#RDBMS_Engines_that_provide_support for WKT). There is a binary equivalent, Well-known binary, that will hopefully come later in this package. WKT has similar spatial objects as GeoJSON, but the format is pretty different. 
+`wellknown` is an R client to convert WKT to GeoJSON, and GeoJSON to WKT. [Well-known text](http://en.wikipedia.org/wiki/Well-known_text) is perhaps not as widely known as GeoJSON, but is widely used when storing geosptial data in SQL databases. [Many RDBMS engines provide support](http://en.wikipedia.org/wiki/Well-known_text#RDBMS_Engines_that_provide_support for WKT). There is a binary equivalent, Well-known binary, that will hopefully come later in this package. WKT has similar spatial objects as GeoJSON, but the format is pretty different.
 
 You can find the WKT specification in a PDF at [https://portal.opengeospatial.org/files/?artifact_id=25355](https://portal.opengeospatial.org/files/?artifact_id=25355).
 
@@ -78,7 +78,7 @@ The above currently accept (depending on the fxn) `numeric`, `list`, and `data.f
 
 ## Install
 
-Stable version from CRAN (not available yet)
+Stable version from CRAN
 
 ```{r eval=FALSE}
 install.packages("wellknown")
@@ -147,7 +147,7 @@ geojson2wkt(poly)
 ### Multipolygon
 
 ```{r}
-mpoly <- 
+mpoly <-
   list(type = "MultiPolygon",
     coordinates = list(list(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20))),
         list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
@@ -171,7 +171,7 @@ geojson2wkt(gmcoll, fmt = 0)
 
 ### Convert json or character objects
 
-You can convert directly from an object of class `json`, which is output from `jsonlite::toJSON()`. 
+You can convert directly from an object of class `json`, which is output from `jsonlite::toJSON()`.
 
 ```{r}
 library("jsonlite")
@@ -236,7 +236,7 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature = FALSE)
 
 ## lint WKT
 
-The `lint()` function uses native R to check for correct stucture of WKT strings. That is, it works, but may be slow-ish for very large strings. 
+The `lint()` function uses native R to check for correct stucture of WKT strings. That is, it works, but may be slow-ish for very large strings.
 
 ```{r eval=FALSE}
 lint("POINT (1 2)")

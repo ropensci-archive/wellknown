@@ -14,7 +14,7 @@ As featurecollection
 }
 \details{
 Helper function to make a FeatureCollection list object for use
-in vizualizing, e.g., with \code{\link{leaflet}}
+in vizualizing, e.g., with \code{leaflet}
 }
 \examples{
 str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180),

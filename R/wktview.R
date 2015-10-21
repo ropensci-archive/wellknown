@@ -1,6 +1,5 @@
 #' Visualize geojson from a character string or list
 #'
-#' @importFrom leaflet leaflet addTiles addGeoJSON setView
 #' @export
 #' @param x Input, a geojson character string or list
 #' @param center (numeric) A length two vector of the form: \code{longitude, latitude}
@@ -8,7 +7,7 @@
 #' @param fmt Number of digits to display after the decimal point when formatting
 #' coordinates.
 #' @seealso \code{\link{as_featurecollection}}
-#' @return Opens a map with the geojson object(s) using \code{\link{leaflet}}
+#' @return Opens a map with the geojson object(s) using \code{leaflet}
 #' @examples \dontrun{
 #' # point
 #' str <- "POINT (-116.4000000000000057 45.2000000000000028)"
@@ -40,12 +39,13 @@ wktview.character <- function(x, center = NULL, zoom = 5, fmt = 16) {
 }
 
 make_view <- function(x, center = NULL, zoom = 5, fmt = 16) {
+  chek_for_pkg("leaflet")
   geojson <- wkt2geojson(x, fmt = fmt) %>% properties(style = list(NULL))
   cen <- centroid(geojson, center)
-  leaflet() %>%
-    addTiles() %>%
-    setView(lng = cen[1], lat = cen[2], zoom = zoom) %>%
-    addGeoJSON(geojson)
+  leaflet::leaflet() %>%
+    leaflet::addTiles() %>%
+    leaflet::setView(lng = cen[1], lat = cen[2], zoom = zoom) %>%
+    leaflet::addGeoJSON(geojson)
 }
 
 not_some <- function(x) {

@@ -17,7 +17,7 @@ wktview(x, center = NULL, zoom = 5, fmt = 16)
 coordinates.}
 }
 \value{
-Opens a map with the geojson object(s) using \code{\link{leaflet}}
+Opens a map with the geojson object(s) using \code{leaflet}
 }
 \description{
 Visualize geojson from a character string or list
