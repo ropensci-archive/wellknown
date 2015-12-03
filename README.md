@@ -25,8 +25,7 @@ There's a family of functions that make it easy to go from familiar R objects li
 * `polygon()` - make a polygon, e.g., `POLYGON ((100 0), (101 0), (101 1), (100 0))`
 * `multipolygon()` - make a multipolygon, e.g., `MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))`
 
-The above currently accept (depending on the fxn) `numeric`, `list`, and `data.frame` (and `character` for special
-case of `EMPTY` WKT objects).
+The above currently accept (depending on the fxn) `numeric`, `list`, and `data.frame` (and `character` for special case of `EMPTY` WKT objects).
 
 ### Geojson to WKT and vice versa
 
@@ -47,6 +46,10 @@ case of `EMPTY` WKT objects).
 #### WKT to Geojson
 
 `wkt2geojson()` converts any WKT string into geojson as a list. This list format for geojson can be used downstream e.g., in the `leaflet` package.
+
+#### WKT to WKB, and vice versa
+
+`wkt_wkb()` converts WKT to WKB, while `wkb_wkt()` converts WKB to WKT
 
 ## Install
 
@@ -309,6 +312,44 @@ lint("LINESTRING (100)")
 #> [1] FALSE
 lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, a b, 10 20, 5 10, 15 5)))")
 #> [1] FALSE
+```
+
+## WKT <--> WKB
+
+WKT to WKB
+
+
+```r
+## point
+wkt_wkb("POINT (-116.4 45.2)")
+#>  [1] 01 01 00 00 00 9a 99 99 99 99 19 5d c0 9a 99 99 99 99 99 46 40
+
+## polygon
+wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))")
+#>  [1] 01 03 00 00 00 01 00 00 00 04 00 00 00 00 00 00 00 00 00 59 40 00 00
+#> [24] 00 00 00 00 00 00 66 66 66 66 66 46 59 40 00 00 00 00 00 00 00 00 00
+#> [47] 00 00 00 00 40 59 40 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 59 40
+#> [70] 00 00 00 00 00 00 00 00
+```
+
+WKB to WKT
+
+
+```r
+## point
+(x <- wkt_wkb("POINT (-116.4 45.2)"))
+#>  [1] 01 01 00 00 00 9a 99 99 99 99 19 5d c0 9a 99 99 99 99 99 46 40
+wkb_wkt(x)
+#> [1] "POINT(-116.4 45.2)"
+
+## polygon
+(x <- wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))"))
+#>  [1] 01 03 00 00 00 01 00 00 00 04 00 00 00 00 00 00 00 00 00 59 40 00 00
+#> [24] 00 00 00 00 00 00 66 66 66 66 66 46 59 40 00 00 00 00 00 00 00 00 00
+#> [47] 00 00 00 00 40 59 40 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 59 40
+#> [70] 00 00 00 00 00 00 00 00
+wkb_wkt(x)
+#> [1] "POLYGON((100 0,101.1 0,101 1,100 0))"
 ```
 
 ## Meta
