@@ -65,10 +65,10 @@ function BinaryWriter(size, allowResize) {
 }
 
 function _write(write, size) {
-    return function (value) {
+    return function (value, noAssert) {
         this.ensureSize(size);
 
-        write.call(this.buffer, value, this.position);
+        write.call(this.buffer, value, this.position, noAssert);
         this.position += size;
     };
 }
@@ -141,16 +141,18 @@ var WktParser = require('./wktparser');
 var ZigZag = require('./zigzag.js');
 
 function Geometry() {
-    this.srid = 0;
+    this.srid = undefined;
+    this.hasZ = false;
+    this.hasM = false;
 }
 
-Geometry.parse = function (value) {
+Geometry.parse = function (value, options) {
     var valueType = typeof value;
 
     if (valueType === 'string' || value instanceof WktParser)
         return Geometry._parseWkt(value);
     else if (Buffer.isBuffer(value) || value instanceof BinaryReader)
-        return Geometry._parseWkb(value);
+        return Geometry._parseWkb(value, options);
     else
         throw new Error('first argument must be a string or Buffer');
 };
@@ -169,9 +171,12 @@ Geometry._parseWkt = function (value) {
         srid = match[1];
 
     var geometryType = wktParser.matchType();
+    var dimension = wktParser.matchDimension();
 
     var options = {
-        srid: srid || 0
+        srid: srid,
+        hasZ: dimension.hasZ,
+        hasM: dimension.hasM
     };
 
     switch (geometryType) {
@@ -189,17 +194,16 @@ Geometry._parseWkt = function (value) {
         return MultiPolygon._parseWkt(wktParser, options);
     case Types.wkt.GeometryCollection:
         return GeometryCollection._parseWkt(wktParser, options);
-    default:
-        throw new Error('GeometryType ' + geometryType + ' not supported');
     }
 };
 
-Geometry._parseWkb = function (value) {
+Geometry._parseWkb = function (value, parentOptions) {
     var binaryReader,
         hasSrid,
         srid,
         wkbType,
-        geometryType;
+        geometryType,
+        options = {};
 
     if (value instanceof BinaryReader)
         binaryReader = value;
@@ -209,16 +213,41 @@ Geometry._parseWkb = function (value) {
     binaryReader.isBigEndian = !binaryReader.readInt8();
 
     wkbType = binaryReader.readUInt32();
-    geometryType = wkbType & 0xFF;
 
-    hasSrid = (wkbType & 0x20000000) === 0x20000000;
+    options.hasSrid = (wkbType & 0x20000000) === 0x20000000;
 
-    if (hasSrid)
-        srid = binaryReader.readUInt32();
+    if (options.hasSrid)
+        options.srid = binaryReader.readUInt32();
 
-    var options = {
-        srid: srid || 0
-    };
+    options.hasZ = false;
+    options.hasM = false;
+
+    if (!options.hasSrid && (!parentOptions || !parentOptions.hasSrid)) {
+        if (wkbType >= 1000 && wkbType < 2000) {
+            options.hasZ = true;
+            geometryType = wkbType - 1000;
+        }
+        else if (wkbType >= 2000 && wkbType < 3000) {
+            options.hasM = true;
+            geometryType = wkbType - 2000;
+        }
+        else if (wkbType >= 3000 && wkbType < 4000) {
+            options.hasZ = true;
+            options.hasM = true;
+            geometryType = wkbType - 3000;
+        }
+        else {
+            geometryType = wkbType;
+        }
+    }
+    else {
+        if (wkbType & 0x80000000)
+            options.hasZ = true;
+        if (wkbType & 0x40000000)
+            options.hasM = true;
+
+        geometryType = wkbType & 0xF;
+    }
 
     switch (geometryType) {
     case Types.wkb.Point:
@@ -264,9 +293,20 @@ Geometry.parseTwkb = function (value) {
 
     if (options.hasExtendedPrecision) {
         var extendedPrecision = binaryReader.readUInt8();
-        options.hasZ = (extendedPrecision & 0x01);
-        options.hasM = (extendedPrecision & 0x02);
+        options.hasZ = (extendedPrecision & 0x01) === 0x01;
+        options.hasM = (extendedPrecision & 0x02) === 0x02;
+
+        options.zPrecision = ZigZag.decode((extendedPrecision & 0x1C) >> 2);
+        options.zPrecisionFactor = Math.pow(10, options.zPrecision);
+
+        options.mPrecision = ZigZag.decode((extendedPrecision & 0xE0) >> 5);
+        options.mPrecisionFactor = Math.pow(10, options.mPrecision);
     }
+    else {
+        options.hasZ = false;
+        options.hasM = false;
+    }
+
     if (options.hasSizeAttribute)
         binaryReader.readVarInt();
     if (options.hasBoundingBox) {
@@ -304,24 +344,39 @@ Geometry.parseTwkb = function (value) {
 };
 
 Geometry.parseGeoJSON = function (value) {
+    var geometry;
+
     switch (value.type) {
     case Types.geoJSON.Point:
-        return Point._parseGeoJSON(value);
+        geometry = Point._parseGeoJSON(value); break;
     case Types.geoJSON.LineString:
-        return LineString._parseGeoJSON(value);
+        geometry = LineString._parseGeoJSON(value); break;
     case Types.geoJSON.Polygon:
-        return Polygon._parseGeoJSON(value);
+        geometry = Polygon._parseGeoJSON(value); break;
     case Types.geoJSON.MultiPoint:
-        return MultiPoint._parseGeoJSON(value);
+        geometry = MultiPoint._parseGeoJSON(value); break;
     case Types.geoJSON.MultiLineString:
-        return MultiLineString._parseGeoJSON(value);
+        geometry = MultiLineString._parseGeoJSON(value); break;
     case Types.geoJSON.MultiPolygon:
-        return MultiPolygon._parseGeoJSON(value);
+        geometry = MultiPolygon._parseGeoJSON(value); break;
     case Types.geoJSON.GeometryCollection:
-        return GeometryCollection._parseGeoJSON(value);
+        geometry = GeometryCollection._parseGeoJSON(value); break;
     default:
         throw new Error('GeometryType ' + value.type + ' not supported');
     }
+
+    if (value.crs && value.crs.type && value.crs.type === 'name' && value.crs.properties && value.crs.properties.name) {
+        var crs = value.crs.properties.name;
+
+        if (crs.indexOf('EPSG:') === 0)
+            geometry.srid = parseInt(crs.substring(5));
+        else if (crs.indexOf('urn:ogc:def:crs:EPSG::') === 0)
+            geometry.srid = parseInt(crs.substring(22));
+        else
+            throw new Error('Unsupported crs: ' + crs);
+    }
+
+    return geometry;
 };
 
 Geometry.prototype.toEwkt = function () {
@@ -333,7 +388,7 @@ Geometry.prototype.toEwkb = function () {
     var wkb = this.toWkb();
 
     ewkb.writeInt8(1);
-    ewkb.writeUInt32LE(wkb.slice(1, 5).readUInt32LE(0) | 0x20000000);
+    ewkb.writeUInt32LE(wkb.slice(1, 5).readUInt32LE(0) | 0x20000000, true);
     ewkb.writeUInt32LE(this.srid);
 
     ewkb.writeBuffer(wkb.slice(5));
@@ -341,12 +396,112 @@ Geometry.prototype.toEwkb = function () {
     return ewkb.buffer;
 };
 
+Geometry.prototype._getWktType = function (wktType, isEmpty) {
+    var wkt = wktType;
+
+    if (this.hasZ && this.hasM)
+        wkt += ' ZM ';
+    else if (this.hasZ)
+        wkt += ' Z ';
+    else if (this.hasM)
+        wkt += ' M ';
+
+    if (isEmpty && !this.hasZ && !this.hasM)
+        wkt += ' ';
+
+    if (isEmpty)
+        wkt += 'EMPTY';
+
+    return wkt;
+};
+
+Geometry.prototype._getWktCoordinate = function (point) {
+    var coordinates = point.x + ' ' + point.y;
+
+    if (this.hasZ)
+        coordinates += ' ' + point.z;
+    if (this.hasM)
+        coordinates += ' ' + point.m;
+
+    return coordinates;
+};
+
+Geometry.prototype._writeWkbType = function (wkb, geometryType, parentOptions) {
+    var dimensionType = 0;
+
+    if (typeof this.srid === 'undefined' && (!parentOptions || typeof parentOptions.srid === 'undefined')) {
+        if (this.hasZ && this.hasM)
+            dimensionType += 3000;
+        else if(this.hasZ)
+            dimensionType += 1000;
+        else if(this.hasM)
+            dimensionType += 2000;
+    }
+    else {
+        if (this.hasZ)
+            dimensionType |= 0x80000000;
+        if (this.hasM)
+            dimensionType |= 0x40000000;
+    }
+
+    wkb.writeUInt32LE(dimensionType + geometryType, true);
+};
+
+Geometry.getTwkbPrecision = function (xyPrecision, zPrecision, mPrecision) {
+    return {
+        xy: xyPrecision,
+        z: zPrecision,
+        m: mPrecision,
+        xyFactor: Math.pow(10, xyPrecision),
+        zFactor: Math.pow(10, zPrecision),
+        mFactor: Math.pow(10, mPrecision)
+    };
+};
+
 Geometry.prototype._writeTwkbHeader = function (twkb, geometryType, precision, isEmpty) {
-    var type = (ZigZag.encode(precision) << 4) + geometryType;
-    var metadataHeader = isEmpty << 4;
+    var type = (ZigZag.encode(precision.xy) << 4) + geometryType;
+    var metadataHeader = (this.hasZ || this.hasM) << 3;
+    metadataHeader += isEmpty << 4;
 
     twkb.writeUInt8(type);
     twkb.writeUInt8(metadataHeader);
+
+    if (this.hasZ || this.hasM) {
+        var extendedPrecision = 0;
+        if (this.hasZ)
+            extendedPrecision |= 0x1;
+        if (this.hasM)
+            extendedPrecision |= 0x2;
+
+        twkb.writeUInt8(extendedPrecision);
+    }
+};
+
+Geometry.prototype.toGeoJSON = function (options) {
+    var geoJSON = {};
+
+    if (this.srid) {
+        if (options) {
+            if (options.shortCrs) {
+                geoJSON.crs = {
+                    type: 'name',
+                    properties: {
+                        name: 'EPSG:' + this.srid
+                    }
+                };
+            }
+            else if (options.longCrs) {
+                geoJSON.crs = {
+                    type: 'name',
+                    properties: {
+                        name: 'urn:ogc:def:crs:EPSG::' + this.srid
+                    }
+                };
+            }
+        }
+    }
+
+    return geoJSON;
 };
 
 }).call(this,require("buffer").Buffer)
@@ -358,7 +513,6 @@ var util = require('util');
 var Types = require('./types');
 var Geometry = require('./geometry');
 var BinaryWriter = require('./binarywriter');
-var ZigZag = require('./zigzag.js');
 
 function GeometryCollection(geometries) {
     Geometry.call(this);
@@ -368,9 +522,30 @@ function GeometryCollection(geometries) {
 
 util.inherits(GeometryCollection, Geometry);
 
+GeometryCollection.Z = function (geometries) {
+    var geometryCollection = new GeometryCollection(geometries);
+    geometryCollection.hasZ = true;
+    return geometryCollection;
+};
+
+GeometryCollection.M = function (geometries) {
+    var geometryCollection = new GeometryCollection(geometries);
+    geometryCollection.hasM = true;
+    return geometryCollection;
+};
+
+GeometryCollection.ZM = function (geometries) {
+    var geometryCollection = new GeometryCollection(geometries);
+    geometryCollection.hasZ = true;
+    geometryCollection.hasM = true;
+    return geometryCollection;
+};
+
 GeometryCollection._parseWkt = function (value, options) {
     var geometryCollection = new GeometryCollection();
     geometryCollection.srid = options.srid;
+    geometryCollection.hasZ = options.hasZ;
+    geometryCollection.hasM = options.hasM;
 
     if (value.isMatch(['EMPTY']))
         return geometryCollection;
@@ -389,17 +564,21 @@ GeometryCollection._parseWkt = function (value, options) {
 GeometryCollection._parseWkb = function (value, options) {
     var geometryCollection = new GeometryCollection();
     geometryCollection.srid = options.srid;
+    geometryCollection.hasZ = options.hasZ;
+    geometryCollection.hasM = options.hasM;
 
     var geometryCount = value.readUInt32();
 
     for (var i = 0; i < geometryCount; i++)
-        geometryCollection.geometries.push(Geometry.parse(value));
+        geometryCollection.geometries.push(Geometry.parse(value, options));
 
     return geometryCollection;
 };
 
 GeometryCollection._parseTwkb = function (value, options) {
     var geometryCollection = new GeometryCollection();
+    geometryCollection.hasZ = options.hasZ;
+    geometryCollection.hasM = options.hasM;
 
     if (options.isEmpty)
         return geometryCollection;
@@ -418,14 +597,17 @@ GeometryCollection._parseGeoJSON = function (value) {
     for (var i = 0; i < value.geometries.length; i++)
         geometryCollection.geometries.push(Geometry.parseGeoJSON(value.geometries[i]));
 
+    if (geometryCollection.geometries.length > 0)
+        geometryCollection.hasZ = geometryCollection.geometries[0].hasZ;
+
     return geometryCollection;
 };
 
 GeometryCollection.prototype.toWkt = function () {
     if (this.geometries.length === 0)
-        return Types.wkt.GeometryCollection + ' EMPTY';
+        return this._getWktType(Types.wkt.GeometryCollection, true);
 
-    var wkt = Types.wkt.GeometryCollection + '(';
+    var wkt = this._getWktType(Types.wkt.GeometryCollection, false) + '(';
 
     for (var i = 0; i < this.geometries.length; i++)
         wkt += this.geometries[i].toWkt() + ',';
@@ -441,11 +623,11 @@ GeometryCollection.prototype.toWkb = function () {
 
     wkb.writeInt8(1);
 
-    wkb.writeUInt32LE(Types.wkb.GeometryCollection);
+    this._writeWkbType(wkb, Types.wkb.GeometryCollection);
     wkb.writeUInt32LE(this.geometries.length);
 
     for (var i = 0; i < this.geometries.length; i++)
-        wkb.writeBuffer(this.geometries[i].toWkb());
+        wkb.writeBuffer(this.geometries[i].toWkb({ srid: this.srid }));
 
     return wkb.buffer;
 };
@@ -453,8 +635,7 @@ GeometryCollection.prototype.toWkb = function () {
 GeometryCollection.prototype.toTwkb = function () {
     var twkb = new BinaryWriter(0, true);
 
-    var precision = 5;
-    var precisionFactor = Math.pow(10, precision);
+    var precision = Geometry.getTwkbPrecision(5, 0, 0);
     var isEmpty = this.geometries.length === 0;
 
     this._writeTwkbHeader(twkb, Types.wkb.GeometryCollection, precision, isEmpty);
@@ -478,11 +659,10 @@ GeometryCollection.prototype._getWkbSize = function () {
     return size;
 };
 
-GeometryCollection.prototype.toGeoJSON = function () {
-    var geoJSON = {
-        type: Types.geoJSON.GeometryCollection,
-        geometries: []
-    };
+GeometryCollection.prototype.toGeoJSON = function (options) {
+    var geoJSON = Geometry.prototype.toGeoJSON.call(this, options);
+    geoJSON.type = Types.geoJSON.GeometryCollection;
+    geoJSON.geometries = [];
 
     for (var i = 0; i < this.geometries.length; i++)
         geoJSON.geometries.push(this.geometries[i].toGeoJSON());
@@ -490,7 +670,7 @@ GeometryCollection.prototype.toGeoJSON = function () {
     return geoJSON;
 };
 
-},{"./binarywriter":3,"./geometry":4,"./types":12,"./zigzag.js":15,"util":23}],6:[function(require,module,exports){
+},{"./binarywriter":3,"./geometry":4,"./types":12,"util":23}],6:[function(require,module,exports){
 module.exports = LineString;
 
 var util = require('util');
@@ -505,19 +685,45 @@ function LineString(points) {
     Geometry.call(this);
 
     this.points = points || [];
+
+    if (this.points.length > 0) {
+        this.hasZ = this.points[0].hasZ;
+        this.hasM = this.points[0].hasM;
+    }
 }
 
 util.inherits(LineString, Geometry);
 
+LineString.Z = function (points) {
+    var lineString = new LineString(points);
+    lineString.hasZ = true;
+    return lineString;
+};
+
+LineString.M = function (points) {
+    var lineString = new LineString(points);
+    lineString.hasM = true;
+    return lineString;
+};
+
+LineString.ZM = function (points) {
+    var lineString = new LineString(points);
+    lineString.hasZ = true;
+    lineString.hasM = true;
+    return lineString;
+};
+
 LineString._parseWkt = function (value, options) {
     var lineString = new LineString();
     lineString.srid = options.srid;
+    lineString.hasZ = options.hasZ;
+    lineString.hasM = options.hasM;
 
     if (value.isMatch(['EMPTY']))
         return lineString;
 
     value.expectGroupStart();
-    lineString.points.push.apply(lineString.points, value.matchCoordinates());
+    lineString.points.push.apply(lineString.points, value.matchCoordinates(options));
     value.expectGroupEnd();
 
     return lineString;
@@ -526,31 +732,30 @@ LineString._parseWkt = function (value, options) {
 LineString._parseWkb = function (value, options) {
     var lineString = new LineString();
     lineString.srid = options.srid;
+    lineString.hasZ = options.hasZ;
+    lineString.hasM = options.hasM;
 
     var pointCount = value.readUInt32();
 
     for (var i = 0; i < pointCount; i++)
-        lineString.points.push(new Point(value.readDouble(), value.readDouble()));
+        lineString.points.push(Point._readWkbPoint(value, options));
 
     return lineString;
 };
 
 LineString._parseTwkb = function (value, options) {
     var lineString = new LineString();
+    lineString.hasZ = options.hasZ;
+    lineString.hasM = options.hasM;
 
     if (options.isEmpty)
         return lineString;
 
-    var x = 0;
-    var y = 0;
+    var previousPoint = new Point(0, 0, options.hasZ ? 0 : undefined, options.hasM ? 0 : undefined);
     var pointCount = value.readVarInt();
 
-    for (var i = 0; i < pointCount; i++) {
-        x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-        y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-
-        lineString.points.push(new Point(x, y));
-    }
+    for (var i = 0; i < pointCount; i++)
+        lineString.points.push(Point._readTwkbPoint(value, options, previousPoint));
 
     return lineString;
 };
@@ -558,24 +763,27 @@ LineString._parseTwkb = function (value, options) {
 LineString._parseGeoJSON = function (value) {
     var lineString = new LineString();
 
+    if (value.coordinates.length > 0)
+        lineString.hasZ = value.coordinates[0].length > 2;
+
     for (var i = 0; i < value.coordinates.length; i++)
-        lineString.points.push(new Point(value.coordinates[i][0], value.coordinates[i][1]));
+        lineString.points.push(Point._readGeoJSONPoint(value.coordinates[i]));
 
     return lineString;
 };
 
 LineString.prototype.toWkt = function () {
     if (this.points.length === 0)
-        return Types.wkt.LineString + ' EMPTY';
+        return this._getWktType(Types.wkt.LineString, true);
 
-    return Types.wkt.LineString + this._toInnerWkt();
+    return this._getWktType(Types.wkt.LineString, false) + this._toInnerWkt();
 };
 
 LineString.prototype._toInnerWkt = function () {
     var innerWkt = '(';
 
     for (var i = 0; i < this.points.length; i++)
-        innerWkt += this.points[i].x + ' ' + this.points[i].y + ',';
+        innerWkt += this._getWktCoordinate(this.points[i]) + ',';
 
     innerWkt = innerWkt.slice(0, -1);
     innerWkt += ')';
@@ -583,18 +791,16 @@ LineString.prototype._toInnerWkt = function () {
     return innerWkt;
 };
 
-LineString.prototype.toWkb = function () {
+LineString.prototype.toWkb = function (parentOptions) {
     var wkb = new BinaryWriter(this._getWkbSize());
 
     wkb.writeInt8(1);
 
-    wkb.writeUInt32LE(Types.wkb.LineString);
+    this._writeWkbType(wkb, Types.wkb.LineString, parentOptions);
     wkb.writeUInt32LE(this.points.length);
 
-    for (var i = 0; i < this.points.length; i++) {
-        wkb.writeDoubleLE(this.points[i].x);
-        wkb.writeDoubleLE(this.points[i].y);
-    }
+    for (var i = 0; i < this.points.length; i++)
+        this.points[i]._writeWkbPoint(wkb);
 
     return wkb.buffer;
 };
@@ -602,8 +808,7 @@ LineString.prototype.toWkb = function () {
 LineString.prototype.toTwkb = function () {
     var twkb = new BinaryWriter(0, true);
 
-    var precision = 5;
-    var precisionFactor = Math.pow(10, precision);
+    var precision = Geometry.getTwkbPrecision(5, 0, 0);
     var isEmpty = this.points.length === 0;
 
     this._writeTwkbHeader(twkb, Types.wkb.LineString, precision, isEmpty);
@@ -611,35 +816,36 @@ LineString.prototype.toTwkb = function () {
     if (this.points.length > 0) {
         twkb.writeVarInt(this.points.length);
 
-        var lastX = 0;
-        var lastY = 0;
-        for (var i = 0; i < this.points.length; i++) {
-            var x = this.points[i].x * precisionFactor;
-            var y = this.points[i].y * precisionFactor;
-
-            twkb.writeVarInt(ZigZag.encode(x - lastX));
-            twkb.writeVarInt(ZigZag.encode(y - lastY));
-
-            lastX = x;
-            lastY = y;
-        }
+        var previousPoint = new Point(0, 0, 0, 0);
+        for (var i = 0; i < this.points.length; i++)
+            this.points[i]._writeTwkbPoint(twkb, precision, previousPoint);
     }
 
     return twkb.buffer;
 };
 
 LineString.prototype._getWkbSize = function () {
-    return 1 + 4 + 4 + (this.points.length * 16);
+    var coordinateSize = 16;
+
+    if (this.hasZ)
+        coordinateSize += 8;
+    if (this.hasM)
+        coordinateSize += 8;
+
+    return 1 + 4 + 4 + (this.points.length * coordinateSize);
 };
 
-LineString.prototype.toGeoJSON = function () {
-    var geoJSON = {
-        type: Types.geoJSON.LineString,
-        coordinates: []
-    };
+LineString.prototype.toGeoJSON = function (options) {
+    var geoJSON = Geometry.prototype.toGeoJSON.call(this, options);
+    geoJSON.type = Types.geoJSON.LineString;
+    geoJSON.coordinates = [];
 
-    for (var i = 0; i < this.points.length; i++)
-        geoJSON.coordinates.push([this.points[i].x, this.points[i].y]);
+    for (var i = 0; i < this.points.length; i++) {
+        if (this.hasZ)
+            geoJSON.coordinates.push([this.points[i].x, this.points[i].y, this.points[i].z]);
+        else
+            geoJSON.coordinates.push([this.points[i].x, this.points[i].y]);
+    }
 
     return geoJSON;
 };
@@ -664,9 +870,30 @@ function MultiLineString(lineStrings) {
 
 util.inherits(MultiLineString, Geometry);
 
+MultiLineString.Z = function (lineStrings) {
+    var multiLineString = new MultiLineString(lineStrings);
+    multiLineString.hasZ = true;
+    return multiLineString;
+};
+
+MultiLineString.M = function (lineStrings) {
+    var multiLineString = new MultiLineString(lineStrings);
+    multiLineString.hasM = true;
+    return multiLineString;
+};
+
+MultiLineString.ZM = function (lineStrings) {
+    var multiLineString = new MultiLineString(lineStrings);
+    multiLineString.hasZ = true;
+    multiLineString.hasM = true;
+    return multiLineString;
+};
+
 MultiLineString._parseWkt = function (value, options) {
     var multiLineString = new MultiLineString();
     multiLineString.srid = options.srid;
+    multiLineString.hasZ = options.hasZ;
+    multiLineString.hasM = options.hasM;
 
     if (value.isMatch(['EMPTY']))
         return multiLineString;
@@ -675,7 +902,7 @@ MultiLineString._parseWkt = function (value, options) {
 
     do {
         value.expectGroupStart();
-        multiLineString.lineStrings.push(new LineString(value.matchCoordinates()));
+        multiLineString.lineStrings.push(new LineString(value.matchCoordinates(options)));
         value.expectGroupEnd();
     } while (value.isMatch([',']));
 
@@ -687,35 +914,37 @@ MultiLineString._parseWkt = function (value, options) {
 MultiLineString._parseWkb = function (value, options) {
     var multiLineString = new MultiLineString();
     multiLineString.srid = options.srid;
+    multiLineString.hasZ = options.hasZ;
+    multiLineString.hasM = options.hasM;
 
-    var pointCount = value.readUInt32();
+    var lineStringCount = value.readUInt32();
 
-    for (var i = 0; i < pointCount; i++)
-        multiLineString.lineStrings.push(Geometry.parse(value));
+    for (var i = 0; i < lineStringCount; i++)
+        multiLineString.lineStrings.push(Geometry.parse(value, options));
 
     return multiLineString;
 };
 
 MultiLineString._parseTwkb = function (value, options) {
     var multiLineString = new MultiLineString();
+    multiLineString.hasZ = options.hasZ;
+    multiLineString.hasM = options.hasM;
 
     if (options.isEmpty)
         return multiLineString;
 
-    var x = 0;
-    var y = 0;
+    var previousPoint = new Point(0, 0, options.hasZ ? 0 : undefined, options.hasM ? 0 : undefined);
     var lineStringCount = value.readVarInt();
 
     for (var i = 0; i < lineStringCount; i++) {
         var lineString = new LineString();
+        lineString.hasZ = options.hasZ;
+        lineString.hasM = options.hasM;
+
         var pointCount = value.readVarInt();
 
-        for (var j = 0; j < pointCount; j++) {
-            x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-            y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-
-            lineString.points.push(new Point(x, y));
-        }
+        for (var j = 0; j < pointCount; j++)
+            lineString.points.push(Point._readTwkbPoint(value, options, previousPoint));
 
         multiLineString.lineStrings.push(lineString);
     }
@@ -726,6 +955,9 @@ MultiLineString._parseTwkb = function (value, options) {
 MultiLineString._parseGeoJSON = function (value) {
     var multiLineString = new MultiLineString();
 
+    if (value.coordinates.length > 0 && value.coordinates[0].length > 0)
+        multiLineString.hasZ = value.coordinates[0][0].length > 2;
+
     for (var i = 0; i < value.coordinates.length; i++)
         multiLineString.lineStrings.push(LineString._parseGeoJSON({ coordinates: value.coordinates[i] }));
 
@@ -734,9 +966,9 @@ MultiLineString._parseGeoJSON = function (value) {
 
 MultiLineString.prototype.toWkt = function () {
     if (this.lineStrings.length === 0)
-        return Types.wkt.MultiLineString + ' EMPTY';
+        return this._getWktType(Types.wkt.MultiLineString, true);
 
-    var wkt = Types.wkt.MultiLineString + '(';
+    var wkt = this._getWktType(Types.wkt.MultiLineString, false) + '(';
 
     for (var i = 0; i < this.lineStrings.length; i++)
         wkt += this.lineStrings[i]._toInnerWkt() + ',';
@@ -752,11 +984,11 @@ MultiLineString.prototype.toWkb = function () {
 
     wkb.writeInt8(1);
 
-    wkb.writeUInt32LE(Types.wkb.MultiLineString);
+    this._writeWkbType(wkb, Types.wkb.MultiLineString);
     wkb.writeUInt32LE(this.lineStrings.length);
 
     for (var i = 0; i < this.lineStrings.length; i++)
-        wkb.writeBuffer(this.lineStrings[i].toWkb());
+        wkb.writeBuffer(this.lineStrings[i].toWkb({ srid: this.srid }));
 
     return wkb.buffer;
 };
@@ -764,8 +996,7 @@ MultiLineString.prototype.toWkb = function () {
 MultiLineString.prototype.toTwkb = function () {
     var twkb = new BinaryWriter(0, true);
 
-    var precision = 5;
-    var precisionFactor = Math.pow(10, precision);
+    var precision = Geometry.getTwkbPrecision(5, 0, 0);
     var isEmpty = this.lineStrings.length === 0;
 
     this._writeTwkbHeader(twkb, Types.wkb.MultiLineString, precision, isEmpty);
@@ -773,21 +1004,12 @@ MultiLineString.prototype.toTwkb = function () {
     if (this.lineStrings.length > 0) {
         twkb.writeVarInt(this.lineStrings.length);
 
-        var lastX = 0;
-        var lastY = 0;
+        var previousPoint = new Point(0, 0, 0, 0);
         for (var i = 0; i < this.lineStrings.length; i++) {
             twkb.writeVarInt(this.lineStrings[i].points.length);
 
-            for (var j = 0; j < this.lineStrings[i].points.length; j++) {
-                var x = this.lineStrings[i].points[j].x * precisionFactor;
-                var y = this.lineStrings[i].points[j].y * precisionFactor;
-
-                twkb.writeVarInt(ZigZag.encode(x - lastX));
-                twkb.writeVarInt(ZigZag.encode(y - lastY));
-
-                lastX = x;
-                lastY = y;
-            }
+            for (var j = 0; j < this.lineStrings[i].points.length; j++)
+                this.lineStrings[i].points[j]._writeTwkbPoint(twkb, precision, previousPoint);
         }
     }
 
@@ -803,11 +1025,10 @@ MultiLineString.prototype._getWkbSize = function () {
     return size;
 };
 
-MultiLineString.prototype.toGeoJSON = function () {
-    var geoJSON = {
-        type: Types.geoJSON.MultiLineString,
-        coordinates: []
-    };
+MultiLineString.prototype.toGeoJSON = function (options) {
+    var geoJSON = Geometry.prototype.toGeoJSON.call(this, options);
+    geoJSON.type = Types.geoJSON.MultiLineString;
+    geoJSON.coordinates = [];
 
     for (var i = 0; i < this.lineStrings.length; i++)
         geoJSON.coordinates.push(this.lineStrings[i].toGeoJSON().coordinates);
@@ -834,15 +1055,36 @@ function MultiPoint(points) {
 
 util.inherits(MultiPoint, Geometry);
 
+MultiPoint.Z = function (points) {
+    var multiPoint = new MultiPoint(points);
+    multiPoint.hasZ = true;
+    return multiPoint;
+};
+
+MultiPoint.M = function (points) {
+    var multiPoint = new MultiPoint(points);
+    multiPoint.hasM = true;
+    return multiPoint;
+};
+
+MultiPoint.ZM = function (points) {
+    var multiPoint = new MultiPoint(points);
+    multiPoint.hasZ = true;
+    multiPoint.hasM = true;
+    return multiPoint;
+};
+
 MultiPoint._parseWkt = function (value, options) {
     var multiPoint = new MultiPoint();
     multiPoint.srid = options.srid;
+    multiPoint.hasZ = options.hasZ;
+    multiPoint.hasM = options.hasM;
 
     if (value.isMatch(['EMPTY']))
         return multiPoint;
 
     value.expectGroupStart();
-    multiPoint.points.push.apply(multiPoint.points, value.matchCoordinates());
+    multiPoint.points.push.apply(multiPoint.points, value.matchCoordinates(options));
     value.expectGroupEnd();
 
     return multiPoint;
@@ -851,38 +1093,39 @@ MultiPoint._parseWkt = function (value, options) {
 MultiPoint._parseWkb = function (value, options) {
     var multiPoint = new MultiPoint();
     multiPoint.srid = options.srid;
+    multiPoint.hasZ = options.hasZ;
+    multiPoint.hasM = options.hasM;
 
     var pointCount = value.readUInt32();
 
     for (var i = 0; i < pointCount; i++)
-        multiPoint.points.push(Geometry.parse(value));
+        multiPoint.points.push(Geometry.parse(value, options));
 
     return multiPoint;
 };
 
 MultiPoint._parseTwkb = function (value, options) {
     var multiPoint = new MultiPoint();
+    multiPoint.hasZ = options.hasZ;
+    multiPoint.hasM = options.hasM;
 
     if (options.isEmpty)
         return multiPoint;
 
+    var previousPoint = new Point(0, 0, options.hasZ ? 0 : undefined, options.hasM ? 0 : undefined);
     var pointCount = value.readVarInt();
 
-    var x = 0;
-    var y = 0;
-
-    for (var i = 0; i < pointCount; i++) {
-        x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-        y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-
-        multiPoint.points.push(new Point(x, y));
-    }
+    for (var i = 0; i < pointCount; i++)
+        multiPoint.points.push(Point._readTwkbPoint(value, options, previousPoint));
 
     return multiPoint;
 };
 
 MultiPoint._parseGeoJSON = function (value) {
     var multiPoint = new MultiPoint();
+
+    if (value.coordinates.length > 0)
+        multiPoint.hasZ = value.coordinates[0].length > 2;
 
     for (var i = 0; i < value.coordinates.length; i++)
         multiPoint.points.push(Point._parseGeoJSON({ coordinates: value.coordinates[i] }));
@@ -892,12 +1135,12 @@ MultiPoint._parseGeoJSON = function (value) {
 
 MultiPoint.prototype.toWkt = function () {
     if (this.points.length === 0)
-        return Types.wkt.MultiPoint + ' EMPTY';
+        return this._getWktType(Types.wkt.MultiPoint, true);
 
-    var wkt = Types.wkt.MultiPoint + '(';
+    var wkt = this._getWktType(Types.wkt.MultiPoint, false) + '(';
 
     for (var i = 0; i < this.points.length; i++)
-        wkt += this.points[i].x + ' ' + this.points[i].y + ',';
+        wkt += this._getWktCoordinate(this.points[i]) + ',';
 
     wkt = wkt.slice(0, -1);
     wkt += ')';
@@ -910,11 +1153,11 @@ MultiPoint.prototype.toWkb = function () {
 
     wkb.writeInt8(1);
 
-    wkb.writeUInt32LE(Types.wkb.MultiPoint);
+    this._writeWkbType(wkb, Types.wkb.MultiPoint);
     wkb.writeUInt32LE(this.points.length);
 
     for (var i = 0; i < this.points.length; i++)
-        wkb.writeBuffer(this.points[i].toWkb());
+        wkb.writeBuffer(this.points[i].toWkb({ srid: this.srid }));
 
     return wkb.buffer;
 };
@@ -922,8 +1165,7 @@ MultiPoint.prototype.toWkb = function () {
 MultiPoint.prototype.toTwkb = function () {
     var twkb = new BinaryWriter(0, true);
 
-    var precision = 5;
-    var precisionFactor = Math.pow(10, precision);
+    var precision = Geometry.getTwkbPrecision(5, 0, 0);
     var isEmpty = this.points.length === 0;
 
     this._writeTwkbHeader(twkb, Types.wkb.MultiPoint, precision, isEmpty);
@@ -931,32 +1173,31 @@ MultiPoint.prototype.toTwkb = function () {
     if (this.points.length > 0) {
         twkb.writeVarInt(this.points.length);
 
-        var lastX = 0;
-        var lastY = 0;
-        for (var i = 0; i < this.points.length; i++) {
-            var x = this.points[i].x * precisionFactor;
-            var y = this.points[i].y * precisionFactor;
-
-            twkb.writeVarInt(ZigZag.encode(x - lastX));
-            twkb.writeVarInt(ZigZag.encode(y - lastY));
-
-            lastX = x;
-            lastY = y;
-        }
+        var previousPoint = new Point(0, 0, 0, 0);
+        for (var i = 0; i < this.points.length; i++)
+            this.points[i]._writeTwkbPoint(twkb, precision, previousPoint);
     }
 
     return twkb.buffer;
 };
 
 MultiPoint.prototype._getWkbSize = function () {
-    return 1 + 4 + 4 + (this.points.length * 21);
+    var coordinateSize = 16;
+
+    if (this.hasZ)
+        coordinateSize += 8;
+    if (this.hasM)
+        coordinateSize += 8;
+
+    coordinateSize += 5;
+
+    return 1 + 4 + 4 + (this.points.length * coordinateSize);
 };
 
-MultiPoint.prototype.toGeoJSON = function () {
-    var geoJSON = {
-        type: Types.geoJSON.MultiPoint,
-        coordinates: []
-    };
+MultiPoint.prototype.toGeoJSON = function (options) {
+    var geoJSON = Geometry.prototype.toGeoJSON.call(this, options);
+    geoJSON.type = Types.geoJSON.MultiPoint;
+    geoJSON.coordinates = [];
 
     for (var i = 0; i < this.points.length; i++)
         geoJSON.coordinates.push(this.points[i].toGeoJSON().coordinates);
@@ -984,9 +1225,30 @@ function MultiPolygon(polygons) {
 
 util.inherits(MultiPolygon, Geometry);
 
+MultiPolygon.Z = function (polygons) {
+    var multiPolygon = new MultiPolygon(polygons);
+    multiPolygon.hasZ = true;
+    return multiPolygon;
+};
+
+MultiPolygon.M = function (polygons) {
+    var multiPolygon = new MultiPolygon(polygons);
+    multiPolygon.hasM = true;
+    return multiPolygon;
+};
+
+MultiPolygon.ZM = function (polygons) {
+    var multiPolygon = new MultiPolygon(polygons);
+    multiPolygon.hasZ = true;
+    multiPolygon.hasM = true;
+    return multiPolygon;
+};
+
 MultiPolygon._parseWkt = function (value, options) {
     var multiPolygon = new MultiPolygon();
     multiPolygon.srid = options.srid;
+    multiPolygon.hasZ = options.hasZ;
+    multiPolygon.hasM = options.hasM;
 
     if (value.isMatch(['EMPTY']))
         return multiPolygon;
@@ -996,19 +1258,20 @@ MultiPolygon._parseWkt = function (value, options) {
     do {
         value.expectGroupStart();
 
-        var polygon = new Polygon();
+        var exteriorRing = [];
+        var interiorRings = [];
 
         value.expectGroupStart();
-        polygon.exteriorRing.push.apply(polygon.exteriorRing, value.matchCoordinates());
+        exteriorRing.push.apply(exteriorRing, value.matchCoordinates(options));
         value.expectGroupEnd();
 
         while (value.isMatch([','])) {
             value.expectGroupStart();
-            polygon.interiorRings.push(value.matchCoordinates());
+            interiorRings.push(value.matchCoordinates(options));
             value.expectGroupEnd();
         }
 
-        multiPolygon.polygons.push(polygon);
+        multiPolygon.polygons.push(new Polygon(exteriorRing, interiorRings));
 
         value.expectGroupEnd();
 
@@ -1022,48 +1285,46 @@ MultiPolygon._parseWkt = function (value, options) {
 MultiPolygon._parseWkb = function (value, options) {
     var multiPolygon = new MultiPolygon();
     multiPolygon.srid = options.srid;
+    multiPolygon.hasZ = options.hasZ;
+    multiPolygon.hasM = options.hasM;
 
     var polygonCount = value.readUInt32();
 
     for (var i = 0; i < polygonCount; i++)
-        multiPolygon.polygons.push(Geometry.parse(value));
+        multiPolygon.polygons.push(Geometry.parse(value, options));
 
     return multiPolygon;
 };
 
 MultiPolygon._parseTwkb = function (value, options) {
     var multiPolygon = new MultiPolygon();
+    multiPolygon.hasZ = options.hasZ;
+    multiPolygon.hasM = options.hasM;
 
     if (options.isEmpty)
         return multiPolygon;
 
-    var x = 0;
-    var y = 0;
+    var previousPoint = new Point(0, 0, options.hasZ ? 0 : undefined, options.hasM ? 0 : undefined);
     var polygonCount = value.readVarInt();
 
     for (var i = 0; i < polygonCount; i++) {
         var polygon = new Polygon();
+        polygon.hasZ = options.hasZ;
+        polygon.hasM = options.hasM;
+
         var ringCount = value.readVarInt();
         var exteriorRingCount = value.readVarInt();
 
-        for (var j = 0; j < exteriorRingCount; j++) {
-            x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-            y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-
-            polygon.exteriorRing.push(new Point(x, y));
-        }
+        for (var j = 0; j < exteriorRingCount; j++)
+            polygon.exteriorRing.push(Point._readTwkbPoint(value, options, previousPoint));
 
         for (j = 1; j < ringCount; j++) {
             var interiorRing = [];
 
             var interiorRingCount = value.readVarInt();
 
-            for (var k = 0; k < interiorRingCount; k++) {
-                x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-                y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-
-                interiorRing.push(new Point(x, y));
-            }
+            for (var k = 0; k < interiorRingCount; k++)
+                interiorRing.push(Point._readTwkbPoint(value, options, previousPoint));
 
             polygon.interiorRings.push(interiorRing);
         }
@@ -1077,6 +1338,9 @@ MultiPolygon._parseTwkb = function (value, options) {
 MultiPolygon._parseGeoJSON = function (value) {
     var multiPolygon = new MultiPolygon();
 
+    if (value.coordinates.length > 0 && value.coordinates[0].length > 0 && value.coordinates[0][0].length > 0)
+        multiPolygon.hasZ = value.coordinates[0][0][0].length > 2;
+
     for (var i = 0; i < value.coordinates.length; i++)
         multiPolygon.polygons.push(Polygon._parseGeoJSON({ coordinates: value.coordinates[i] }));
 
@@ -1085,9 +1349,9 @@ MultiPolygon._parseGeoJSON = function (value) {
 
 MultiPolygon.prototype.toWkt = function () {
     if (this.polygons.length === 0)
-        return Types.wkt.MultiPolygon + ' EMPTY';
+        return this._getWktType(Types.wkt.MultiPolygon, true);
 
-    var wkt = Types.wkt.MultiPolygon + '(';
+    var wkt = this._getWktType(Types.wkt.MultiPolygon, false) + '(';
 
     for (var i = 0; i < this.polygons.length; i++)
         wkt += this.polygons[i]._toInnerWkt() + ',';
@@ -1103,11 +1367,11 @@ MultiPolygon.prototype.toWkb = function () {
 
     wkb.writeInt8(1);
 
-    wkb.writeUInt32LE(Types.wkb.MultiPolygon);
+    this._writeWkbType(wkb, Types.wkb.MultiPolygon);
     wkb.writeUInt32LE(this.polygons.length);
 
     for (var i = 0; i < this.polygons.length; i++)
-        wkb.writeBuffer(this.polygons[i].toWkb());
+        wkb.writeBuffer(this.polygons[i].toWkb({ srid: this.srid }));
 
     return wkb.buffer;
 };
@@ -1115,8 +1379,7 @@ MultiPolygon.prototype.toWkb = function () {
 MultiPolygon.prototype.toTwkb = function () {
     var twkb = new BinaryWriter(0, true);
 
-    var precision = 5;
-    var precisionFactor = Math.pow(10, precision);
+    var precision = Geometry.getTwkbPrecision(5, 0, 0);
     var isEmpty = this.polygons.length === 0;
 
     this._writeTwkbHeader(twkb, Types.wkb.MultiPolygon, precision, isEmpty);
@@ -1124,40 +1387,20 @@ MultiPolygon.prototype.toTwkb = function () {
     if (this.polygons.length > 0) {
         twkb.writeVarInt(this.polygons.length);
 
-        var lastX = 0;
-        var lastY = 0;
-        var x = 0;
-        var y = 0;
-
+        var previousPoint = new Point(0, 0, 0, 0);
         for (var i = 0; i < this.polygons.length; i++) {
             twkb.writeVarInt(1 + this.polygons[i].interiorRings.length);
 
             twkb.writeVarInt(this.polygons[i].exteriorRing.length);
 
-            for (var j = 0; j < this.polygons[i].exteriorRing.length; j++) {
-                x = this.polygons[i].exteriorRing[j].x * precisionFactor;
-                y = this.polygons[i].exteriorRing[j].y * precisionFactor;
-
-                twkb.writeVarInt(ZigZag.encode(x - lastX));
-                twkb.writeVarInt(ZigZag.encode(y - lastY));
-
-                lastX = x;
-                lastY = y;
-            }
+            for (var j = 0; j < this.polygons[i].exteriorRing.length; j++)
+                this.polygons[i].exteriorRing[j]._writeTwkbPoint(twkb, precision, previousPoint);
 
             for (j = 0; j < this.polygons[i].interiorRings.length; j++) {
                 twkb.writeVarInt(this.polygons[i].interiorRings[j].length);
 
-                for (var k = 0; k < this.polygons[i].interiorRings[j].length; k++) {
-                    x = this.polygons[i].interiorRings[j][k].x * precisionFactor;
-                    y = this.polygons[i].interiorRings[j][k].y * precisionFactor;
-
-                    twkb.writeVarInt(ZigZag.encode(x - lastX));
-                    twkb.writeVarInt(ZigZag.encode(y - lastY));
-
-                    lastX = x;
-                    lastY = y;
-                }
+                for (var k = 0; k < this.polygons[i].interiorRings[j].length; k++)
+                    this.polygons[i].interiorRings[j][k]._writeTwkbPoint(twkb, precision, previousPoint);
             }
         }
     }
@@ -1174,11 +1417,10 @@ MultiPolygon.prototype._getWkbSize = function () {
     return size;
 };
 
-MultiPolygon.prototype.toGeoJSON = function () {
-    var geoJSON = {
-        type: Types.geoJSON.MultiPolygon,
-        coordinates: []
-    };
+MultiPolygon.prototype.toGeoJSON = function (options) {
+    var geoJSON = Geometry.prototype.toGeoJSON.call(this, options);
+    geoJSON.type = Types.geoJSON.MultiPolygon;
+    geoJSON.coordinates = [];
 
     for (var i = 0; i < this.polygons.length; i++)
         geoJSON.coordinates.push(this.polygons[i].toGeoJSON().coordinates);
@@ -1196,28 +1438,56 @@ var Types = require('./types');
 var BinaryWriter = require('./binarywriter');
 var ZigZag = require('./zigzag.js');
 
-function Point(x, y) {
+function Point(x, y, z, m) {
     Geometry.call(this);
 
     this.x = x;
     this.y = y;
+    this.z = z;
+    this.m = m;
+
+    this.hasZ = typeof this.z !== 'undefined';
+    this.hasM = typeof this.m !== 'undefined';
 }
 
 util.inherits(Point, Geometry);
 
+Point.Z = function (x, y, z) {
+    var point = new Point(x, y, z);
+    point.hasZ = true;
+    return point;
+};
+
+Point.M = function (x, y, m) {
+    var point = new Point(x, y, undefined, m);
+    point.hasM = true;
+    return point;
+};
+
+Point.ZM = function (x, y, z, m) {
+    var point = new Point(x, y, z, m);
+    point.hasZ = true;
+    point.hasM = true;
+    return point;
+};
+
 Point._parseWkt = function (value, options) {
     var point = new Point();
     point.srid = options.srid;
+    point.hasZ = options.hasZ;
+    point.hasM = options.hasM;
 
     if (value.isMatch(['EMPTY']))
         return point;
 
     value.expectGroupStart();
 
-    var coordinate = value.matchCoordinate();
+    var coordinate = value.matchCoordinate(options);
 
     point.x = coordinate.x;
     point.y = coordinate.y;
+    point.z = coordinate.z;
+    point.m = coordinate.m;
 
     value.expectGroupEnd();
 
@@ -1225,84 +1495,149 @@ Point._parseWkt = function (value, options) {
 };
 
 Point._parseWkb = function (value, options) {
-    var point = new Point(value.readDouble(), value.readDouble());
+    var point = Point._readWkbPoint(value, options);
     point.srid = options.srid;
     return point;
 };
 
+Point._readWkbPoint = function (value, options) {
+    return new Point(value.readDouble(), value.readDouble(),
+        options.hasZ ? value.readDouble() : undefined,
+        options.hasM ? value.readDouble() : undefined);
+};
+
 Point._parseTwkb = function (value, options) {
+    var point = new Point();
+    point.hasZ = options.hasZ;
+    point.hasM = options.hasM;
+
     if (options.isEmpty)
-        return new Point();
+        return point;
 
-    var x = ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-    var y = ZigZag.decode(value.readVarInt()) / options.precisionFactor;
+    point.x = ZigZag.decode(value.readVarInt()) / options.precisionFactor;
+    point.y = ZigZag.decode(value.readVarInt()) / options.precisionFactor;
+    point.z = options.hasZ ? ZigZag.decode(value.readVarInt()) / options.zPrecisionFactor : undefined;
+    point.m = options.hasM ? ZigZag.decode(value.readVarInt()) / options.mPrecisionFactor : undefined;
 
-    return new Point(x, y);
+    return point;
+};
+
+Point._readTwkbPoint = function (value, options, previousPoint) {
+    previousPoint.x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
+    previousPoint.y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
+
+    if (options.hasZ)
+        previousPoint.z += ZigZag.decode(value.readVarInt()) / options.zPrecisionFactor;
+    if (options.hasM)
+        previousPoint.m += ZigZag.decode(value.readVarInt()) / options.mPrecisionFactor;
+
+    return new Point(previousPoint.x, previousPoint.y, previousPoint.z, previousPoint.m);
 };
 
 Point._parseGeoJSON = function (value) {
-    if (value.coordinates.length === 0)
+    return Point._readGeoJSONPoint(value.coordinates);
+};
+
+Point._readGeoJSONPoint = function (coordinates) {
+    if (coordinates.length === 0)
         return new Point();
 
-    return new Point(value.coordinates[0], value.coordinates[1]);
+    if (coordinates.length > 2)
+        return new Point(coordinates[0], coordinates[1], coordinates[2]);
+
+    return new Point(coordinates[0], coordinates[1]);
 };
 
 Point.prototype.toWkt = function () {
-    if (typeof this.x === 'undefined' && typeof this.y === 'undefined')
-        return Types.wkt.Point + ' EMPTY';
+    if (typeof this.x === 'undefined' && typeof this.y === 'undefined' &&
+        typeof this.z === 'undefined' && typeof this.m === 'undefined')
+        return this._getWktType(Types.wkt.Point, true);
 
-    return Types.wkt.Point + '(' + this.x + ' ' + this.y + ')';
+    return this._getWktType(Types.wkt.Point, false) + '(' + this._getWktCoordinate(this) + ')';
 };
 
-Point.prototype.toWkb = function () {
+Point.prototype.toWkb = function (parentOptions) {
     var wkb = new BinaryWriter(this._getWkbSize());
 
     wkb.writeInt8(1);
 
     if (typeof this.x === 'undefined' && typeof this.y === 'undefined') {
-        wkb.writeUInt32LE(Types.wkb.MultiPoint);
+        this._writeWkbType(wkb, Types.wkb.MultiPoint, parentOptions);
         wkb.writeUInt32LE(0);
     }
     else {
-        wkb.writeUInt32LE(Types.wkb.Point);
-        wkb.writeDoubleLE(this.x);
-        wkb.writeDoubleLE(this.y);
+        this._writeWkbType(wkb, Types.wkb.Point, parentOptions);
+        this._writeWkbPoint(wkb);
     }
 
     return wkb.buffer;
 };
 
+Point.prototype._writeWkbPoint = function (wkb) {
+    wkb.writeDoubleLE(this.x);
+    wkb.writeDoubleLE(this.y);
+
+    if (this.hasZ)
+        wkb.writeDoubleLE(this.z);
+    if (this.hasM)
+        wkb.writeDoubleLE(this.m);
+};
+
 Point.prototype.toTwkb = function () {
     var twkb = new BinaryWriter(0, true);
 
-    var precision = 5;
-    var precisionFactor = Math.pow(10, precision);
+    var precision = Geometry.getTwkbPrecision(5, 0, 0);
     var isEmpty = typeof this.x === 'undefined' && typeof this.y === 'undefined';
 
     this._writeTwkbHeader(twkb, Types.wkb.Point, precision, isEmpty);
 
-    if (!isEmpty) {
-        twkb.writeVarInt(ZigZag.encode(this.x * precisionFactor));
-        twkb.writeVarInt(ZigZag.encode(this.y * precisionFactor));
-    }
+    if (!isEmpty)
+        this._writeTwkbPoint(twkb, precision, new Point(0, 0, 0, 0));
 
     return twkb.buffer;
+};
+
+Point.prototype._writeTwkbPoint = function (twkb, precision, previousPoint) {
+    var x = this.x * precision.xyFactor;
+    var y = this.y * precision.xyFactor;
+    var z = this.z * precision.zFactor;
+    var m = this.m * precision.mFactor;
+
+    twkb.writeVarInt(ZigZag.encode(x - previousPoint.x));
+    twkb.writeVarInt(ZigZag.encode(y - previousPoint.y));
+    if (this.hasZ)
+        twkb.writeVarInt(ZigZag.encode(z - previousPoint.z));
+    if (this.hasM)
+        twkb.writeVarInt(ZigZag.encode(m - previousPoint.m));
+
+    previousPoint.x = x;
+    previousPoint.y = y;
+    previousPoint.z = z;
+    previousPoint.m = m;
 };
 
 Point.prototype._getWkbSize = function () {
     if (typeof this.x === 'undefined' && typeof this.y === 'undefined')
         return 1 + 4 + 4;
 
-    return 1 + 4 + 8 + 8;
+    var size = 1 + 4 + 8 + 8;
+
+    if (this.hasZ)
+        size += 8;
+    if (this.hasM)
+        size += 8;
+
+    return size;
 };
 
-Point.prototype.toGeoJSON = function () {
-    var geoJSON = {
-        type: Types.geoJSON.Point
-    };
+Point.prototype.toGeoJSON = function (options) {
+    var geoJSON = Geometry.prototype.toGeoJSON.call(this, options);
+    geoJSON.type = Types.geoJSON.Point;
 
     if (typeof this.x === 'undefined' && typeof this.y === 'undefined')
         geoJSON.coordinates = [];
+    else if (typeof this.z !== 'undefined')
+        geoJSON.coordinates = [this.x, this.y, this.z];
     else
         geoJSON.coordinates = [this.x, this.y];
 
@@ -1325,13 +1660,39 @@ function Polygon(exteriorRing, interiorRings) {
 
     this.exteriorRing = exteriorRing || [];
     this.interiorRings = interiorRings || [];
+
+    if (this.exteriorRing.length > 0) {
+        this.hasZ = this.exteriorRing[0].hasZ;
+        this.hasM = this.exteriorRing[0].hasM;
+    }
 }
 
 util.inherits(Polygon, Geometry);
 
+Polygon.Z = function (exteriorRing, interiorRings) {
+    var polygon = new Polygon(exteriorRing, interiorRings);
+    polygon.hasZ = true;
+    return polygon;
+};
+
+Polygon.M = function (exteriorRing, interiorRings) {
+    var polygon = new Polygon(exteriorRing, interiorRings);
+    polygon.hasM = true;
+    return polygon;
+};
+
+Polygon.ZM = function (exteriorRing, interiorRings) {
+    var polygon = new Polygon(exteriorRing, interiorRings);
+    polygon.hasZ = true;
+    polygon.hasM = true;
+    return polygon;
+};
+
 Polygon._parseWkt = function (value, options) {
     var polygon = new Polygon();
     polygon.srid = options.srid;
+    polygon.hasZ = options.hasZ;
+    polygon.hasM = options.hasM;
 
     if (value.isMatch(['EMPTY']))
         return polygon;
@@ -1339,12 +1700,12 @@ Polygon._parseWkt = function (value, options) {
     value.expectGroupStart();
 
     value.expectGroupStart();
-    polygon.exteriorRing.push.apply(polygon.exteriorRing, value.matchCoordinates());
+    polygon.exteriorRing.push.apply(polygon.exteriorRing, value.matchCoordinates(options));
     value.expectGroupEnd();
 
     while (value.isMatch([','])) {
         value.expectGroupStart();
-        polygon.interiorRings.push(value.matchCoordinates());
+        polygon.interiorRings.push(value.matchCoordinates(options));
         value.expectGroupEnd();
     }
 
@@ -1356,6 +1717,8 @@ Polygon._parseWkt = function (value, options) {
 Polygon._parseWkb = function (value, options) {
     var polygon = new Polygon();
     polygon.srid = options.srid;
+    polygon.hasZ = options.hasZ;
+    polygon.hasM = options.hasM;
 
     var ringCount = value.readUInt32();
 
@@ -1363,7 +1726,7 @@ Polygon._parseWkb = function (value, options) {
         var exteriorRingCount = value.readUInt32();
 
         for (var i = 0; i < exteriorRingCount; i++)
-            polygon.exteriorRing.push(new Point(value.readDouble(), value.readDouble()));
+            polygon.exteriorRing.push(Point._readWkbPoint(value, options));
 
         for (i = 1; i < ringCount; i++) {
             var interiorRing = [];
@@ -1371,7 +1734,7 @@ Polygon._parseWkb = function (value, options) {
             var interiorRingCount = value.readUInt32();
 
             for (var j = 0; j < interiorRingCount; j++)
-                interiorRing.push(new Point(value.readDouble(), value.readDouble()));
+                interiorRing.push(Point._readWkbPoint(value, options));
 
             polygon.interiorRings.push(interiorRing);
         }
@@ -1382,33 +1745,26 @@ Polygon._parseWkb = function (value, options) {
 
 Polygon._parseTwkb = function (value, options) {
     var polygon = new Polygon();
+    polygon.hasZ = options.hasZ;
+    polygon.hasM = options.hasM;
 
     if (options.isEmpty)
         return polygon;
 
-    var x = 0;
-    var y = 0;
+    var previousPoint = new Point(0, 0, options.hasZ ? 0 : undefined, options.hasM ? 0 : undefined);
     var ringCount = value.readVarInt();
     var exteriorRingCount = value.readVarInt();
 
-    for (var i = 0; i < exteriorRingCount; i++) {
-        x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-        y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-
-        polygon.exteriorRing.push(new Point(x, y));
-    }
+    for (var i = 0; i < exteriorRingCount; i++)
+        polygon.exteriorRing.push(Point._readTwkbPoint(value, options, previousPoint));
 
     for (i = 1; i < ringCount; i++) {
         var interiorRing = [];
 
         var interiorRingCount = value.readVarInt();
 
-        for (var j = 0; j < interiorRingCount; j++) {
-            x += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-            y += ZigZag.decode(value.readVarInt()) / options.precisionFactor;
-
-            interiorRing.push(new Point(x, y));
-        }
+        for (var j = 0; j < interiorRingCount; j++)
+            interiorRing.push(Point._readTwkbPoint(value, options, previousPoint));
 
         polygon.interiorRings.push(interiorRing);
     }
@@ -1419,15 +1775,18 @@ Polygon._parseTwkb = function (value, options) {
 Polygon._parseGeoJSON = function (value) {
     var polygon = new Polygon();
 
+    if (value.coordinates.length > 0 && value.coordinates[0].length > 0)
+        polygon.hasZ = value.coordinates[0][0].length > 2;
+
     for (var i = 0; i < value.coordinates.length; i++) {
         if (i > 0)
             polygon.interiorRings.push([]);
 
         for (var j = 0; j  < value.coordinates[i].length; j++) {
             if (i === 0)
-                polygon.exteriorRing.push(new Point(value.coordinates[i][j][0], value.coordinates[i][j][1]));
+                polygon.exteriorRing.push(Point._readGeoJSONPoint(value.coordinates[i][j]));
             else
-                polygon.interiorRings[i - 1].push(new Point(value.coordinates[i][j][0], value.coordinates[i][j][1]));
+                polygon.interiorRings[i - 1].push(Point._readGeoJSONPoint(value.coordinates[i][j]));
         }
     }
 
@@ -1436,16 +1795,16 @@ Polygon._parseGeoJSON = function (value) {
 
 Polygon.prototype.toWkt = function () {
     if (this.exteriorRing.length === 0)
-        return Types.wkt.Polygon + ' EMPTY';
+        return this._getWktType(Types.wkt.Polygon, true);
 
-    return Types.wkt.Polygon + this._toInnerWkt();
+    return this._getWktType(Types.wkt.Polygon, false) + this._toInnerWkt();
 };
 
 Polygon.prototype._toInnerWkt = function () {
     var innerWkt = '((';
 
     for (var i = 0; i < this.exteriorRing.length; i++)
-        innerWkt += this.exteriorRing[i].x + ' ' + this.exteriorRing[i].y + ',';
+        innerWkt += this._getWktCoordinate(this.exteriorRing[i]) + ',';
 
     innerWkt = innerWkt.slice(0, -1);
     innerWkt += ')';
@@ -1454,7 +1813,7 @@ Polygon.prototype._toInnerWkt = function () {
         innerWkt += ',(';
 
         for (var j = 0; j < this.interiorRings[i].length; j++) {
-            innerWkt += this.interiorRings[i][j].x + ' ' + this.interiorRings[i][j].y + ',';
+            innerWkt += this._getWktCoordinate(this.interiorRings[i][j]) + ',';
         }
 
         innerWkt = innerWkt.slice(0, -1);
@@ -1466,12 +1825,12 @@ Polygon.prototype._toInnerWkt = function () {
     return innerWkt;
 };
 
-Polygon.prototype.toWkb = function () {
+Polygon.prototype.toWkb = function (parentOptions) {
     var wkb = new BinaryWriter(this._getWkbSize());
 
     wkb.writeInt8(1);
 
-    wkb.writeUInt32LE(Types.wkb.Polygon);
+    this._writeWkbType(wkb, Types.wkb.Polygon, parentOptions);
 
     if (this.exteriorRing.length > 0) {
         wkb.writeUInt32LE(1 + this.interiorRings.length);
@@ -1481,18 +1840,14 @@ Polygon.prototype.toWkb = function () {
         wkb.writeUInt32LE(0);
     }
 
-    for (var i = 0; i < this.exteriorRing.length; i++) {
-        wkb.writeDoubleLE(this.exteriorRing[i].x);
-        wkb.writeDoubleLE(this.exteriorRing[i].y);
-    }
+    for (var i = 0; i < this.exteriorRing.length; i++)
+        this.exteriorRing[i]._writeWkbPoint(wkb);
 
     for (i = 0; i < this.interiorRings.length; i++) {
         wkb.writeUInt32LE(this.interiorRings[i].length);
 
-        for (var j = 0; j < this.interiorRings[i].length; j++) {
-            wkb.writeDoubleLE(this.interiorRings[i][j].x);
-            wkb.writeDoubleLE(this.interiorRings[i][j].y);
-        }
+        for (var j = 0; j < this.interiorRings[i].length; j++)
+            this.interiorRings[i][j]._writeWkbPoint(wkb);
     }
 
     return wkb.buffer;
@@ -1501,8 +1856,7 @@ Polygon.prototype.toWkb = function () {
 Polygon.prototype.toTwkb = function () {
     var twkb = new BinaryWriter(0, true);
 
-    var precision = 5;
-    var precisionFactor = Math.pow(10, precision);
+    var precision = Geometry.getTwkbPrecision(5, 0, 0);
     var isEmpty = this.exteriorRing.length === 0;
 
     this._writeTwkbHeader(twkb, Types.wkb.Polygon, precision, isEmpty);
@@ -1512,35 +1866,15 @@ Polygon.prototype.toTwkb = function () {
 
         twkb.writeVarInt(this.exteriorRing.length);
 
-        var lastX = 0;
-        var lastY = 0;
-        var x = 0;
-        var y = 0;
-
-        for (var i = 0; i < this.exteriorRing.length; i++) {
-            x = this.exteriorRing[i].x * precisionFactor;
-            y = this.exteriorRing[i].y * precisionFactor;
-
-            twkb.writeVarInt(ZigZag.encode(x - lastX));
-            twkb.writeVarInt(ZigZag.encode(y - lastY));
-
-            lastX = x;
-            lastY = y;
-        }
+        var previousPoint = new Point(0, 0, 0, 0);
+        for (var i = 0; i < this.exteriorRing.length; i++)
+            this.exteriorRing[i]._writeTwkbPoint(twkb, precision, previousPoint);
 
         for (i = 0; i < this.interiorRings.length; i++) {
             twkb.writeVarInt(this.interiorRings[i].length);
 
-            for (var j = 0; j < this.interiorRings[i].length; j++) {
-                x = this.interiorRings[i][j].x * precisionFactor;
-                y = this.interiorRings[i][j].y * precisionFactor;
-
-                twkb.writeVarInt(ZigZag.encode(x - lastX));
-                twkb.writeVarInt(ZigZag.encode(y - lastY));
-
-                lastX = x;
-                lastY = y;
-            }
+            for (var j = 0; j < this.interiorRings[i].length; j++)
+                this.interiorRings[i][j]._writeTwkbPoint(twkb, precision, previousPoint);
         }
     }
 
@@ -1548,28 +1882,38 @@ Polygon.prototype.toTwkb = function () {
 };
 
 Polygon.prototype._getWkbSize = function () {
+    var coordinateSize = 16;
+
+    if (this.hasZ)
+        coordinateSize += 8;
+    if (this.hasM)
+        coordinateSize += 8;
+
     var size = 1 + 4 + 4;
 
     if (this.exteriorRing.length > 0)
-        size += 4 + (this.exteriorRing.length * 16);
+        size += 4 + (this.exteriorRing.length * coordinateSize);
 
     for (var i = 0; i < this.interiorRings.length; i++)
-        size += 4 + (this.interiorRings[i].length * 16);
+        size += 4 + (this.interiorRings[i].length * coordinateSize);
 
     return size;
 };
 
-Polygon.prototype.toGeoJSON = function () {
-    var geoJSON = {
-        type: Types.geoJSON.Polygon,
-        coordinates: []
-    };
+Polygon.prototype.toGeoJSON = function (options) {
+    var geoJSON = Geometry.prototype.toGeoJSON.call(this, options);
+    geoJSON.type = Types.geoJSON.Polygon;
+    geoJSON.coordinates = [];
 
     if (this.exteriorRing.length > 0) {
         var exteriorRing = [];
 
-        for (var i = 0; i < this.exteriorRing.length; i++)
-            exteriorRing.push([this.exteriorRing[i].x, this.exteriorRing[i].y]);
+        for (var i = 0; i < this.exteriorRing.length; i++) {
+            if (this.hasZ)
+                exteriorRing.push([this.exteriorRing[i].x, this.exteriorRing[i].y, this.exteriorRing[i].z]);
+            else
+                exteriorRing.push([this.exteriorRing[i].x, this.exteriorRing[i].y]);
+        }
 
         geoJSON.coordinates.push(exteriorRing);
     }
@@ -1577,8 +1921,12 @@ Polygon.prototype.toGeoJSON = function () {
     for (var j = 0; j < this.interiorRings.length; j++) {
         var interiorRing = [];
 
-        for (var k = 0; k < this.interiorRings[j].length; k++)
-            interiorRing.push([this.interiorRings[j][k].x, this.interiorRings[j][k].y]);
+        for (var k = 0; k < this.interiorRings[j].length; k++) {
+            if (this.hasZ)
+                interiorRing.push([this.interiorRings[j][k].x, this.interiorRings[j][k].y, this.interiorRings[j][k].z]);
+            else
+                interiorRing.push([this.interiorRings[j][k].x, this.interiorRings[j][k].y]);
+        }
 
         geoJSON.coordinates.push(interiorRing);
     }
@@ -1679,6 +2027,17 @@ WktParser.prototype.matchType = function () {
     return geometryType;
 };
 
+WktParser.prototype.matchDimension = function () {
+    var dimension = this.match(['ZM', 'Z', 'M']);
+
+    switch (dimension) {
+        case 'ZM': return { hasZ: true, hasM: true };
+        case 'Z': return { hasZ: true, hasM: false };
+        case 'M': return { hasZ: false, hasM: true };
+        default: return { hasZ: false, hasM: false };
+    }
+};
+
 WktParser.prototype.expectGroupStart = function () {
     if (!this.isMatch(['(']))
         throw new Error('Expected group start');
@@ -1689,20 +2048,39 @@ WktParser.prototype.expectGroupEnd = function () {
         throw new Error('Expected group end');
 };
 
-WktParser.prototype.matchCoordinate = function () {
-    var match = this.matchRegex([/^(-?\d+\.?\d*)\s+(-?\d+\.?\d*)/]);
+WktParser.prototype.matchCoordinate = function (options) {
+    var match;
+
+    if (options.hasZ && options.hasM)
+        match = this.matchRegex([/^(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)/]);
+    else if (options.hasZ || options.hasM)
+        match = this.matchRegex([/^(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)/]);
+    else
+        match = this.matchRegex([/^(-?\d+\.?\d*)\s+(-?\d+\.?\d*)/]);
 
     if (!match)
-        throw new Error('Expected coordinate pair');
+        throw new Error('Expected coordinates');
 
-    return new Point(parseFloat(match[1]), parseFloat(match[2]));
+    if (options.hasZ && options.hasM)
+        return new Point(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4]));
+    else if (options.hasZ)
+        return new Point(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]));
+    else if (options.hasM)
+        return new Point(parseFloat(match[1]), parseFloat(match[2]), undefined, parseFloat(match[3]));
+    else
+        return new Point(parseFloat(match[1]), parseFloat(match[2]));
 };
 
-WktParser.prototype.matchCoordinates = function () {
+WktParser.prototype.matchCoordinates = function (options) {
     var coordinates = [];
 
     do {
-        coordinates.push(this.matchCoordinate());
+        var startsWithBracket = this.isMatch(['(']);
+
+        coordinates.push(this.matchCoordinate(options));
+
+        if (startsWithBracket)
+            this.expectGroupEnd();
     } while (this.isMatch([',']));
 
     return coordinates;
