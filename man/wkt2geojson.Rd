@@ -4,7 +4,7 @@
 \alias{wkt2geojson}
 \title{Convert WKT to GeoJSON-like objects.}
 \usage{
-wkt2geojson(str, fmt = 16, feature = TRUE)
+wkt2geojson(str, fmt = 16, feature = TRUE, numeric = TRUE)
 }
 \arguments{
 \item{str}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
@@ -12,7 +12,9 @@ wkt2geojson(str, fmt = 16, feature = TRUE)
 \item{fmt}{Number of digits to display after the decimal point when formatting
 coordinates.}
 
-\item{feature}{(logical) Make a feature geojson object. Default: TRUE}
+\item{feature}{(logical) Make a feature geojson object. Default: \code{TRUE}}
+
+\item{numeric}{(logical) Give back values as numeric. Default: \code{TRUE}}
 }
 \description{
 Convert WKT to GeoJSON-like objects.
@@ -27,23 +29,27 @@ includingn lowercase WKT types, no spaces between coordinates.
 str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
+wkt2geojson(str, numeric=FALSE)
 
 # multipoint
 str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
 wkt2geojson(str, fmt = 2)
 wkt2geojson(str, fmt = 2, feature=FALSE)
+wkt2geojson(str, numeric=FALSE)
 
 # polygon
 str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
    (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
+wkt2geojson(str, numeric=FALSE)
 
 # multipolygon
 str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
    ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
+wkt2geojson(str, numeric=FALSE)
 
 # linestring
 str <- "LINESTRING (100.000 0.000, 101.000 1.000)"
@@ -51,10 +57,12 @@ wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
 wkt2geojson("LINESTRING (0 1 2 3, 4 5 6 7)")
+wkt2geojson(str, numeric=FALSE)
 
 # multilinestring
 str <- "MULTILINESTRING ((30 1, 40 30, 50 20)(10 0, 20 1))"
 wkt2geojson(str)
+wkt2geojson(str, numeric=FALSE)
 
 str <- "MULTILINESTRING (
    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5),
@@ -62,6 +70,7 @@ str <- "MULTILINESTRING (
    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5),
    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5))"
 wkt2geojson(str)
+wkt2geojson(str, numeric=FALSE)
 
 # Geometrycollection
 str <- "GEOMETRYCOLLECTION (
@@ -76,6 +85,10 @@ str <- "GEOMETRYCOLLECTION (
                  (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)),
                  ((1 2 3 4, 5 6 7 8, 9 10 11 12, 1 2 3 4))))"
 wkt2geojson(str)
+wkt2geojson(str, numeric=FALSE)
+}
+\references{
+\url{http://geojson.org/geojson-spec.html}
 }
 \seealso{
 \code{\link{geojson2wkt}}
