@@ -6,7 +6,7 @@ test_that("convert point works", {
   expect_is(a, "geojson")
   expect_that(typeof(a), equals("list"))
   expect_match(a$geometry$type, "Point")
-  expect_equal(unclass(a), list(type="Feature", geometry=list('type' = 'Point', 'coordinates' = c("116.4", "45.2"))))
+  expect_equal(unclass(a), list(type="Feature", geometry=list('type' = 'Point', 'coordinates' = c(116.4, 45.2))))
 })
 
 test_that("convert multipoint works", {
@@ -15,7 +15,7 @@ test_that("convert multipoint works", {
   expect_is(b, "geojson")
   expect_that(typeof(b), equals("list"))
   expect_match(b$geometry$type, "MultiPoint")
-  expect_equal(unclass(b), list(type="Feature", geometry=list(type = 'MultiPoint', coordinates=list(c("100.00", "3.10"), c("101.00", "2.10"), c("3.14", "2.18")))))
+  expect_equal(unclass(b), list(type="Feature", geometry=list(type = 'MultiPoint', coordinates=list(c(100.000, 3.101), c(101.0, 2.1), c(3.14, 2.18)))))
 })
 
 test_that("convert linestring works", {
@@ -25,8 +25,8 @@ test_that("convert linestring works", {
   expect_that(typeof(c), equals("list"))
   expect_match(c$geometry$type, "LineString")
   expect_equal(unclass(c), list(type="Feature", geometry=list(type = 'LineString',
-                        coordinates = list(c("0.0", "0.0", "10.0"), c("2.0", "1.0", "20.0"),
-                                           c("4.0", "2.0", "30.0"), c("5.0", "4.0", "40.0")))))
+                        coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
+                                           c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))))
 })
 
 
@@ -34,8 +34,8 @@ test_that("convert polygon works", {
   poly <- "POLYGON ((100 1, 104 2, 101 3, 100 1), (100 1, 103 2, 101 5, 100 1))"
   tomatch <- list(type="Feature", geometry=list(type = 'Polygon',
                    coordinates=list(
-                     list(c("100", "1"), c("104", "2"), c("101", "3"), c("100", "1")),
-                     list(c("100", "1"), c("103", "2"), c("101", "5"), c("100", "1"))
+                     list(c(100, 1), c(104, 2), c(101, 3), c(100, 1)),
+                     list(c(100, 1), c(103, 2), c(101, 5), c(100, 1))
                    )))
   e <- wkt2geojson(poly, fmt = 0)
   expect_is(e, "geojson")
