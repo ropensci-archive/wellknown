@@ -85,6 +85,14 @@ The above currently accept (depending on the fxn) `numeric`, `list`, and `data.f
 
 ## Install
 
+Stable version
+
+```{r eval=FALSE}
+install.packages("wellknown")
+```
+
+Dev version
+
 ```{r eval=FALSE}
 install.packages("devtools")
 devtools::install_github("ropensci/wellknown")
