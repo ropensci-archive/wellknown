@@ -1,12 +1,14 @@
 language: r
-
-sudo: required
-
-before_install:
-- sudo apt-get install libv8-dev
+sudo: false
+cache: packages
 
 r_binary_install:
  - leaflet
+
+addons:
+  apt:
+    packages:
+      - libv8-dev
 
 r_github_packages:
  - jimhester/covr
