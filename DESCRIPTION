@@ -21,5 +21,6 @@ Imports:
 Suggests:
     knitr,
     leaflet (>= 1.0.0),
-    testthat
+    testthat,
+    covr
 RoxygenNote: 5.0.1
