@@ -3,6 +3,8 @@
 #' @export
 #' @param str A WKT string
 #' @return A logical (\code{TRUE} or \code{FALSE})
+#' @details This function uses R regex - there's no error messages about
+#' what is wrong in the WKT.
 #' @examples
 #' lint("POINT (1 2)")
 #' lint("POINT (1 2 3)")
@@ -62,13 +64,13 @@ repeat_n <- function(x, n = 3) sprintf("(%s){%s,}", coll(x), n)
 
 # short-hand nouns
 number <- "[+-]?(\\d*\\.)?\\d+"
-space <- "\\s"
-spaceif <- "\\s?"
-comma <- ","
-lp <- "^\\("
-lp_ <- "\\("
-rp <- "\\)$"
-rp_ <- "\\)"
+space <- "[[:space:]]"
+spaceif <- "[[:space:]]*"
+comma <- "[[:space:]]*,[[:space:]]*"
+lp <- "^\\([[:space:]]*"
+lp_ <- "[[:space:]]*\\([[:space:]]*"
+rp <- "[[:space:]]*\\)$"
+rp_ <- "[[:space:]]*\\)[[:space:]]*"
 empty <- "^EMPTY$"
 rule_point_empty <- rule_multipoint_empty <- rule_linestring_empty <- rule_polygon_empty <- rule_multipolygon_empty <- empty
 pt <- c(number, space, number)

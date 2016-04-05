@@ -15,6 +15,10 @@ A logical (\code{TRUE} or \code{FALSE})
 \description{
 Validate WKT strings
 }
+\details{
+This function uses R regex - there's no error messages about
+what is wrong in the WKT.
+}
 \examples{
 lint("POINT (1 2)")
 lint("POINT (1 2 3)")
