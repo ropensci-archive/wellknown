@@ -56,10 +56,15 @@ test_that("errors in wkt specification handled correctly", {
   expect_error(wkt2geojson("POIN(116.400000000000005745.2000000000000028"), "EXPR must be a length 1 vector")
   # mis-spelled wkt type is NOT okay
   expect_error(wkt2geojson("POIN(116.4000000000000057 45.2000000000000028"), "EXPR must be a length 1 vector")
-  # lower case wkt type is NOT okay
-  expect_error(wkt2geojson("point (116.4000000000000057 45.2000000000000028"), "EXPR must be a length 1 vector")
   # no spacing between wkt type and coords is okay
   expect_is(wkt2geojson("LINESTRING(0 0 10, 2 1 20, 4 2 30, 5 4 40)"), "geojson")
   # no spacing between wkt type and coords is okay
   expect_is(wkt2geojson("LINESTRING(0 0 10, 2 1 20, 4 2 30, 5 4 40)"), "geojson")
+})
+
+test_that("case no longer matters for WKT feature types", {
+  # lower case wkt type used to NOT be okay, as of 2016-06-02 works
+  expect_is(wkt2geojson("point (116.4000000000000057 45.2000000000000028"), "geojson")
+  expect_is(wkt2geojson("Point (116.4000000000000057 45.2000000000000028"), "geojson")
+  expect_is(wkt2geojson("poInt (116.4000000000000057 45.2000000000000028"), "geojson")
 })

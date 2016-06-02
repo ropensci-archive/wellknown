@@ -86,6 +86,10 @@ str <- "GEOMETRYCOLLECTION (
                  ((1 2 3 4, 5 6 7 8, 9 10 11 12, 1 2 3 4))))"
 wkt2geojson(str)
 wkt2geojson(str, numeric=FALSE)
+
+# case doesn't matter
+str <- "point (-116.4000000000000057 45.2000000000000028)"
+wkt2geojson(str)
 }
 \references{
 \url{http://geojson.org/geojson-spec.html}

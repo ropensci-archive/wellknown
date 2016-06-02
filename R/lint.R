@@ -64,7 +64,7 @@ repeat_n <- function(x, n = 3) sprintf("(%s){%s,}", coll(x), n)
 
 # short-hand nouns
 number <- "[+-]?(\\d*\\.)?\\d+"
-space <- "[[:space:]]"
+space <- "[[:space:]]+"
 spaceif <- "[[:space:]]*"
 comma <- "[[:space:]]*,[[:space:]]*"
 lp <- "^\\([[:space:]]*"

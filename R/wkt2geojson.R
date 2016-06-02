@@ -74,9 +74,13 @@
 #'                  ((1 2 3 4, 5 6 7 8, 9 10 11 12, 1 2 3 4))))"
 #' wkt2geojson(str)
 #' wkt2geojson(str, numeric=FALSE)
+#'
+#' # case doesn't matter
+#' str <- "point (-116.4000000000000057 45.2000000000000028)"
+#' wkt2geojson(str)
 
 wkt2geojson <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
-  type <- get_type(str)
+  type <- get_type(str, ignore_case = TRUE)
   res <- switch(type,
          Point = load_point(str, fmt, feature, numeric),
          Multipoint = load_multipoint(str, fmt, feature, numeric),
@@ -93,7 +97,7 @@ types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
            "LINESTRING","MULTILINESTRING","GEOMETRYCOLLECTION",
            "TRIANGLE","CIRCULARSTRING","COMPOUNDCURVE")
 
-get_type <- function(x, ignore_case=FALSE){
+get_type <- function(x, ignore_case = FALSE){
   type <- cw(types[sapply(types, grepl, x = x, ignore.case = ignore_case)], onlyfirst = TRUE)
   if (length(type) > 1) {
     grep(tolower(strextract(x, "[A-Za-z]+")), type, ignore.case = TRUE, value = TRUE)
@@ -103,7 +107,7 @@ get_type <- function(x, ignore_case=FALSE){
 }
 
 load_point <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
-  str_coord <- gsub("POINT|\\(|\\)", "", str)
+  str_coord <- gsub("POINT|\\(|\\)", "", str, ignore.case = TRUE)
   coords <- strsplit(gsub("[[:punct:]]$", "", str_trim_(str_coord)), "\\s")[[1]]
   coords <- nozero(coords)
   # iffeat('Point', as.numeric(coords, fmt), feature)
@@ -115,7 +119,7 @@ format_num <- function(x, fmt) {
 }
 
 load_multipoint <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
-  str_coord <- str_trim_(gsub("MULTIPOINT\\s?", "", str))
+  str_coord <- str_trim_(gsub("MULTIPOINT\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
   coords <- unname(sapply(str_coord, function(z){
@@ -129,7 +133,7 @@ load_multipoint <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
 }
 
 load_polygon <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
-  str_coord <- str_trim_(gsub("POLYGON\\s?", "", str))
+  str_coord <- str_trim_(gsub("POLYGON\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
   coords <- lapply(str_coord, function(z){
@@ -144,7 +148,7 @@ load_polygon <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
 
 load_multipolygon <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
   str <- gsub("\n", "", str)
-  str_coord <- str_trim_(gsub("MULTIPOLYGON\\s?", "", str))
+  str_coord <- str_trim_(gsub("MULTIPOLYGON\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\)),")[[1]]
   coords <- lapply(str_coord, function(z){
@@ -160,7 +164,7 @@ load_multipolygon <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
 }
 
 load_linestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
-  str_coord <- str_trim_(gsub("LINESTRING\\s?", "", str))
+  str_coord <- str_trim_(gsub("LINESTRING\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
   coords <- lapply(str_coord, function(z){
@@ -174,7 +178,7 @@ load_linestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
 }
 
 load_multilinestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
-  str_coord <- str_trim_(gsub("MULTILINESTRING\\s?", "", str))
+  str_coord <- str_trim_(gsub("MULTILINESTRING\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),|\\)\\(")[[1]]
   coords <- lapply(str_coord, function(z){
@@ -188,7 +192,7 @@ load_multilinestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
 }
 
 load_geometrycollection <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
-  str_coord <- str_trim_(gsub("GEOMETRYCOLLECTION\\s?", "", gsub("\n", "", str)))
+  str_coord <- str_trim_(gsub("GEOMETRYCOLLECTION\\s?", "", gsub("\n", "", str), ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   matches <- noneg(sort(sapply(types, regexpr, text = str_coord)))
   out <- list()
