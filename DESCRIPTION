@@ -15,9 +15,9 @@ VignetteBuilder: knitr
 Imports:
     methods,
     utils,
-    jsonlite (>= 0.9.17),
+    jsonlite (>= 0.9.21),
     magrittr,
-    V8 (>= 0.9)
+    V8 (>= 1.0.2)
 Suggests:
     knitr,
     leaflet (>= 1.0.0),

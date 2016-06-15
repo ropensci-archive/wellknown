@@ -107,7 +107,7 @@ library("wellknown")
 ### Point
 
 ```{r}
-point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
+point <- list(type = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
 geojson2wkt(point)
 ```
 

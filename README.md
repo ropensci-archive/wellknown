@@ -53,19 +53,21 @@ The above currently accept (depending on the fxn) `numeric`, `list`, and `data.f
 
 ## Install
 
-
 Stable version
 
-```{r eval=FALSE}
+
+```r
 install.packages("wellknown")
 ```
 
 Dev version
 
-```{r eval=FALSE}
+
+```r
 install.packages("devtools")
 devtools::install_github("ropensci/wellknown")
 ```
+
 
 ```r
 library("wellknown")
@@ -77,7 +79,7 @@ library("wellknown")
 
 
 ```r
-point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
+point <- list(type = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
 geojson2wkt(point)
 #> [1] "POINT (116.4000000000000057  45.2000000000000028  11.0999999999999996)"
 ```
@@ -197,14 +199,14 @@ str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 wkt2geojson(str)
 #> $type
 #> [1] "Feature"
-#>
+#> 
 #> $geometry
 #> $geometry$type
 #> [1] "Point"
-#>
+#> 
 #> $geometry$coordinates
-#> [1] "-116.4000000000000057" "45.2000000000000028"
-#>
+#> [1] -116.4   45.2
+#> 
 ...
 ```
 
@@ -215,10 +217,10 @@ Not `Feature`
 wkt2geojson(str, feature=FALSE)
 #> $type
 #> [1] "Point"
-#>
+#> 
 #> $coordinates
-#> [1] "-116.4000000000000057" "45.2000000000000028"
-#>
+#> [1] -116.4   45.2
+#> 
 #> attr(,"class")
 #> [1] "geojson"
 ```
@@ -231,14 +233,14 @@ str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
 wkt2geojson(str, feature=FALSE)
 #> $type
 #> [1] "MultiPoint"
-#>
+#> 
 #> $coordinates
 #> $coordinates[[1]]
-#> [1] "100.0000000000000000" "3.1010000000000000"
-#>
+#> [1] 100.000   3.101
+#> 
 #> $coordinates[[2]]
-#> [1] "101.0000000000000000" "2.1000000000000001"
-#>
+#> [1] 101.0   2.1
+#> 
 ...
 ```
 
@@ -250,14 +252,14 @@ str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 
 wkt2geojson(str, feature=FALSE)
 #> $type
 #> [1] "Polygon"
-#>
+#> 
 #> $coordinates
 #> $coordinates[[1]]
 #> $coordinates[[1]][[1]]
-#> [1] "100.0000000000000000" "0.1000000000000000"
-#>
+#> [1] 100.0   0.1
+#> 
 #> $coordinates[[1]][[2]]
-#> [1] "101.0999999999999943" "0.3000000000000000"
+#> [1] 101.1   0.3
 ...
 ```
 
@@ -270,13 +272,13 @@ str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
 wkt2geojson(str, feature=FALSE)
 #> $type
 #> [1] "MultiPolygon"
-#>
+#> 
 #> $coordinates
 #> $coordinates[[1]]
 #> $coordinates[[1]][[1]]
 #> $coordinates[[1]][[1]][[1]]
-#> [1] "40.0000000000000000" "40.0000000000000000"
-#>
+#> [1] 40 40
+#> 
 #> $coordinates[[1]][[1]][[2]]
 ...
 ```
@@ -288,14 +290,14 @@ wkt2geojson(str, feature=FALSE)
 wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 #> $type
 #> [1] "LineString"
-#>
+#> 
 #> $coordinates
 #> $coordinates[[1]]
-#> [1] "0.0000000000000000"  "-1.0000000000000000"
-#>
+#> [1]  0 -1
+#> 
 #> $coordinates[[2]]
-#> [1] "-2.0000000000000000" "-3.0000000000000000"
-#>
+#> [1] -2 -3
+#> 
 ...
 ```
 
