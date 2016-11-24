@@ -4,8 +4,9 @@
 #' @name wkb
 #' @param x A \code{character} string representing a WKT object, or an object
 #' of class \code{raw}, representing a WKB object
-#' @return \code{wkt_wkb} returns an object of class \code{raw}, a WKB reprsentation.
-#' \code{wkb_wkt} returns an object of class \code{character}, a WKT representation
+#' @return \code{wkt_wkb} returns an object of class \code{raw}, a WKB
+#' reprsentation. \code{wkb_wkt} returns an object of class \code{character},
+#' a WKT representation
 #' @examples
 #' # WKT to WKB
 #' ## point

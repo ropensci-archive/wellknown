@@ -2,16 +2,17 @@
 #'
 #' @export
 #'
-#' @param str A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Number of digits to display after the decimal point when formatting
-#' coordinates.
+#' @template fmt
+#' @param str A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
 #' @param feature (logical) Make a feature geojson object. Default: \code{TRUE}
 #' @param numeric (logical) Give back values as numeric. Default: \code{TRUE}
-#' @details Should be robust against a variety of typing errors, including extra spaces between
-#' coordinates, no space between WKT type and coordinates. However, some things won't pass,
-#' includingn lowercase WKT types, no spaces between coordinates.
+#' @details Should be robust against a variety of typing errors, including
+#' extra spaces between coordinates, no space between WKT type and coordinates.
+#' However, some things won't pass, including lowercase WKT types, no
+#' spaces between coordinates.
 #' @seealso \code{\link{geojson2wkt}}
-#' @references \url{http://geojson.org/geojson-spec.html}
+#' @references \url{https://tools.ietf.org/html/rfc7946}
 #' @examples
 #' # point
 #' str <- "POINT (-116.4000000000000057 45.2000000000000028)"
@@ -34,7 +35,7 @@
 #'
 #' # multipolygon
 #' str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
-#'    ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
+#'  ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
 #' wkt2geojson(str, numeric=FALSE)

@@ -2,9 +2,9 @@
 #'
 #' @export
 #'
-#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates. Max: 20
+#' @template fmt
+#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
 #' @family R-objects
 #' @examples
 #' ## empty point
@@ -52,14 +52,16 @@ point.numeric <- function(..., fmt = 16) {
   pts <- unlist(list(...))
   fmtcheck(fmt)
   checker(pts, 'POINT', 2)
-  sprintf('POINT (%s)', paste0(format(pts, nsmall = fmt, trim = TRUE), collapse = " "))
+  sprintf('POINT (%s)', paste0(format(pts, nsmall = fmt, trim = TRUE),
+                               collapse = " "))
 }
 
 #' @export
 point.data.frame <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
-  str <- apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))
+  str <- apply(pts[[1]], 1, function(x)
+    paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))
   sprintf('POINT (%s)', str)
 }
 
@@ -67,7 +69,8 @@ point.data.frame <- function(..., fmt = 16) {
 point.matrix <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
-  str <- apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))
+  str <- apply(pts[[1]], 1, function(x)
+    paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))
   sprintf('POINT (%s)', str)
 }
 
@@ -75,6 +78,7 @@ point.matrix <- function(..., fmt = 16) {
 point.list <- function(..., fmt = 16) {
   pts <- list(...)[[1]]
   fmtcheck(fmt)
-  str <- sapply(pts, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))
+  str <- sapply(pts, function(x)
+    paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " "))
   sprintf('POINT (%s)', str)
 }

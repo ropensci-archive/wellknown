@@ -2,9 +2,9 @@
 #'
 #' @export
 #'
-#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates. Max: 20
+#' @template fmt
+#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
 #' @family R-objects
 #' @examples
 #' ## empty multipoint
@@ -44,7 +44,8 @@ multipoint.numeric <- function(..., fmt = 16){
   fmtcheck(fmt)
   invisible(lapply(pts, checker, type = 'MULTIPOINT', len = 2))
   str <- paste0(lapply(pts, function(z){
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)),
+                           collapse = " "))
   }), collapse = ", ")
   sprintf('MULTIPOINT (%s)', str)
 }
@@ -53,9 +54,9 @@ multipoint.numeric <- function(..., fmt = 16){
 multipoint.data.frame <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
-  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
   str <- paste0(apply(pts[[1]], 1, function(z){
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)),
+                           collapse = " "))
   }), collapse = ", ")
   sprintf('MULTIPOINT (%s)', str)
 }
@@ -64,9 +65,9 @@ multipoint.data.frame <- function(..., fmt = 16){
 multipoint.matrix <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
-  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
   str <- paste0(apply(pts[[1]], 1, function(z){
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)),
+                           collapse = " "))
   }), collapse = ", ")
   sprintf('MULTIPOINT (%s)', str)
 }
@@ -76,7 +77,8 @@ multipoint.list <- function(..., fmt = 16) {
   pts <- list(...)[[1]]
   fmtcheck(fmt)
   str <- paste0(lapply(pts, function(z) {
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " "))
+    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)),
+                           collapse = " "))
   }), collapse = ", ")
   sprintf('MULTIPOINT (%s)', str)
 }

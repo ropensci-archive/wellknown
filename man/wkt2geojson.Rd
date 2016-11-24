@@ -7,10 +7,11 @@
 wkt2geojson(str, fmt = 16, feature = TRUE, numeric = TRUE)
 }
 \arguments{
-\item{str}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
+\item{str}{A GeoJSON-like object representing a Point, LineString, Polygon,
+MultiPolygon, etc.}
 
-\item{fmt}{Number of digits to display after the decimal point when formatting
-coordinates.}
+\item{fmt}{Format string which indicates the number of digits to display
+after the decimal point when formatting coordinates. Max: 20}
 
 \item{feature}{(logical) Make a feature geojson object. Default: \code{TRUE}}
 
@@ -20,9 +21,10 @@ coordinates.}
 Convert WKT to GeoJSON-like objects.
 }
 \details{
-Should be robust against a variety of typing errors, including extra spaces between
-coordinates, no space between WKT type and coordinates. However, some things won't pass,
-includingn lowercase WKT types, no spaces between coordinates.
+Should be robust against a variety of typing errors, including
+extra spaces between coordinates, no space between WKT type and coordinates.
+However, some things won't pass, including lowercase WKT types, no
+spaces between coordinates.
 }
 \examples{
 # point
@@ -46,7 +48,7 @@ wkt2geojson(str, numeric=FALSE)
 
 # multipolygon
 str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
-   ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
+ ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 wkt2geojson(str, numeric=FALSE)
@@ -92,7 +94,7 @@ str <- "point (-116.4000000000000057 45.2000000000000028)"
 wkt2geojson(str)
 }
 \references{
-\url{http://geojson.org/geojson-spec.html}
+\url{https://tools.ietf.org/html/rfc7946}
 }
 \seealso{
 \code{\link{geojson2wkt}}

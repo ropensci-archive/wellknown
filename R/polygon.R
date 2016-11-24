@@ -2,11 +2,11 @@
 #'
 #' @export
 #'
-#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates. Max: 20
-#' @details You can create nested polygons with \code{list} and \code{data.frame} inputs,
-#' but not from \code{numeric} inputs. See examples.
+#' @template fmt
+#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
+#' @details You can create nested polygons with \code{list} and
+#' \code{data.frame} inputs, but not from \code{numeric} inputs. See examples.
 #' @family R-objects
 #' @examples
 #' ## empty polygon
@@ -14,7 +14,8 @@
 #' # polygon("stuff")
 #'
 #' # numeric
-#' polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001), fmt=2)
+#' polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001),
+#'   c(100.001, 0.001), fmt=2)
 #'
 #' # data.frame
 #' ## single polygon
@@ -32,7 +33,8 @@
 #'
 #' # list
 #' # single list - creates single polygon
-#' ply <- list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))
+#' ply <- list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001),
+#'   c(100.001, 0.001))
 #' polygon(ply, fmt=2) %>% wktview(zoom=7)
 #' # nested list - creates nested polygon
 #' polygon(list(c(35, 10), c(45, 45), c(15, 40), c(10, 20), c(35, 10)),
@@ -99,7 +101,9 @@ polygon.list <- function(..., fmt = 16) {
   fmtcheck(fmt)
   pts <- un_nest(pts)
   str <- sprintf("(%s)", lapply(pts, function(z) {
-    paste0(lapply(z, function(b) paste0(str_trim_(format(b, nsmall = fmt, trim = TRUE)), collapse = " ")), collapse = ", ")
+    paste0(lapply(z, function(b)
+      paste0(str_trim_(format(b, nsmall = fmt, trim = TRUE)), collapse = " ")),
+      collapse = ", ")
   }))
   sprintf('POLYGON (%s)', paste0(str, collapse = ", "))
 }

@@ -10,16 +10,16 @@ multilinestring(..., fmt = 16)
 \item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
 multilinestring, etc.}
 
-\item{fmt}{Format string which indicates the number of digits to display after the
-decimal point when formatting coordinates. Max: 20}
+\item{fmt}{Format string which indicates the number of digits to display
+after the decimal point when formatting coordinates. Max: 20}
 }
 \description{
 Make WKT multilinestring objects
 }
 \details{
-There is no \code{numeric} input option for multilinestring. There is no
-way as of yet to make a nested multilinestring with \code{data.frame} input, but you
-can do so with list input. See examples.
+There is no \code{numeric} input option for multilinestring.
+There is no way as of yet to make a nested multilinestring with
+\code{data.frame} input, but you can do so with list input. See examples.
 }
 \examples{
 ## empty multilinestring

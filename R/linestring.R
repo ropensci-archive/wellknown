@@ -2,9 +2,9 @@
 #'
 #' @export
 #'
-#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates. Max: 20
+#' @template fmt
+#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
 #' @family R-objects
 #' @examples
 #' ## empty linestring
@@ -59,7 +59,8 @@ linestring.numeric <- function(..., fmt = 16) {
   fmtcheck(fmt)
   invisible(lapply(pts, checker, type = 'LINESTRING', len = 2:4))
   str <- paste0(lapply(pts, function(z){
-    paste0(gsub("\\s", "", format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
+    paste0(gsub("\\s", "", format(z, nsmall = fmt, trim = TRUE)),
+           collapse = " ")
   }), collapse = ", ")
   sprintf('LINESTRING (%s)', str)
 }
@@ -68,7 +69,9 @@ linestring.numeric <- function(..., fmt = 16) {
 linestring.data.frame <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
-  str <- paste0(apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " ")), collapse = ", ")
+  str <- paste0(apply(pts[[1]], 1, function(x)
+    paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " ")),
+    collapse = ", ")
   sprintf('LINESTRING (%s)', str)
 }
 
@@ -76,7 +79,9 @@ linestring.data.frame <- function(..., fmt = 16) {
 linestring.matrix <- function(..., fmt = 16) {
   pts <- list(...)
   fmtcheck(fmt)
-  str <- paste0(apply(pts[[1]], 1, function(x) paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " ")), collapse = ", ")
+  str <- paste0(apply(pts[[1]], 1, function(x)
+    paste0(format(x, nsmall = fmt, trim = TRUE), collapse = " ")),
+    collapse = ", ")
   sprintf('LINESTRING (%s)', str)
 }
 
@@ -85,7 +90,8 @@ linestring.list <- function(..., fmt = 16) {
   pts <- list(...)[[1]]
   fmtcheck(fmt)
   str <- paste0(lapply(pts, function(z){
-    paste0(gsub("\\s", "", format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
+    paste0(gsub("\\s", "", format(z, nsmall = fmt, trim = TRUE)),
+           collapse = " ")
   }), collapse = ", ")
   sprintf('LINESTRING (%s)', str)
 }

@@ -9,12 +9,13 @@ wktview(x, center = NULL, zoom = 5, fmt = 16)
 \arguments{
 \item{x}{Input, a geojson character string or list}
 
-\item{center}{(numeric) A length two vector of the form: \code{longitude, latitude}}
+\item{center}{(numeric) A length two vector of the form:
+\code{longitude, latitude}}
 
 \item{zoom}{(integer) A number between 1 and 18 (1 zoomed out, 18 zoomed in)}
 
-\item{fmt}{Number of digits to display after the decimal point when formatting
-coordinates.}
+\item{fmt}{Format string which indicates the number of digits to display
+after the decimal point when formatting coordinates. Max: 20}
 }
 \value{
 Opens a map with the geojson object(s) using \code{leaflet}
@@ -39,7 +40,8 @@ wktview(str, zoom = 3)
 wktview(linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2))
 
 # polygon
-a <- polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)))
+a <- polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001),
+  c(100.001, 0.001)))
 wktview(a)
 wktview(a, zoom=9)
 }

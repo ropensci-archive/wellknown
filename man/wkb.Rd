@@ -15,8 +15,9 @@ wkb_wkt(x)
 of class \code{raw}, representing a WKB object}
 }
 \value{
-\code{wkt_wkb} returns an object of class \code{raw}, a WKB reprsentation.
-\code{wkb_wkt} returns an object of class \code{character}, a WKT representation
+\code{wkt_wkb} returns an object of class \code{raw}, a WKB
+reprsentation. \code{wkb_wkt} returns an object of class \code{character},
+a WKT representation
 }
 \description{
 Convert WKT to WKB

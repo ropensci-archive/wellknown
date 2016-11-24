@@ -2,19 +2,22 @@
 #'
 #' @export
 #'
-#' @param obj A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates.
-#' @param ... Further args passed on to \code{\link[jsonlite]{fromJSON}} only in the event of json
-#' passed as a character string.
+#' @template fmt
+#' @param obj A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
+#' @param ... Further args passed on to \code{\link[jsonlite]{fromJSON}} only
+#' in the event of json passed as a character string.
 #' @seealso \code{\link{wkt2geojson}}
+#' @references \url{https://tools.ietf.org/html/rfc7946}
+#' \url{https://en.wikipedia.org/wiki/Well-known_text}
 #' @examples
 #' # point
 #' point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2))
 #' geojson2wkt(point)
 #'
 #' # multipoint
-#' mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
+#' mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101),
+#'   c(101.0, 2.1), c(3.14, 2.18)))
 #' geojson2wkt(mp)
 #'
 #' # linestring
@@ -34,8 +37,10 @@
 #' # polygon
 #' poly <- list(type = 'Polygon',
 #'      coordinates=list(
-#'        list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)),
-#'        list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801), c(100.201, 0.201))
+#'        list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001),
+#'          c(100.001, 0.001)),
+#'        list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801),
+#'          c(100.201, 0.201))
 #' ))
 #' geojson2wkt(poly)
 #' geojson2wkt(poly, fmt=6)
@@ -43,18 +48,18 @@
 #' # multipolygon
 #' mpoly <- list(type = 'MultiPolygon',
 #'               coordinates=list(
-#'                 list(list(c(100.001, 0.001), c(101.001, 0.001), c(101.001, 1.001),
-#'                           c(100.001, 0.001)),
-#'                      list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801),
-#'                           c(100.201, 0.201))),
+#'                 list(list(c(100.001, 0.001), c(101.001, 0.001),
+#'                     c(101.001, 1.001), c(100.001, 0.001)),
+#'                      list(c(100.201, 0.201), c(100.801, 0.201),
+#'                           c(100.801, 0.801), c(100.201, 0.201))),
 #'                 list(list(c(1.0, 2.0, 3.0, 4.0), c(5.0, 6.0, 7.0, 8.0),
 #'                           c(9.0, 10.0, 11.0, 12.0), c(1.0, 2.0, 3.0, 4.0)))
 #' ))
 #' geojson2wkt(mpoly, fmt=2)
 #'
 #' mpoly2 <- list(type = "MultiPolygon",
-#'               coordinates = list(list(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20))),
-#'                                  list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
+#'    coordinates = list(list(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20))),
+#'        list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
 #' )
 #' geojson2wkt(mpoly2, fmt=1)
 #'
@@ -62,7 +67,8 @@
 #' gmcoll <- list(type = 'GeometryCollection',
 #'  geometries = list(
 #'      list(type = "Point", coordinates = list(0.0, 1.0)),
-#'      list(type = 'LineString', coordinates = list(c(-100.0, 0.0), c(-101.0, -1.0))),
+#'      list(type = 'LineString',
+#'        coordinates = list(c(-100.0, 0.0), c(-101.0, -1.0))),
 #'      list(type = 'Polygon',
 #'        'coordinates' = list(list(c(100.001, 0.001),
 #'                        c(101.1235, 0.001),
@@ -113,7 +119,8 @@
 #' }'
 #' geojson2wkt(str)
 #'
-#' str <- '{"type":["LineString"],"coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
+#' str <-
+#' '{"type":["LineString"],"coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
 #' geojson2wkt(str)
 #'
 #' # From a jsonlite json object

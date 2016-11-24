@@ -2,12 +2,12 @@
 #'
 #' @export
 #'
-#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates. Max: 20
-#' @details There is no \code{numeric} input option for multipolygon. There is no way as of
-#' yet to make a nested multipolygon with \code{data.frame} input, but you can do so
-#' with list input. See examples.
+#' @template fmt
+#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
+#' @details There is no \code{numeric} input option for multipolygon. There
+#' is no way as of yet to make a nested multipolygon with \code{data.frame}
+#' input, but you can do so with list input. See examples.
 #' @family R-objects
 #' @examples
 #' ## empty multipolygon
@@ -65,15 +65,11 @@ multipolygon.character <- function(..., fmt = 16) {
 multipolygon.data.frame <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
-  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
   str <- lapply(pts, function(v) {
     sprintf("((%s))", paste0(apply(v, 1, function(z){
       paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
     }), collapse = ", "))
   })
-#   str <- paste0(apply(pts[[1]], 1, function(z){
-#     paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
-#   }), collapse = ", ")
   sprintf('MULTIPOLYGON (%s)', paste0(str, collapse = ", "))
 }
 
@@ -81,15 +77,11 @@ multipolygon.data.frame <- function(..., fmt = 16){
 multipolygon.matrix <- function(..., fmt = 16){
   pts <- list(...)
   fmtcheck(fmt)
-  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
   str <- lapply(pts, function(v) {
     sprintf("((%s))", paste0(apply(v, 1, function(z){
       paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
     }), collapse = ", "))
   })
-  #   str <- paste0(apply(pts[[1]], 1, function(z){
-  #     paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
-  #   }), collapse = ", ")
   sprintf('MULTIPOLYGON (%s)', paste0(str, collapse = ", "))
 }
 
@@ -109,7 +101,9 @@ multipolygon.list <- function(..., fmt = 16) {
 }
 
 make1multipoly <- function(m, fmt) {
-  inparens(paste0(lapply(m, function(b) paste0(str_trim_(format(b, nsmall = fmt, trim = TRUE)), collapse = " ")), collapse = ", "))
+  inparens(paste0(lapply(m, function(b)
+    paste0(str_trim_(format(b, nsmall = fmt, trim = TRUE)), collapse = " ")),
+    collapse = ", "))
 }
 
 inparens <- function(x) {

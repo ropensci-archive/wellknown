@@ -7,17 +7,18 @@
 polygon(..., fmt = 16)
 }
 \arguments{
-\item{...}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
+\item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
+MultiPolygon, etc.}
 
-\item{fmt}{Format string which indicates the number of digits to display after the
-decimal point when formatting coordinates. Max: 20}
+\item{fmt}{Format string which indicates the number of digits to display
+after the decimal point when formatting coordinates. Max: 20}
 }
 \description{
 Make WKT polygon objects
 }
 \details{
-You can create nested polygons with \code{list} and \code{data.frame} inputs,
-but not from \code{numeric} inputs. See examples.
+You can create nested polygons with \code{list} and
+\code{data.frame} inputs, but not from \code{numeric} inputs. See examples.
 }
 \examples{
 ## empty polygon
@@ -25,7 +26,8 @@ polygon("empty")
 # polygon("stuff")
 
 # numeric
-polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001), fmt=2)
+polygon(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001),
+  c(100.001, 0.001), fmt=2)
 
 # data.frame
 ## single polygon
@@ -43,7 +45,8 @@ polygon(mat)
 
 # list
 # single list - creates single polygon
-ply <- list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001))
+ply <- list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001),
+  c(100.001, 0.001))
 polygon(ply, fmt=2) \%>\% wktview(zoom=7)
 # nested list - creates nested polygon
 polygon(list(c(35, 10), c(45, 45), c(15, 40), c(10, 20), c(35, 10)),

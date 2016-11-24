@@ -7,18 +7,19 @@
 multipolygon(..., fmt = 16)
 }
 \arguments{
-\item{...}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
+\item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
+MultiPolygon, etc.}
 
-\item{fmt}{Format string which indicates the number of digits to display after the
-decimal point when formatting coordinates. Max: 20}
+\item{fmt}{Format string which indicates the number of digits to display
+after the decimal point when formatting coordinates. Max: 20}
 }
 \description{
 Make WKT multipolygon objects
 }
 \details{
-There is no \code{numeric} input option for multipolygon. There is no way as of
-yet to make a nested multipolygon with \code{data.frame} input, but you can do so
-with list input. See examples.
+There is no \code{numeric} input option for multipolygon. There
+is no way as of yet to make a nested multipolygon with \code{data.frame}
+input, but you can do so with list input. See examples.
 }
 \examples{
 ## empty multipolygon

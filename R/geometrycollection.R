@@ -42,7 +42,9 @@ geometrycollection.character <- function(...) {
     if (grepl("geometrycollection", pts[[1]], ignore.case = TRUE)) {
       check_str(pts[[1]])
     } else {
-      if (!all(vapply(pts, lint, logical(1)))) stop("All inputs must be WKT strings", call. = FALSE)
+      if (!all(vapply(pts, lint, logical(1)))) {
+        stop("All inputs must be WKT strings", call. = FALSE)
+      }
       sprint("GEOMETRYCOLLECTION", paste(pts, collapse = ", "))
     }
   }

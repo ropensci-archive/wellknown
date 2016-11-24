@@ -7,10 +7,11 @@
 linestring(..., fmt = 16)
 }
 \arguments{
-\item{...}{A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.}
+\item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
+MultiPolygon, etc.}
 
-\item{fmt}{Format string which indicates the number of digits to display after the
-decimal point when formatting coordinates. Max: 20}
+\item{fmt}{Format string which indicates the number of digits to display
+after the decimal point when formatting coordinates. Max: 20}
 }
 \description{
 Make WKT linestring objects
