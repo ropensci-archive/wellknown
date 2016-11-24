@@ -7,7 +7,7 @@ wellknown
 [![Build status](https://ci.appveyor.com/api/projects/status/ot3lth177a6f8jgg?svg=true)](https://ci.appveyor.com/project/sckott/wellknown)
 [![codecov.io](https://codecov.io/github/ropensci/wellknown/coverage.svg?branch=master)](https://codecov.io/github/ropensci/wellknown?branch=master)
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/wellknown)](https://github.com/metacran/cranlogs.app)
-[![cran version](http://www.r-pkg.org/badges/version/wellknown)](http://cran.rstudio.com/web/packages/wellknown)
+[![cran version](http://www.r-pkg.org/badges/version/wellknown)](https://cran.r-project.org/package=wellknown)
 
 `wellknown` - convert WKT to GeoJSON and vice versa.
 
