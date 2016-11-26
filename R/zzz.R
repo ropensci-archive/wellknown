@@ -26,7 +26,7 @@ nozero <- function(x) {
 checker <- function(x, type, len) {
   if (!length(x) %in% len)
     stop(sprintf("%s input should be of length %s", type, p0c(len)), call. = FALSE)
-  if (!is.double(x))
+  if (!is.double(x) && !is.integer(x))
     stop(sprintf("%s input should be of type double (a number)", type), call. = FALSE)
 }
 
