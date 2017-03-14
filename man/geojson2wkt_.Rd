@@ -13,16 +13,16 @@ MultiPolygon, etc.}
 \item{fmt}{Format string which indicates the number of digits to display
 after the decimal point when formatting coordinates. Max: 20}
 
-\item{...}{Further args passed on to \code{\link[jsonlite]{fromJSON}} only
+\item{...}{Further args passed on to [jsonlite::fromJSON() only
 in the event of json passed as a character string.}
 }
 \description{
 Convert GeoJSON-like objects to WKT
 }
 \details{
-Similar to \code{\link{geojson2wkt}}, but simpler construction.
+Similar to \code{\link[=geojson2wkt]{geojson2wkt()}}, but simpler construction.
 However, input to this function is not proper GeoJSON. If you want to
-input GeoJSON format (as either list or JSON) use \code{\link{geojson2wkt}}
+input GeoJSON format (as either list or JSON) use \code{\link[=geojson2wkt]{geojson2wkt()}}
 }
 \examples{
 # point
@@ -136,9 +136,9 @@ geojson2wkt_(json)
 
 }
 \references{
-\url{https://tools.ietf.org/html/rfc7946}
+\url{https://tools.ietf.org/html/rfc7946},
 \url{https://en.wikipedia.org/wiki/Well-known_text}
 }
 \seealso{
-\code{\link{geojson2wkt}}, \code{\link{wkt2geojson}}
+\code{\link[=geojson2wkt]{geojson2wkt()}}, \code{\link[=wkt2geojson]{wkt2geojson()}}
 }

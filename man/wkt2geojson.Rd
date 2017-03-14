@@ -98,5 +98,5 @@ wkt2geojson(str)
 \url{https://tools.ietf.org/html/rfc7946}
 }
 \seealso{
-\code{\link{geojson2wkt}}
+\code{\link[=geojson2wkt]{geojson2wkt()}}
 }

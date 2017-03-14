@@ -5,11 +5,11 @@
 #' @template fmt
 #' @param obj A GeoJSON-like object representing a Point, LineString, Polygon,
 #' MultiPolygon, etc.
-#' @param ... Further args passed on to \code{\link[jsonlite]{fromJSON}} only
+#' @param ... Further args passed on to [jsonlite::fromJSON()] only
 #' in the event of json passed as a character string.
-#' @seealso \code{\link{geojson2wkt_}}, \code{\link{wkt2geojson}}
-#' @references \url{https://tools.ietf.org/html/rfc7946}
-#' \url{https://en.wikipedia.org/wiki/Well-known_text}
+#' @seealso [geojson2wkt_()], [wkt2geojson()]
+#' @references <https://tools.ietf.org/html/rfc7946>,
+#' <https://en.wikipedia.org/wiki/Well-known_text>
 #' @examples
 #' # point
 #' point <- list(type = 'Point', coordinates = c(116.4, 45.2))

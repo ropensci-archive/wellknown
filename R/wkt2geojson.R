@@ -5,14 +5,14 @@
 #' @template fmt
 #' @param str A GeoJSON-like object representing a Point, LineString, Polygon,
 #' MultiPolygon, etc.
-#' @param feature (logical) Make a feature geojson object. Default: \code{TRUE}
-#' @param numeric (logical) Give back values as numeric. Default: \code{TRUE}
+#' @param feature (logical) Make a feature geojson object. Default: `TRUE`
+#' @param numeric (logical) Give back values as numeric. Default: `TRUE`
 #' @details Should be robust against a variety of typing errors, including
 #' extra spaces between coordinates, no space between WKT type and coordinates.
 #' However, some things won't pass, including lowercase WKT types, no
 #' spaces between coordinates.
-#' @seealso \code{\link{geojson2wkt}}
-#' @references \url{https://tools.ietf.org/html/rfc7946}
+#' @seealso [geojson2wkt()]
+#' @references <https://tools.ietf.org/html/rfc7946>
 #' @examples
 #' # point
 #' str <- "POINT (-116.4000000000000057 45.2000000000000028)"

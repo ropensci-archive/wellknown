@@ -5,9 +5,9 @@
 #' @template fmt
 #' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
 #' multilinestring, etc.
-#' @details There is no \code{numeric} input option for multilinestring.
+#' @details There is no `numeric` input option for multilinestring.
 #' There is no way as of yet to make a nested multilinestring with
-#' \code{data.frame} input, but you can do so with list input. See examples.
+#' `data.frame` input, but you can do so with list input. See examples.
 #' @family R-objects
 #' @examples
 #' ## empty multilinestring

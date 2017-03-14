@@ -47,5 +47,5 @@ wktview(a, zoom=9)
 }
 }
 \seealso{
-\code{\link{as_featurecollection}}
+\code{\link[=as_featurecollection]{as_featurecollection()}}
 }

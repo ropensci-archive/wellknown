@@ -5,14 +5,14 @@
 #' @template fmt
 #' @param obj A GeoJSON-like object representing a Point, LineString, Polygon,
 #' MultiPolygon, etc.
-#' @param ... Further args passed on to \code{\link[jsonlite]{fromJSON}} only
+#' @param ... Further args passed on to [jsonlite::fromJSON() only
 #' in the event of json passed as a character string.
-#' @seealso \code{\link{geojson2wkt}}, \code{\link{wkt2geojson}}
-#' @references \url{https://tools.ietf.org/html/rfc7946}
-#' \url{https://en.wikipedia.org/wiki/Well-known_text}
-#' @details Similar to \code{\link{geojson2wkt}}, but simpler construction.
+#' @seealso [geojson2wkt()], [wkt2geojson()]
+#' @references <https://tools.ietf.org/html/rfc7946>,
+#' <https://en.wikipedia.org/wiki/Well-known_text>
+#' @details Similar to [geojson2wkt()], but simpler construction.
 #' However, input to this function is not proper GeoJSON. If you want to
-#' input GeoJSON format (as either list or JSON) use \code{\link{geojson2wkt}}
+#' input GeoJSON format (as either list or JSON) use [geojson2wkt()]
 #' @examples
 #' # point
 #' geojson2wkt_(list(Point = c(116.4, 45.2)))

@@ -12,6 +12,7 @@ LazyData: true
 URL: https://github.com/ropensci/wellknown
 BugReports: https://github.com/ropensci/wellknown/issues
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 Imports:
     methods,
     utils,
