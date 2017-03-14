@@ -96,12 +96,12 @@ wkt2geojson <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
   structure(res, class = "geojson")
 }
 
-types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
+wellknown_types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
            "LINESTRING","MULTILINESTRING","GEOMETRYCOLLECTION",
            "TRIANGLE","CIRCULARSTRING","COMPOUNDCURVE")
 
 get_type <- function(x, ignore_case = FALSE){
-  type <- cw(types[sapply(types, grepl, x = x, ignore.case = ignore_case)],
+  type <- cw(wellknown_types[sapply(wellknown_types, grepl, x = x, ignore.case = ignore_case)],
              onlyfirst = TRUE)
   if (length(type) > 1) {
     grep(tolower(strextract(x, "[A-Za-z]+")), type, ignore.case = TRUE,
@@ -203,7 +203,7 @@ load_geometrycollection <- function(str, fmt = 16, feature = TRUE, numeric = TRU
   str_coord <- str_trim_(gsub("GEOMETRYCOLLECTION\\s?", "",
                               gsub("\n", "", str), ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
-  matches <- noneg(sort(sapply(types, regexpr, text = str_coord)))
+  matches <- noneg(sort(sapply(wellknown_types, regexpr, text = str_coord)))
   out <- list()
   for (i in seq_along(matches)) {
     end <- if (i == length(matches)) nchar(str_coord) else matches[[i + 1]] - 1

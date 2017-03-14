@@ -7,8 +7,9 @@
 geojson2wkt(obj, fmt = 16, ...)
 }
 \arguments{
-\item{obj}{A GeoJSON-like object representing a Point, LineString, Polygon,
-MultiPolygon, etc.}
+\item{obj}{(list/json/character) A GeoJSON-like object representing a
+Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
+or GeometryCollection}
 
 \item{fmt}{Format string which indicates the number of digits to display
 after the decimal point when formatting coordinates. Max: 20}
@@ -19,12 +20,35 @@ in the event of json passed as a character string.}
 \description{
 Convert GeoJSON-like objects to WKT.
 }
+\details{
+Input to \code{obj} parameter can take two forms:
+
+\itemize{
+\item A list with named elements \code{type} and \code{coordinates} OR
+\code{type} and \code{geometries} (only in the case of GeometryCollection).
+e.g., \code{list(type = "Point", coordinates = c(1, 0))}
+\item A list with single named element in the set Point, Multipoint,
+Polygon, Multipolygon, Linestring, Multilinestring,or Geometrycollection,
+e.g., \code{list(Point = c(1, 0))} - Note that this format is not proper
+GeoJSON, but is less verbose than the previous format, so should save
+the user time and make it easier to use.
+}
+}
 \examples{
 # point
+## new format
+point <- list(Point = c(116.4, 45.2))
+geojson2wkt(point)
+## old format, warns
 point <- list(type = 'Point', coordinates = c(116.4, 45.2))
 geojson2wkt(point)
 
 # multipoint
+## new format
+mp <- list(MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18),
+   ncol = 2))
+geojson2wkt(mp)
+## old format, warns
 mp <- list(
   type = 'MultiPoint',
   coordinates = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18), ncol = 2)
@@ -32,14 +56,43 @@ mp <- list(
 geojson2wkt(mp)
 
 # linestring
+## new format
+st <- list(LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
+                               0.0, 1.0, 2.0, 4.0),
+                               ncol = 2))
+geojson2wkt(st)
+## old format, warns
 st <- list(
   type = 'LineString',
   coordinates = matrix(c(0.0, 2.0, 4.0, 5.0,
                          0.0, 1.0, 2.0, 4.0), ncol = 2)
 )
 geojson2wkt(st)
+## 3D
+st <- list(LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
+                               0.0, 1.0, 2.0, 4.0,
+                               10, 20, 30, 40),
+                               ncol = 3))
+geojson2wkt(st, fmt = 2)
+
+## 4D
+st <- list(LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
+                               0.0, 1.0, 2.0, 4.0,
+                               10, 20, 30, 40,
+                               1, 2, 3, 4),
+                               ncol = 4))
+geojson2wkt(st, fmt = 2)
+
 
 # multilinestring
+## new format
+multist <- list(MultiLineString = list(
+   matrix(c(0, -2, -4, -1, -3, -5), ncol = 2),
+   matrix(c(1.66, 10.9999, 10.9, 0, -31.5, 3.0, 1.1, 0), ncol = 2)
+ )
+)
+geojson2wkt(multist)
+## old format, warns
 multist <- list(
   type = 'MultiLineString',
   coordinates = list(
@@ -49,7 +102,16 @@ multist <- list(
 )
 geojson2wkt(multist)
 
+
 # polygon
+## new format
+poly <- list(Polygon = list(
+   matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001), ncol = 2),
+   matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201), ncol = 2)
+))
+geojson2wkt(poly)
+geojson2wkt(poly, fmt=6)
+## old format, warns
 poly <- list(
   type = 'Polygon',
   coordinates = list(
@@ -63,6 +125,19 @@ geojson2wkt(poly)
 geojson2wkt(poly, fmt=6)
 
 # multipolygon
+## new format
+mpoly <- list(MultiPolygon = list(
+  list(
+    matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001), ncol = 2),
+    matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2), ncol = 2)
+  ),
+  list(
+    matrix(c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0), ncol = 2),
+    matrix(c(9.0, 10.0, 11.0, 12.0, 1.0, 2.0, 3.0, 4.0, 9.0), ncol = 2)
+  )
+))
+geojson2wkt(mpoly, fmt=2)
+## old format, warns
 mpoly <- list(
   type = 'MultiPolygon',
   coordinates = list(
@@ -100,6 +175,21 @@ mpoly2 <- list(
 geojson2wkt(mpoly2, fmt=1)
 
 # geometrycollection
+## new format
+gmcoll <- list(GeometryCollection = list(
+ list(Point = c(0.0, 1.0)),
+ list(LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
+                           0.0, 1.0, 2.0, 4.0),
+                           ncol = 2)),
+ list(Polygon = list(
+   matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
+     ncol = 2),
+   matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
+     ncol = 2)
+  ))
+))
+geojson2wkt(gmcoll, fmt=0)
+## old format, warns
 gmcoll <- list(
  type = 'GeometryCollection',
  geometries = list(
@@ -118,8 +208,17 @@ gmcoll <- list(
 geojson2wkt(gmcoll, fmt=0)
 
 # Convert geojson as character string to WKT
-str <- '
-{
+# new format
+str <- '{
+   "Point": [
+       -105.01621,
+       39.57422
+   ]
+}'
+geojson2wkt(str)
+
+## old format, warns
+str <- '{
    "type": "Point",
    "coordinates": [
        -105.01621,
@@ -128,12 +227,19 @@ str <- '
 }'
 geojson2wkt(str)
 
+## new format
+str <- '{"LineString:[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
+geojson2wkt(str)
+## old format, warns
 str <-
 '{"type":"LineString","coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
 geojson2wkt(str)
 
 # From a jsonlite json object
 library("jsonlite")
+json <- toJSON(list(Point=c(-105,39)), auto_unbox=TRUE)
+geojson2wkt(json)
+## old format, warns
 json <- toJSON(list(type="Point", coordinates=c(-105,39)), auto_unbox=TRUE)
 geojson2wkt(json)
 
@@ -143,5 +249,5 @@ geojson2wkt(json)
 \url{https://en.wikipedia.org/wiki/Well-known_text}
 }
 \seealso{
-\code{\link[=geojson2wkt_]{geojson2wkt_()}}, \code{\link[=wkt2geojson]{wkt2geojson()}}
+\code{\link[=wkt2geojson]{wkt2geojson()}}
 }

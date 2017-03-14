@@ -128,6 +128,11 @@ geojson2wkt_ <- function(obj, fmt = 16, ...) {
 }
 
 #' @export
+geojson2wkt.default <- function(obj, fmt = 16, ...) {
+  stop("not 'geojson2wkt_' method for ", class(obj), call. = FALSE)
+}
+
+#' @export
 geojson2wkt_.character <- function(obj, fmt = 16, ...) {
   geojson2wkt_(jsonlite::fromJSON(obj, ...), fmt)
 }
