@@ -129,12 +129,12 @@ geojson2wkt_ <- function(obj, fmt = 16, ...) {
 
 #' @export
 geojson2wkt_.character <- function(obj, fmt = 16, ...) {
-  geojson2wkt_(jsonlite::fromJSON(obj, FALSE, ...), fmt)
+  geojson2wkt_(jsonlite::fromJSON(obj, ...), fmt)
 }
 
 #' @export
 geojson2wkt_.json <- function(obj, fmt = 16, ...) {
-  geojson2wkt_(jsonlite::fromJSON(obj, FALSE, ...), fmt)
+  geojson2wkt_(jsonlite::fromJSON(obj, ...), fmt)
 }
 
 #' @export
