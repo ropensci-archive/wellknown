@@ -79,7 +79,7 @@ test_that("wktview works with multilinestring", {
 
   df <- data.frame(long = c(30, 45, 10), lat = c(20, 40, 40))
   df2 <- data.frame(long = c(15, 40, 10), lat = c(5, 10, 20))
-  mline <- multilinestring(df, df2, fmt=0)
+  mline <- multilinestring(df, df2, fmt = 0)
   mline1 <- wktview(mline)
 
   expect_is(mline1, c("leaflet", "htmlwidget"))
