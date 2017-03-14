@@ -21,7 +21,7 @@ Convert GeoJSON-like objects to WKT.
 }
 \examples{
 # point
-point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2))
+point <- list(type = 'Point', coordinates = c(116.4, 45.2))
 geojson2wkt(point)
 
 # multipoint
@@ -143,6 +143,5 @@ geojson2wkt(json)
 \url{https://en.wikipedia.org/wiki/Well-known_text}
 }
 \seealso{
-\code{\link{wkt2geojson}}
+\code{\link{geojson2wkt_}}, \code{\link{wkt2geojson}}
 }
-

@@ -28,4 +28,3 @@ str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
 as_json(wkt2geojson(str))
 as_json(wkt2geojson(str), FALSE)
 }
-
