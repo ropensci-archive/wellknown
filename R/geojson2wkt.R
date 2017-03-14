@@ -7,12 +7,12 @@
 #' MultiPolygon, etc.
 #' @param ... Further args passed on to \code{\link[jsonlite]{fromJSON}} only
 #' in the event of json passed as a character string.
-#' @seealso \code{\link{wkt2geojson}}
+#' @seealso \code{\link{geojson2wkt_}}, \code{\link{wkt2geojson}}
 #' @references \url{https://tools.ietf.org/html/rfc7946}
 #' \url{https://en.wikipedia.org/wiki/Well-known_text}
 #' @examples
 #' # point
-#' point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2))
+#' point <- list(type = 'Point', coordinates = c(116.4, 45.2))
 #' geojson2wkt(point)
 #'
 #' # multipoint
@@ -162,7 +162,7 @@ dump_point <- function(obj, fmt = 16){
 
 dump_multipoint <- function(obj, fmt = 16){
   coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
+  str <- paste0(apply(coords, 1, function(z){
     sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt)), collapse = " "))
   }), collapse = ", ")
   sprintf('MULTIPOINT (%s)', str)
@@ -170,7 +170,7 @@ dump_multipoint <- function(obj, fmt = 16){
 
 dump_linestring <- function(obj, fmt = 16){
   coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
+  str <- paste0(apply(coords, 1, function(z){
     paste0(gsub("\\s", "", format(z, nsmall = fmt)), collapse = " ")
   }), collapse = ", ")
   sprintf('LINESTRING (%s)', str)
@@ -179,7 +179,8 @@ dump_linestring <- function(obj, fmt = 16){
 dump_multilinestring <- function(obj, fmt = 16){
   coords <- obj$coordinates
   str <- paste0(lapply(coords, function(z){
-    sprintf("(%s)", paste0(gsub(",", "", unname(sapply(str_trim_(format(z, nsmall = fmt)), paste0, collapse = " "))), collapse = ", "))
+    sprintf("(%s)", paste0(gsub(",", "",
+                                apply(str_trim_(format(z, nsmall = fmt)), 1, paste0, collapse = " ")), collapse = ", "))
   }), collapse = ", ")
   sprintf('MULTILINESTRING (%s)', str)
 }
@@ -187,7 +188,7 @@ dump_multilinestring <- function(obj, fmt = 16){
 dump_polygon <- function(obj, fmt = 16){
   coords <- obj$coordinates
   str <- paste0(lapply(coords, function(z){
-    sprintf("(%s)", paste0(lapply(z, function(w){
+    sprintf("(%s)", paste0(apply(z, 1, function(w){
       paste0(gsub("\\s", "", format(w, nsmall = fmt)), collapse = " ")
     }), collapse = ", "))
   }), collapse = ", ")
@@ -196,11 +197,11 @@ dump_polygon <- function(obj, fmt = 16){
 
 dump_multipolygon <- function(obj, fmt = 16){
   coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
+  str <- paste0(lapply(coords, function(z) {
     sprintf("(%s)", paste0(sprintf("(%s)", lapply(z, function(w){
-      paste0(gsub(",", "", unname(sapply(str_trim_(format(w, nsmall = fmt)), paste0, collapse = " "))), collapse = ", ")
-    })), collapse=", "))
-  }), collapse=", ")
+      paste0(gsub(",", "", unname(apply(str_trim_(format(w, nsmall = fmt)), 1, paste0, collapse = " "))), collapse = ", ")
+    })), collapse = ", "))
+  }), collapse = ", ")
   sprintf('MULTIPOLYGON (%s)', str)
 }
 
