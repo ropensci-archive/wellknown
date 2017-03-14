@@ -13,11 +13,11 @@ properties <- function(x, style = NULL, popup = NULL){
   if (is.null(style) && is.null(popup)) {
     stop("You must supply a list of named options to either style, popup, or both", call. = FALSE)
   } else {
-    if (is(style, "list") || is(popup, "list")) {
+    if (inherits(style, "list") || inherits(popup, "list")) {
       if (length(style) == 0 && length(popup) == 0)
         stop("At least one of style or popup needs a non-empty list",
              call. = FALSE)
     }
-    modifyList(x, list(properties = list(style = style, popup = popup)))
+    utils::modifyList(x, list(properties = list(style = style, popup = popup)))
   }
 }

@@ -11,7 +11,7 @@
 #' #   as_featurecollection() %>%
 #' #   lawn::view()
 as_featurecollection <- function(x) {
-  if (!is(x, "geojson")) stop("Must be of class geojson", call. = FALSE)
+  if (!inherits(x, "geojson")) stop("Must be of class geojson", call. = FALSE)
   x <- unclass(x)
   if (!"properties" %in% names(x)) x$properties <- list()
   list(type = "FeatureCollection", features = list(x))

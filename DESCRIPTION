@@ -14,8 +14,6 @@ BugReports: https://github.com/ropensci/wellknown/issues
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Imports:
-    methods,
-    utils,
     jsonlite (>= 0.9.21),
     magrittr,
     V8 (>= 1.0.2)
