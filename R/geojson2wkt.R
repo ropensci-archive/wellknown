@@ -159,11 +159,19 @@ geojson2wkt.list <- function(obj, fmt = 16, ...) {
 
 dump_point <- function(obj, fmt = 16){
   coords <- obj$coordinates
+  # if (is.list(coords) || is.vector(coords)) {
+  #   stop("expecting a matrix in 'coordinates', got a ", class(coords))
+  # }
+
   sprintf('POINT (%s)', paste0(format(coords, nsmall = fmt), collapse = " "))
 }
 
 dump_multipoint <- function(obj, fmt = 16){
   coords <- obj$coordinates
+  if (!is.matrix(coords)) {
+    stop("expecting a matrix in 'coordinates', got a ", class(coords))
+  }
+
   str <- paste0(apply(coords, 1, function(z){
     sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt)), collapse = " "))
   }), collapse = ", ")
@@ -172,6 +180,10 @@ dump_multipoint <- function(obj, fmt = 16){
 
 dump_linestring <- function(obj, fmt = 16){
   coords <- obj$coordinates
+  if (!is.matrix(coords)) {
+    stop("expecting a matrix in 'coordinates', got a ", class(coords))
+  }
+
   str <- paste0(apply(coords, 1, function(z){
     paste0(gsub("\\s", "", format(z, nsmall = fmt)), collapse = " ")
   }), collapse = ", ")
@@ -180,6 +192,13 @@ dump_linestring <- function(obj, fmt = 16){
 
 dump_multilinestring <- function(obj, fmt = 16){
   coords <- obj$coordinates
+  if (!is.list(coords)) {
+    stop("your top most element must be a list")
+  }
+  if (!all(vapply(coords, is.matrix, TRUE))) {
+    stop("expecting matrices for all 'coordinates' elements")
+  }
+
   str <- paste0(lapply(coords, function(z){
     sprintf("(%s)", paste0(gsub(",", "",
                                 apply(str_trim_(format(z, nsmall = fmt)), 1, paste0, collapse = " ")), collapse = ", "))
@@ -189,6 +208,13 @@ dump_multilinestring <- function(obj, fmt = 16){
 
 dump_polygon <- function(obj, fmt = 16){
   coords <- obj$coordinates
+  if (!is.list(coords)) {
+    stop("your top most element must be a list")
+  }
+  if (!all(vapply(coords, is.matrix, TRUE))) {
+    stop("expecting matrices for all 'coordinates' elements")
+  }
+
   str <- paste0(lapply(coords, function(z){
     sprintf("(%s)", paste0(apply(z, 1, function(w){
       paste0(gsub("\\s", "", format(w, nsmall = fmt)), collapse = " ")

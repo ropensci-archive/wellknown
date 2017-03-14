@@ -178,7 +178,7 @@ load_linestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     do.call("rbind", lapply(pairs, function(x) {
       tmp <- if (numeric) as.numeric(nozero(x), fmt) else format_num(nozero(x), fmt)
-      matrix(tmp, ncol = 2)
+      matrix(tmp, ncol = length(tmp))
     }))
   })
   coords <- do.call("rbind", coords)

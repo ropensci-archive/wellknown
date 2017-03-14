@@ -91,7 +91,7 @@ test_that("wktview works with multilinestring", {
 # from geometrycollection  ----------------
 # leaflet is not working with geometrycollection yet
 # seems like it should though cause leaflet supports the geometry
-test_that("wktview works with geometrycollection", {
+#test_that("wktview works with geometrycollection", {
 #   skip_if_not_installed("leaflet")
 #
 #   gc <- geometrycollection(
@@ -100,7 +100,7 @@ test_that("wktview works with geometrycollection", {
 #   )
 #
 #   expect_is(wktview(gc), c("leaflet", "htmlwidget"))
-})
+#})
 
 # wktview fails well  ----------------
 test_that("wktview fails well", {
