@@ -88,9 +88,10 @@ geojson2wkt(point)
 
 
 ```r
-mp <- list(type = 'MultiPoint',
-           coordinates=list( c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)
-))
+mp <- list(
+  type = 'MultiPoint',
+  coordinates = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18), ncol = 2)
+)
 geojson2wkt(mp)
 #> [1] "MULTIPOINT ((100.0000000000000000 3.1010000000000000), (101.0000000000000000 2.1000000000000001), (3.1400000000000001 2.1800000000000002))"
 ```
@@ -99,66 +100,90 @@ geojson2wkt(mp)
 
 
 ```r
-st <- list(type = 'LineString',
-            coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
-                              c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))
+st <- list(
+  type = 'LineString',
+  coordinates = matrix(c(0.0, 2.0, 4.0, 5.0,
+                         0.0, 1.0, 2.0, 4.0), ncol = 2)
+)
 geojson2wkt(st, fmt=0)
-#> [1] "LINESTRING (0 0 10, 2 1 20, 4 2 30, 5 4 40)"
+#> [1] "LINESTRING (0 0, 2 1, 4 2, 5 4)"
 ```
 
 ### Multilinestring
 
 
 ```r
-multist <- list(type = 'MultiLineString',
-      coordinates = list(
-        list(c(0.0, -1.0), c(-2.0, -3.0), c(-4.0, -5.0)),
-        list(c(1.66, -31023.5), c(10000.9999, 3.0), c(100.9, 1.1), c(0.0, 0.0))
-      ))
+multist <- list(
+  type = 'MultiLineString',
+  coordinates = list(
+   matrix(c(0, -2, -4, -1, -3, -5), ncol = 2),
+   matrix(c(1.66, 10.9999, 10.9, 0, -31.5, 3.0, 1.1, 0), ncol = 2)
+ )
+)
 geojson2wkt(multist)
-#> [1] "MULTILINESTRING ((0.0000000000000000 -1.0000000000000000, -2.0000000000000000 -3.0000000000000000, -4.0000000000000000 -5.0000000000000000), (1.6599999999999999 -31023.5000000000000000, 10000.9999000000007072 3.0000000000000000, 100.9000000000000057 1.1000000000000001, 0.0000000000000000 0.0000000000000000))"
+#> [1] "MULTILINESTRING ((0.0000000000000000 -1.0000000000000000, -2.0000000000000000 -3.0000000000000000, -4.0000000000000000 -5.0000000000000000), (1.6599999999999999 -31.5000000000000000, 10.9999000000000002 3.0000000000000000, 10.9000000000000004 1.1000000000000001, 0.0000000000000000 0.0000000000000000))"
 ```
 
 ### Polygon
 
 
 ```r
-poly <- list(type = 'Polygon',
-      coordinates=list(
-        list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)),
-        list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801), c(100.201, 0.201))
-))
+poly <- list(
+  type = 'Polygon',
+  coordinates = list(
+    matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
+      ncol = 2),
+    matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
+      ncol = 2)
+  )
+)
 geojson2wkt(poly)
-#> [1] "POLYGON ((100.0010000000000048 0.0010000000000000, 101.1234500000000054 0.0010000000000000, 101.0010000000000048 1.0009999999999999, 100.0010000000000048 0.0010000000000000), (100.2009999999999934 0.2010000000000000, 100.8010000000000019 0.2010000000000000, 100.8010000000000019 0.8010000000000000, 100.2009999999999934 0.2010000000000000))"
+#> [1] "POLYGON ((100.0010000000000048 0.0010000000000000, 101.0999999999999943 0.0010000000000000, 101.0010000000000048 1.0009999999999999, 100.0010000000000048 0.0010000000000000), (100.2009999999999934 0.2010000000000000, 100.8010000000000019 0.2010000000000000, 100.8010000000000019 0.8010000000000000, 100.2009999999999934 0.2010000000000000))"
 ```
 
 ### Multipolygon
 
 
 ```r
-mpoly <- list(type = "MultiPolygon",
-              coordinates = list(list(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20))),
-                                 list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
-              )
+mpoly <- list(
+  type = 'MultiPolygon',
+  coordinates = list(
+    list(
+      matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001), ncol = 2),
+      matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2), ncol = 2)
+    ),
+    list(
+      matrix(c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0), ncol = 3),
+      matrix(c(9.0, 10.0, 11.0, 12.0, 1.0, 2.0, 3.0, 4.0, 9.0), ncol = 3)
+    )
+  )
+)
 geojson2wkt(mpoly, fmt=1)
-#> [1] "MULTIPOLYGON (((30.0 20.0, 45.0 40.0, 10.0 40.0, 30.0 20.0)), ((15.0 5.0, 40.0 10.0, 10.0 20.0, 5.0 10.0, 15.0 5.0)))"
+#> [1] "MULTIPOLYGON (((100.000 0.001, 101.000 0.001, 101.000 1.001, 100.000 0.001), (100.2 0.2, 100.8 0.2, 100.8 0.8, 100.2 0.2)), ((1.0 4.0 7.0, 2.0 5.0 8.0, 3.0 6.0 1.0), (9.0 12.0 3.0, 10.0 1.0 4.0, 11.0 2.0 9.0)))"
 ```
 
 ### GeometryCollection
 
 
 ```r
-gmcoll <- list(type = 'GeometryCollection',
-   geometries = list(
-     list(type = "Point", coordinates = list(0.0, 1.0)),
-     list(type = 'LineString', coordinates = list(c(-100.0, 0.0), c(-101.0, -1.0))),
-     list(type = 'MultiPoint',
-          'coordinates' = list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18))
-          )
-     )
-   )
+## old format, warns
+gmcoll <- list(
+ type = 'GeometryCollection',
+ geometries = list(
+   list(type = 'Point', coordinates = c(0.0, 1.0)),
+   list(type = 'LineString', coordinates = matrix(c(0.0, 2.0, 4.0, 5.0,
+                           0.0, 1.0, 2.0, 4.0),
+                           ncol = 2)),
+   list(type = 'Polygon', coordinates = list(
+     matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
+       ncol = 2),
+     matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
+       ncol = 2)
+  ))
+ )
+)
 geojson2wkt(gmcoll, fmt=0)
-#> [1] "GEOMETRYCOLLECTION (POINT (0 1), LINESTRING (-100 0, -101 -1), MULTIPOINT ((100.000 3.101), (101.0 2.1), (3.14 2.18)))"
+#> [1] "GEOMETRYCOLLECTION (POINT (0 1), LINESTRING (0 0, 2 1, 4 2, 5 4), POLYGON ((100.001 0.001, 101.100 0.001, 101.001 1.001, 100.001 0.001), (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)))"
 ```
 
 ### Convert json or character objects
@@ -168,21 +193,21 @@ You can convert directly from an object of class `json`, which is output from `j
 
 ```r
 library("jsonlite")
-(json <- toJSON(list(type="Point", coordinates=c(-105,39))))
-#> {"type":["Point"],"coordinates":[-105,39]}
+(json <- toJSON(list(type="Point", coordinates=c(-105,39)), auto_unbox=TRUE))
+#> {"type":"Point","coordinates":[-105,39]}
 ```
 
 
 ```r
 geojson2wkt(json)
-#> [1] "POINT (-105 39)"
+#> [1] "POINT (-105   39)"
 ```
 
 And you can convert from a geojson character string:
 
 
 ```r
-str <- '{"type":["LineString"],"coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
+str <- '{"type":"LineString","coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
 geojson2wkt(str)
 #> [1] "LINESTRING (0 0 10, 2 1 20, 4 2 30, 5 4 40)"
 ```
@@ -235,12 +260,12 @@ wkt2geojson(str, feature=FALSE)
 #> [1] "MultiPoint"
 #> 
 #> $coordinates
-#> $coordinates[[1]]
-#> [1] 100.000   3.101
+#>        [,1]  [,2]
+#> [1,] 100.00 3.101
+#> [2,] 101.00 2.100
+#> [3,]   3.14 2.180
 #> 
-#> $coordinates[[2]]
-#> [1] 101.0   2.1
-#> 
+#> attr(,"class")
 ...
 ```
 
@@ -255,11 +280,11 @@ wkt2geojson(str, feature=FALSE)
 #> 
 #> $coordinates
 #> $coordinates[[1]]
-#> $coordinates[[1]][[1]]
-#> [1] 100.0   0.1
-#> 
-#> $coordinates[[1]][[2]]
-#> [1] 101.1   0.3
+#>       [,1] [,2]
+#> [1,] 100.0  0.1
+#> [2,] 101.1  0.3
+#> [3,] 101.0  0.5
+#> [4,] 100.0  0.1
 ...
 ```
 
@@ -276,10 +301,10 @@ wkt2geojson(str, feature=FALSE)
 #> $coordinates
 #> $coordinates[[1]]
 #> $coordinates[[1]][[1]]
-#> $coordinates[[1]][[1]][[1]]
-#> [1] 40 40
-#> 
-#> $coordinates[[1]][[1]][[2]]
+#>      [,1] [,2]
+#> [1,]   40   40
+#> [2,]   20   45
+#> [3,]   45   30
 ...
 ```
 
@@ -292,12 +317,12 @@ wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
 #> [1] "LineString"
 #> 
 #> $coordinates
-#> $coordinates[[1]]
-#> [1]  0 -1
+#>      [,1] [,2]
+#> [1,]    0   -1
+#> [2,]   -2   -3
+#> [3,]   -4    5
 #> 
-#> $coordinates[[2]]
-#> [1] -2 -3
-#> 
+#> attr(,"class")
 ...
 ```
 
