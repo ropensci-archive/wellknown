@@ -220,7 +220,7 @@
 #' geojson2wkt(str)
 #'
 #' ## new format
-#' str <- '{"LineString:[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
+#' str <- '{"LineString":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
 #' geojson2wkt(str)
 #' ## old format, warns
 #' str <-
