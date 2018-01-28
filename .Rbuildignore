@@ -9,3 +9,4 @@ Makefile
 ^README\.Rmd$
 NEWS\.md
 .V8history
+^codemeta\.json$
