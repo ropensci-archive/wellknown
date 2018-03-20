@@ -2,8 +2,8 @@
 % Please edit documentation in R/wkb.R
 \name{wkb}
 \alias{wkb}
-\alias{wkb_wkt}
 \alias{wkt_wkb}
+\alias{wkb_wkt}
 \title{Convert WKT to WKB}
 \usage{
 wkt_wkb(x)
@@ -54,4 +54,3 @@ wkb_wkt(x)
 (x <- wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))"))
 wkb_wkt(x)
 }
-

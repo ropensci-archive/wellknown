@@ -145,4 +145,3 @@ geojson2wkt(json)
 \seealso{
 \code{\link{wkt2geojson}}
 }
-

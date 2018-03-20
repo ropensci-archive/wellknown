@@ -99,4 +99,3 @@ wkt2geojson(str)
 \seealso{
 \code{\link{geojson2wkt}}
 }
-

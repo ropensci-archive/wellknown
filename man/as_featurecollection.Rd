@@ -23,4 +23,3 @@ str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180),
 #   as_featurecollection() \%>\%
 #   lawn::view()
 }
-

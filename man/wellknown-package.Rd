@@ -2,8 +2,8 @@
 % Please edit documentation in R/wellknown-package.R
 \docType{package}
 \name{wellknown-package}
-\alias{wellknown}
 \alias{wellknown-package}
+\alias{wellknown}
 \title{WKT to GeoJSON and vice versa}
 \description{
 WKT to GeoJSON and vice versa
@@ -12,4 +12,3 @@ WKT to GeoJSON and vice versa
 Scott Chamberlain \email{myrmecocystus@gmail.com}
 }
 \keyword{package}
-
