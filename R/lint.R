@@ -2,7 +2,7 @@
 #'
 #' @export
 #' @param str A WKT string
-#' @return A logical (\code{TRUE} or \code{FALSE})
+#' @return A logical (`TRUE` or `FALSE`)
 #' @details This function uses R regex - there's no error messages about
 #' what is wrong in the WKT.
 #' @examples

@@ -5,8 +5,8 @@
 #' @template fmt
 #' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
 #' MultiPolygon, etc.
-#' @details You can create nested polygons with \code{list} and
-#' \code{data.frame} inputs, but not from \code{numeric} inputs. See examples.
+#' @details You can create nested polygons with `list` and
+#' `data.frame` inputs, but not from `numeric` inputs. See examples.
 #' @family R-objects
 #' @examples
 #' ## empty polygon

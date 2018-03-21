@@ -4,10 +4,10 @@
 #' @template fmt
 #' @param x Input, a geojson character string or list
 #' @param center (numeric) A length two vector of the form:
-#' \code{longitude, latitude}
+#' `longitude, latitude`
 #' @param zoom (integer) A number between 1 and 18 (1 zoomed out, 18 zoomed in)
-#' @seealso \code{\link{as_featurecollection}}
-#' @return Opens a map with the geojson object(s) using \code{leaflet}
+#' @seealso [as_featurecollection()]
+#' @return Opens a map with the geojson object(s) using `leaflet`
 #' @examples \dontrun{
 #' # point
 #' str <- "POINT (-116.4000000000000057 45.2000000000000028)"

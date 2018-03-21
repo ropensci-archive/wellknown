@@ -5,8 +5,8 @@
 #' @template fmt
 #' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
 #' MultiPolygon, etc.
-#' @details There is no \code{numeric} input option for multipolygon. There
-#' is no way as of yet to make a nested multipolygon with \code{data.frame}
+#' @details There is no `numeric` input option for multipolygon. There
+#' is no way as of yet to make a nested multipolygon with `data.frame`
 #' input, but you can do so with list input. See examples.
 #' @family R-objects
 #' @examples

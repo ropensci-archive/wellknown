@@ -2,10 +2,10 @@
 #'
 #' @export
 #' @name wkb
-#' @param x A \code{character} string representing a WKT object, or an object
-#' of class \code{raw}, representing a WKB object
-#' @return \code{wkt_wkb} returns an object of class \code{raw}, a WKB
-#' reprsentation. \code{wkb_wkt} returns an object of class \code{character},
+#' @param x A `character` string representing a WKT object, or an object
+#' of class `raw`, representing a WKB object
+#' @return `wkt_wkb` returns an object of class `raw`, a WKB
+#' reprsentation. `wkb_wkt` returns an object of class `character`,
 #' a WKT representation
 #' @examples
 #' # WKT to WKB
