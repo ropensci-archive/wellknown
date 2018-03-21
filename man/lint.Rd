@@ -36,4 +36,3 @@ lint("CIRCULARSTRING (1 5, 6 2, 7 3)")
 lint("CIRCULARSTRING (1 5, 6 2, 7 3, 5 6, 4 3)")
 lint('COMPOUNDCURVE (CIRCULARSTRING (1 0, 0 1, -1 0), (-1 0, 2 0))')
 }
-

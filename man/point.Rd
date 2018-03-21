@@ -73,10 +73,9 @@ point(data.frame(1, 2, 3, 4))
 point(data.frame(1:3, 4:6, 7:9, 10:12))
 }
 \seealso{
-Other R.objects: \code{\link{circularstring}},
+Other R-objects: \code{\link{circularstring}},
   \code{\link{geometrycollection}},
   \code{\link{linestring}}, \code{\link{multilinestring}},
   \code{\link{multipoint}}, \code{\link{multipolygon}},
   \code{\link{polygon}}
 }
-

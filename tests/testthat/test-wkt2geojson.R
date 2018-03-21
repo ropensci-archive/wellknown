@@ -15,28 +15,50 @@ test_that("convert multipoint works", {
   expect_is(b, "geojson")
   expect_that(typeof(b), equals("list"))
   expect_match(b$geometry$type, "MultiPoint")
-  expect_equal(unclass(b), list(type="Feature", geometry=list(type = 'MultiPoint', coordinates=list(c(100.000, 3.101), c(101.0, 2.1), c(3.14, 2.18)))))
+  expect_equal(unclass(b),
+               list(
+                 type = "Feature",
+                 geometry = list(
+                   type = 'MultiPoint',
+                   coordinates = matrix(c(100.00, 101.00, 3.14, 3.101, 2.100, 2.180), ncol = 2)
+                 )
+               )
+  )
 })
 
 test_that("convert linestring works", {
-  st <- "LINESTRING (0 0 10, 2 1 20, 4 2 30, 5 4 40)"
+  #st <- "LINESTRING (0 0 10, 2 1 20, 4 2 30, 5 4 40)"
+  st <- "LINESTRING (0 0, 2 1, 4 2, 5 4)"
   c <- wkt2geojson(st, fmt = 1)
   expect_is(c, "geojson")
   expect_that(typeof(c), equals("list"))
   expect_match(c$geometry$type, "LineString")
-  expect_equal(unclass(c), list(type="Feature", geometry=list(type = 'LineString',
-                        coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
-                                           c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))))
+  expect_equal(unclass(c),
+               list(
+                 type = "Feature",
+                 geometry = list(
+                   type = 'LineString',
+                   coordinates = matrix(c(0, 2, 4, 5, 0, 1, 2, 4), ncol = 2)
+                 )
+               )
+  )
 })
 
 
 test_that("convert polygon works", {
   poly <- "POLYGON ((100 1, 104 2, 101 3, 100 1), (100 1, 103 2, 101 5, 100 1))"
-  tomatch <- list(type="Feature", geometry=list(type = 'Polygon',
-                   coordinates=list(
-                     list(c(100, 1), c(104, 2), c(101, 3), c(100, 1)),
-                     list(c(100, 1), c(103, 2), c(101, 5), c(100, 1))
-                   )))
+  tomatch <- list(
+    type = "Feature",
+    geometry = list(
+      type = 'Polygon',
+      coordinates = list(
+        matrix(c(100, 104, 101, 100, 1, 2, 3, 1),
+           ncol = 2),
+        matrix(c(100, 103, 101, 100, 1, 2, 5, 1),
+           ncol = 2)
+      )
+    )
+  )
   e <- wkt2geojson(poly, fmt = 0)
   expect_is(e, "geojson")
   expect_equal(typeof(e), "list")
@@ -57,8 +79,10 @@ test_that("errors in wkt specification handled correctly", {
   # mis-spelled wkt type is NOT okay
   expect_error(wkt2geojson("POIN(116.4000000000000057 45.2000000000000028"), "EXPR must be a length 1 vector")
   # no spacing between wkt type and coords is okay
+  ## 3D examples
   expect_is(wkt2geojson("LINESTRING(0 0 10, 2 1 20, 4 2 30, 5 4 40)"), "geojson")
   # no spacing between wkt type and coords is okay
+  ## 3D examples
   expect_is(wkt2geojson("LINESTRING(0 0 10, 2 1 20, 4 2 30, 5 4 40)"), "geojson")
 })
 

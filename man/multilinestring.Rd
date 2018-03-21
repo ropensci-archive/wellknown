@@ -55,10 +55,9 @@ multilinestring(polys, fmt=2) \%>\%
   wktview(zoom=3)
 }
 \seealso{
-Other R.objects: \code{\link{circularstring}},
+Other R-objects: \code{\link{circularstring}},
   \code{\link{geometrycollection}},
   \code{\link{linestring}}, \code{\link{multipoint}},
   \code{\link{multipolygon}}, \code{\link{point}},
   \code{\link{polygon}}
 }
-

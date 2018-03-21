@@ -51,10 +51,9 @@ linestring(mat2, fmt=1)
 linestring(list(c(100.000, 0.000), c(101.000, 1.000)), fmt=2)
 }
 \seealso{
-Other R.objects: \code{\link{circularstring}},
+Other R-objects: \code{\link{circularstring}},
   \code{\link{geometrycollection}},
   \code{\link{multilinestring}}, \code{\link{multipoint}},
   \code{\link{multipolygon}}, \code{\link{point}},
   \code{\link{polygon}}
 }
-

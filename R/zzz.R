@@ -47,7 +47,7 @@ centroid <- function(x, center){
     if ("geometry" %in% names(x)) {
       obj <- x$geometry$coordinates
       # tryasnum <- tryCatch(as.numeric(obj), warning = function(w) w)
-      if (!is(obj, "list")) {
+      if (!inherits(obj, "list")) {
         obj
       } else {
         # sapply(obj, function(z) sapply(z, function(b) b[2]))
