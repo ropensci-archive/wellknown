@@ -79,7 +79,7 @@ library("wellknown")
 
 
 ```r
-point <- list(type = 'Point', 'coordinates' = c(116.4, 45.2, 11.1))
+point <- list(Point = c(116.4, 45.2, 11.1))
 geojson2wkt(point)
 #> [1] "POINT (116.4000000000000057  45.2000000000000028  11.0999999999999996)"
 ```
@@ -89,8 +89,8 @@ geojson2wkt(point)
 
 ```r
 mp <- list(
-  type = 'MultiPoint',
-  coordinates = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18), ncol = 2)
+  MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18), 
+    ncol = 2)
 )
 geojson2wkt(mp)
 #> [1] "MULTIPOINT ((100.0000000000000000 3.1010000000000000), (101.0000000000000000 2.1000000000000001), (3.1400000000000001 2.1800000000000002))"
@@ -101,8 +101,7 @@ geojson2wkt(mp)
 
 ```r
 st <- list(
-  type = 'LineString',
-  coordinates = matrix(c(0.0, 2.0, 4.0, 5.0,
+  LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
                          0.0, 1.0, 2.0, 4.0), ncol = 2)
 )
 geojson2wkt(st, fmt=0)
@@ -114,8 +113,7 @@ geojson2wkt(st, fmt=0)
 
 ```r
 multist <- list(
-  type = 'MultiLineString',
-  coordinates = list(
+  MultiLineString = list(
    matrix(c(0, -2, -4, -1, -3, -5), ncol = 2),
    matrix(c(1.66, 10.9999, 10.9, 0, -31.5, 3.0, 1.1, 0), ncol = 2)
  )
@@ -129,8 +127,7 @@ geojson2wkt(multist)
 
 ```r
 poly <- list(
-  type = 'Polygon',
-  coordinates = list(
+  Polygon = list(
     matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
       ncol = 2),
     matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
@@ -146,8 +143,7 @@ geojson2wkt(poly)
 
 ```r
 mpoly <- list(
-  type = 'MultiPolygon',
-  coordinates = list(
+  MultiPolygon = list(
     list(
       matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001), ncol = 2),
       matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2), ncol = 2)
@@ -166,10 +162,8 @@ geojson2wkt(mpoly, fmt=1)
 
 
 ```r
-## old format, warns
 gmcoll <- list(
- type = 'GeometryCollection',
- geometries = list(
+ GeometryCollection = list(
    list(type = 'Point', coordinates = c(0.0, 1.0)),
    list(type = 'LineString', coordinates = matrix(c(0.0, 2.0, 4.0, 5.0,
                            0.0, 1.0, 2.0, 4.0),
@@ -193,8 +187,8 @@ You can convert directly from an object of class `json`, which is output from `j
 
 ```r
 library("jsonlite")
-(json <- toJSON(list(type="Point", coordinates=c(-105,39)), auto_unbox=TRUE))
-#> {"type":"Point","coordinates":[-105,39]}
+(json <- toJSON(list(Point = c(-105, 39)), auto_unbox = TRUE))
+#> {"Point":[-105,39]}
 ```
 
 
