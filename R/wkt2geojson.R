@@ -7,6 +7,9 @@
 #' MultiPolygon, etc.
 #' @param feature (logical) Make a feature geojson object. Default: `TRUE`
 #' @param numeric (logical) Give back values as numeric. Default: `TRUE`
+#' @param simplify (logical) Attempt to simplify from a multi- geometry type 
+#' to a single type. Applies to multi features only. Default: `FALSE` 
+#' 
 #' @details Should be robust against a variety of typing errors, including
 #' extra spaces between coordinates, no space between WKT type and coordinates.
 #' However, some things won't pass, including lowercase WKT types, no
@@ -19,12 +22,23 @@
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
 #' wkt2geojson(str, numeric=FALSE)
+#' wkt2geojson("POINT (-116 45)")
+#' wkt2geojson("POINT (-116 45 0)")
+#' wkt2geojson("POINT (-116 45 0 1)")
 #'
 #' # multipoint
 #' str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
 #' wkt2geojson(str, fmt = 2)
 #' wkt2geojson(str, fmt = 2, feature=FALSE)
 #' wkt2geojson(str, numeric=FALSE)
+#' wkt2geojson("MULTIPOINT ((100 3), (101 2), (3 2))")
+#' wkt2geojson("MULTIPOINT ((100 3 0), (101 2 0), (3 2 0))")
+#' wkt2geojson("MULTIPOINT ((100 3 0 1), (101 2 0 1), (3 2 0 1))") 
+#' 
+#' ## simplify
+#' wkt2geojson("MULTIPOINT ((100 3))", simplify = FALSE)
+#' wkt2geojson("MULTIPOINT ((100 3))", simplify = TRUE)
+#' 
 #'
 #' # polygon
 #' str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
@@ -39,6 +53,12 @@
 #' wkt2geojson(str)
 #' wkt2geojson(str, feature=FALSE)
 #' wkt2geojson(str, numeric=FALSE)
+#' 
+#' # simplify multipolygon to polygon if possible
+#' str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)))"
+#' wkt2geojson(str, simplify = FALSE)
+#' wkt2geojson(str, simplify = TRUE)
+#' 
 #'
 #' # linestring
 #' str <- "LINESTRING (100.000 0.000, 101.000 1.000)"
@@ -61,6 +81,12 @@
 #'    (-105.0 39.5, -105.0 39.5, -105.0 39.5, -105.0 39.5))"
 #' wkt2geojson(str)
 #' wkt2geojson(str, numeric=FALSE)
+#' 
+#' # simplify multilinestring to linestring if possible
+#' str <- "MULTILINESTRING ((30 1, 40 30, 50 20))"
+#' wkt2geojson(str, simplify = FALSE)
+#' wkt2geojson(str, simplify = TRUE)
+#' 
 #'
 #' # Geometrycollection
 #' str <- "GEOMETRYCOLLECTION (
@@ -81,15 +107,19 @@
 #' str <- "point (-116.4000000000000057 45.2000000000000028)"
 #' wkt2geojson(str)
 
-wkt2geojson <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
+wkt2geojson <- function(str, fmt = 16, feature = TRUE, numeric = TRUE, 
+  simplify = FALSE) {
+
   type <- get_type(str, ignore_case = TRUE)
   res <- switch(type,
          Point = load_point(str, fmt, feature, numeric),
-         Multipoint = load_multipoint(str, fmt, feature, numeric),
+         Multipoint = load_multipoint(str, fmt, feature, numeric, simplify),
          Polygon = load_polygon(str, fmt, feature, numeric),
-         Multipolygon = load_multipolygon(str, fmt, feature, numeric),
+         Multipolygon = load_multipolygon(str, fmt, feature, numeric, 
+            simplify),
          Linestring = load_linestring(str, fmt, feature, numeric),
-         Multilinestring = load_multilinestring(str, fmt, feature, numeric),
+         Multilinestring = load_multilinestring(str, fmt, feature, numeric, 
+            simplify),
          Geometrycollection = load_geometrycollection(str, fmt, feature,
                                                       numeric)
   )
@@ -124,15 +154,20 @@ format_num <- function(x, fmt) {
   sprintf(paste0("%.", fmt, "f"), as.numeric(x))
 }
 
-load_multipoint <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
+load_multipoint <- function(str, fmt = 16, feature = TRUE, numeric = TRUE, 
+  simplify = FALSE) {
+
   str_coord <- str_trim_(gsub("MULTIPOINT\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),")[[1]]
+  if (simplify) {
+    if (length(str_coord) == 1) return(load_point(str_coord, fmt, feature, numeric))
+  }
   coords <- unname(lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     do.call("rbind", lapply(pairs, function(x) {
       tmp <- if (numeric) as.numeric(nozero(x), fmt) else format_num(nozero(x), fmt)
-      matrix(tmp, ncol = 2)
+      matrix(tmp, ncol = length(tmp))
     }))
   }))
   coords <- do.call("rbind", coords)
@@ -147,23 +182,28 @@ load_polygon <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
     pairs <- strsplit(strsplit(gsub("\\(|\\)", "", str_trim_(z)), ",|,\\s")[[1]], "\\s")
     do.call("rbind", lapply(pairs, function(x) {
       tmp <- if (numeric) as.numeric(nozero(x), fmt) else format_num(nozero(x), fmt)
-      matrix(tmp, ncol = 2)
+      matrix(tmp, ncol = length(tmp))
     }))
   })
   iffeat('Polygon', coords, feature)
 }
 
-load_multipolygon <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
+load_multipolygon <- function(str, fmt = 16, feature = TRUE, numeric = TRUE, 
+  simplify = FALSE){
+
   str <- gsub("\n", "", str)
   str_coord <- str_trim_(gsub("MULTIPOLYGON\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\)),")[[1]]
+  if (simplify) {
+    if (length(str_coord) == 1) return(load_polygon(str_coord, fmt, feature, numeric))
+  }
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit( gsub("\\(|\\)", "", strsplit(str_trim_(z), "\\),")[[1]]), ",|,\\s")
     lapply(pairs, function(zz){
       do.call("rbind", unname(lapply(sapply(str_trim_(zz), strsplit, split = "\\s"), function(x) {
         tmp <- if (numeric) as.numeric(nozero(x), fmt) else format_num(nozero(x), fmt)
-        matrix(tmp, ncol = 2)
+        matrix(tmp, ncol = length(tmp))
       })))
     })
   })
@@ -185,15 +225,20 @@ load_linestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
   iffeat('LineString', coords, feature)
 }
 
-load_multilinestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE){
+load_multilinestring <- function(str, fmt = 16, feature = TRUE, numeric = TRUE, 
+  simplify = FALSE) {
+
   str_coord <- str_trim_(gsub("MULTILINESTRING\\s?", "", str, ignore.case = TRUE))
   str_coord <- gsub("^\\(|\\)$", "", str_coord)
   str_coord <- strsplit(str_coord, "\\),|\\)\\(")[[1]]
+  if (simplify) {
+    if (length(str_coord) == 1) return(load_linestring(str_coord, fmt, feature, numeric))
+  }
   coords <- lapply(str_coord, function(z){
     pairs <- strsplit(strsplit(str_trim_(gsub("\\(|\\)", "", str_trim_(z))), ",|,\\s")[[1]], "\\s")
     do.call("rbind", lapply(pairs, function(x) {
       tmp <- if (numeric) as.numeric(nozero(x), fmt) else format_num(nozero(x), fmt)
-      matrix(tmp, ncol = 2)
+      matrix(tmp, ncol = length(tmp))
     }))
   })
   iffeat('MultiLineString', coords, feature)
