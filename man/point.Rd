@@ -4,7 +4,7 @@
 \alias{point}
 \title{Make WKT point objects}
 \usage{
-point(..., fmt = 16, third = "2d")
+point(..., fmt = 16, third = "z")
 }
 \arguments{
 \item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
@@ -13,18 +13,21 @@ MultiPolygon, etc.}
 \item{fmt}{Format string which indicates the number of digits to display
 after the decimal point when formatting coordinates. Max: 20}
 
-\item{third}{if "2d", assign a "m" value for linear reference system,
-and if "3d" assign a "z" value for three-dimenionsal system}
+\item{third}{(character) Only applicable when there are three dimensions.
+If \code{m}, assign a \code{M} value for a measurement, and if \code{z} assign a
+\code{Z} value for three-dimenionsal system. Case is ignored. An \code{M} value
+represents  a measurement, while a \code{Z} value usually represents altitude
+(but can be something like depth in a water based location).}
 }
 \description{
 Make WKT point objects
 }
 \details{
 The \code{third} parameter is used only when there are sets of
-three points, and  you can toggle whether the object gets a Z or M.
+three points, and you can toggle whether the object gets a \code{Z} or \code{M}.
 
-When four points are included, the object automatically gets assigned
-ZM.
+When four points are included, the object automatically gets
+assigned \code{ZM}
 }
 \examples{
 ## empty point
@@ -55,15 +58,15 @@ point(list(c(100.0, 3.101)))
 point(list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
 
 ## when a 3rd point is included
-point(1:3, third = "2d")
-point(1:3, third = "3d")
-point(list(1:3, 4:6), third = "2d")
-point(list(1:3, 4:6), third = "3d")
-point(matrix(1:9, ncol = 3), third = "2d")
-point(matrix(1:9, ncol = 3), third = "3d")
-point(data.frame(1, 2, 3), third = "2d")
-point(data.frame(1, 2, 3), third = "3d")
-point(data.frame(1:3, 4:6, 7:9), third = "2d")
+point(1:3, third = "m")
+point(1:3, third = "z")
+point(list(1:3, 4:6), third = "m")
+point(list(1:3, 4:6), third = "z")
+point(matrix(1:9, ncol = 3), third = "m")
+point(matrix(1:9, ncol = 3), third = "z")
+point(data.frame(1, 2, 3), third = "m")
+point(data.frame(1, 2, 3), third = "z")
+point(data.frame(1:3, 4:6, 7:9), third = "m")
 
 ## when a 4th point is included
 point(1:4)
