@@ -116,3 +116,5 @@ pick3 <- function(x) {
 count_regex <- function(str, x) {
   length(gregexpr(x, str)[[1]])
 }
+
+`%||%` <- function (x, y) if (is.null(x) || length(x) == 0) y else x
