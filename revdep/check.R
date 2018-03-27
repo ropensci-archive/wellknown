@@ -1,0 +1,2 @@
+library("revdepcheck")
+revdepcheck::revdep_check(num_workers = 4)

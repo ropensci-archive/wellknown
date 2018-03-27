@@ -3,3 +3,7 @@
 .RData
 .DS_Store
 .V8history
+revdep/checks.noindex/
+revdep/data.sqlite
+revdep/library.noindex/
+

@@ -10,3 +10,4 @@ Makefile
 NEWS\.md
 .V8history
 ^codemeta\.json$
+^revdep$
