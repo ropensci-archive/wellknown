@@ -4,7 +4,7 @@
 \alias{point}
 \title{Make WKT point objects}
 \usage{
-point(..., fmt = 16)
+point(..., fmt = 16, third = "z")
 }
 \arguments{
 \item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
@@ -12,9 +12,22 @@ MultiPolygon, etc.}
 
 \item{fmt}{Format string which indicates the number of digits to display
 after the decimal point when formatting coordinates. Max: 20}
+
+\item{third}{(character) Only applicable when there are three dimensions.
+If \code{m}, assign a \code{M} value for a measurement, and if \code{z} assign a
+\code{Z} value for three-dimenionsal system. Case is ignored. An \code{M} value
+represents  a measurement, while a \code{Z} value usually represents altitude
+(but can be something like depth in a water based location).}
 }
 \description{
 Make WKT point objects
+}
+\details{
+The \code{third} parameter is used only when there are sets of
+three points, and you can toggle whether the object gets a \code{Z} or \code{M}.
+
+When four points are included, the object automatically gets
+assigned \code{ZM}
 }
 \examples{
 ## empty point
@@ -43,6 +56,24 @@ point(list(c(100.0, 3.101)))
 
 ## many points, from a list
 point(list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
+
+## when a 3rd point is included
+point(1:3, third = "m")
+point(1:3, third = "z")
+point(list(1:3, 4:6), third = "m")
+point(list(1:3, 4:6), third = "z")
+point(matrix(1:9, ncol = 3), third = "m")
+point(matrix(1:9, ncol = 3), third = "z")
+point(data.frame(1, 2, 3), third = "m")
+point(data.frame(1, 2, 3), third = "z")
+point(data.frame(1:3, 4:6, 7:9), third = "m")
+
+## when a 4th point is included
+point(1:4)
+point(list(1:4, 5:8))
+point(matrix(1:12, ncol = 4))
+point(data.frame(1, 2, 3, 4))
+point(data.frame(1:3, 4:6, 7:9, 10:12))
 }
 \seealso{
 Other R-objects: \code{\link{circularstring}},

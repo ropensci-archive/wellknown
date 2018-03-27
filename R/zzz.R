@@ -1,7 +1,8 @@
 # capitalize words
 cw <- function(s, strict = FALSE, onlyfirst = FALSE) {
   cap <- function(s) paste(toupper(substring(s,1,1)),
-        {s <- substring(s,2); if(strict) tolower(s) else s}, sep = "", collapse = " " )
+        {s <- substring(s,2); if(strict) tolower(s) else s}, sep = "", 
+        collapse = " " )
   if(!onlyfirst){
     sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
   } else {
@@ -25,13 +26,26 @@ nozero <- function(x) {
 
 checker <- function(x, type, len) {
   if (!length(x) %in% len)
-    stop(sprintf("%s input should be of length %s", type, p0c(len)), call. = FALSE)
-  if (!is.double(x))
-    stop(sprintf("%s input should be of type double (a number)", type), call. = FALSE)
+    stop(sprintf("%s input should be of length %s", type, p0c(len)), 
+      call. = FALSE)
+  if (!is.double(x) && !is.integer(x))
+    stop(sprintf("%s input should be of type double (a number)", type), 
+      call. = FALSE)
+}
+
+dfchecker <- function(x, type, len) {
+  if (!NCOL(x) %in% len)
+    stop(sprintf("%s input should have %s columns ", type, p0c(len)), 
+      call. = FALSE)
+
+  if (any(apply(x, 2, function(x) !is.double(x) && !is.integer(x))))
+    stop(sprintf("%s input should be of type double (a number)", type), 
+      call. = FALSE)
 }
 
 fmtcheck <- function(x) {
-  if (!is.double(x) || is.na(x)) stop("fmt must be an integer value", call. = FALSE)
+  if (!is.double(x) || is.na(x)) stop("fmt must be an integer value", 
+    call. = FALSE)
   if (x < 0 || x > 20) stop("fmt must be 0 and 20", call. = FALSE)
 }
 
@@ -58,8 +72,10 @@ centroid <- function(x, center){
       }
     } else {
       c(
-        mean(as.numeric(sapply(x$coordinates, function(z) sapply(z, function(b) b[2])))),
-        mean(as.numeric(sapply(x$coordinates, function(z) sapply(z, function(b) b[1]))))
+        mean(as.numeric(sapply(x$coordinates, function(z) 
+          sapply(z, function(b) b[2])))),
+        mean(as.numeric(sapply(x$coordinates, function(z) 
+          sapply(z, function(b) b[1]))))
       )
     }
   }
@@ -85,3 +101,20 @@ chek_for_pkg <- function(x) {
     invisible(TRUE)
   }
 }
+
+pick3 <- function(x) {
+  x <- tolower(x)
+  switch(
+    x,
+    `m` = "M",
+    `z` = "Z",
+    stop("'third' must be one of 'm' or 'z'")
+  )
+}
+
+# count_regex('(1 2 3) (4 5 6) (6 7 8.6)', "[0-9]+(\\.[0-9]+)?")
+count_regex <- function(str, x) {
+  length(gregexpr(x, str)[[1]])
+}
+
+`%||%` <- function (x, y) if (is.null(x) || length(x) == 0) y else x

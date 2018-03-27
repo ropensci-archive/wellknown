@@ -4,7 +4,7 @@
 \alias{multipoint}
 \title{Make WKT multipoint objects}
 \usage{
-multipoint(..., fmt = 16)
+multipoint(..., fmt = 16, third = "z")
 }
 \arguments{
 \item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
@@ -12,6 +12,12 @@ MultiPolygon, etc.}
 
 \item{fmt}{Format string which indicates the number of digits to display
 after the decimal point when formatting coordinates. Max: 20}
+
+\item{third}{(character) Only applicable when there are three dimensions.
+If \code{m}, assign a \code{M} value for a measurement, and if \code{z} assign a
+\code{Z} value for three-dimenionsal system. Case is ignored. An \code{M} value
+represents  a measurement, while a \code{Z} value usually represents altitude
+(but can be something like depth in a water based location).}
 }
 \description{
 Make WKT multipoint objects
@@ -34,6 +40,42 @@ multipoint(mat)
 
 # list
 multipoint(list(c(100.000, 3.101), c(101.000, 2.100), c(3.140, 2.180)))
+
+
+## a 3rd point is included
+multipoint(c(100, 3, 0), c(101, 2, 0), c(3, 2, 0), 
+  third = "z", fmt = 1)
+multipoint(c(100, 3, 0), c(101, 2, 0), c(3, 2, 0), 
+  third = "m", fmt = 1)
+
+df <- us_cities[1:25, c('long', 'lat')]
+df$altitude <- round(runif(25, 100, 500))
+multipoint(df, fmt = 2)
+multipoint(df, fmt = 2, third = "m")
+
+mat <- matrix(1:9, 3)
+multipoint(mat)
+multipoint(mat, third = "m")
+
+x <- list(c(100, 3, 0), c(101, 2, 1), c(3, 2, 5))
+multipoint(x)
+
+
+## a 4th point is included
+multipoint(
+  c(100, 3, 0, 500), c(101, 2, 0, 505), c(3, 2, 0, 600), 
+  fmt = 1)
+
+df <- us_cities[1:25, c('long', 'lat')]
+df$altitude <- round(runif(25, 100, 500))
+df$weight <- round(runif(25, 1, 100))
+multipoint(df, fmt = 2)
+
+mat <- matrix(1:12, 3)
+multipoint(mat)
+
+x <- list(c(100, 3, 0, 300), c(101, 2, 1, 200), c(3, 2, 5, 100))
+multipoint(x, fmt = 3)
 }
 \seealso{
 Other R-objects: \code{\link{circularstring}},

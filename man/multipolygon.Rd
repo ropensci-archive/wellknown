@@ -4,7 +4,7 @@
 \alias{multipolygon}
 \title{Make WKT multipolygon objects}
 \usage{
-multipolygon(..., fmt = 16)
+multipolygon(..., fmt = 16, third = "z")
 }
 \arguments{
 \item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
@@ -12,6 +12,12 @@ MultiPolygon, etc.}
 
 \item{fmt}{Format string which indicates the number of digits to display
 after the decimal point when formatting coordinates. Max: 20}
+
+\item{third}{(character) Only applicable when there are three dimensions.
+If \code{m}, assign a \code{M} value for a measurement, and if \code{z} assign a
+\code{Z} value for three-dimenionsal system. Case is ignored. An \code{M} value
+represents  a measurement, while a \code{Z} value usually represents altitude
+(but can be something like depth in a water based location).}
 }
 \description{
 Make WKT multipolygon objects
@@ -59,6 +65,46 @@ polys <- list(
 )
 multipolygon(polys, fmt=0)
 multipolygon(polys, fmt=0) \%>\% lint
+
+
+
+# 3D
+## data.frame
+df <- data.frame(long = c(30, 45, 10, 30), lat = c(20, 40, 40, 20), 
+  altitude = 1:4)
+df2 <- data.frame(long = c(15, 40, 10, 5, 15), lat = c(5, 10, 20, 10, 5), 
+  altitude = 1:5)
+multipolygon(df, df2, fmt=0)
+multipolygon(df, df2, fmt=0, third = "m")
+## matrix
+mat <- matrix(unname(unlist(df)), ncol = 3)
+mat2 <- matrix(unname(unlist(df2)), ncol = 3)
+multipolygon(mat, mat2, fmt=0)
+multipolygon(mat, mat2, fmt=0, third = "m")
+## list
+l1 <- list(c(30, 20, 2), c(45, 40, 2), c(10, 40, 2), c(30, 20, 2))
+l2 <- list(c(15, 5, 5), c(40, 10, 5), c(10, 20, 5), c(5, 10, 5), 
+  c(15, 5, 5))
+multipolygon(l1, l2, fmt=2)
+multipolygon(l1, l2, fmt=2, third = "m")
+
+
+# 4D
+## data.frame
+df <- data.frame(long = c(30, 45, 10, 30), lat = c(20, 40, 40, 20), 
+  altitude = 1:4, weigjht = 20:23)
+df2 <- data.frame(long = c(15, 40, 10, 5, 15), lat = c(5, 10, 20, 10, 5), 
+  altitude = 1:5, weigjht = 200:204)
+multipolygon(df, df2, fmt=0)
+## matrix
+mat <- matrix(unname(unlist(df)), ncol = 4)
+mat2 <- matrix(unname(unlist(df2)), ncol = 4)
+multipolygon(mat, mat2, fmt=0)
+## list
+l1 <- list(c(30, 20, 2, 1), c(45, 40, 2, 1), c(10, 40, 2, 1), c(30, 20, 2, 1))
+l2 <- list(c(15, 5, 5, 1), c(40, 10, 5, 1), c(10, 20, 5, 1), c(5, 10, 5, 1), 
+  c(15, 5, 5, 1))
+multipolygon(l1, l2, fmt=2)
 }
 \seealso{
 Other R-objects: \code{\link{circularstring}},

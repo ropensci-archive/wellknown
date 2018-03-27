@@ -69,6 +69,7 @@ circularstring.list <- function(..., fmt = 16) {
   sprint('CIRCULARSTRING', str)
 }
 
+# helpers -----------
 sprint <- function(type, str) {
   sprintf('%s (%s)', type, str)
 }

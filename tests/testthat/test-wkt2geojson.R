@@ -92,3 +92,48 @@ test_that("case no longer matters for WKT feature types", {
   expect_is(wkt2geojson("Point (116.4000000000000057 45.2000000000000028"), "geojson")
   expect_is(wkt2geojson("poInt (116.4000000000000057 45.2000000000000028"), "geojson")
 })
+
+test_that("test simplify parameter", {
+  # multipoint
+  aa <- wkt2geojson("MULTIPOINT ((100 3))", simplify = FALSE)
+  bb <- wkt2geojson("MULTIPOINT ((100 3))", simplify = TRUE)
+
+  expect_is(aa, "geojson")
+  expect_is(unclass(aa), "list")
+  expect_is(bb, "geojson")
+  expect_is(unclass(bb), "list")
+
+  expect_equal(aa$type, "Feature")
+  expect_equal(aa$geometry$type, "MultiPoint")
+  expect_equal(bb$type, "Feature")
+  expect_equal(bb$geometry$type, "Point")
+
+  # multipolygon
+  str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)))"
+  aa <- wkt2geojson(str, simplify = FALSE)
+  bb <- wkt2geojson(str, simplify = TRUE)
+
+  expect_is(aa, "geojson")
+  expect_is(unclass(aa), "list")
+  expect_is(bb, "geojson")
+  expect_is(unclass(bb), "list")
+
+  expect_equal(aa$type, "Feature")
+  expect_equal(aa$geometry$type, "MultiPolygon")
+  expect_equal(bb$type, "Feature")
+  expect_equal(bb$geometry$type, "Polygon")
+
+  # multilinestring
+  aa <- wkt2geojson("MULTILINESTRING ((30 1, 40 30, 50 20))", simplify = FALSE)
+  bb <- wkt2geojson("MULTILINESTRING ((30 1, 40 30, 50 20))", simplify = TRUE)
+
+  expect_is(aa, "geojson")
+  expect_is(unclass(aa), "list")
+  expect_is(bb, "geojson")
+  expect_is(unclass(bb), "list")
+
+  expect_equal(aa$type, "Feature")
+  expect_equal(aa$geometry$type, "MultiLineString")
+  expect_equal(bb$type, "Feature")
+  expect_equal(bb$geometry$type, "LineString")
+})

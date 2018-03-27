@@ -3,8 +3,7 @@
 #' @export
 #'
 #' @template fmt
-#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
-#' MultiPolygon, etc.
+#' @inheritParams point
 #' @details You can create nested polygons with `list` and
 #' `data.frame` inputs, but not from `numeric` inputs. See examples.
 #' @family R-objects
@@ -44,12 +43,60 @@
 #' polygon(list(list(c(35, 10), c(45, 45), c(15, 40), c(10, 20), c(35, 10)),
 #'    list(c(20, 30), c(35, 35), c(30, 20), c(20, 30))), fmt=2) %>%
 #'    wktview(zoom=3)
-polygon <- function(..., fmt = 16) {
+#' 
+#' 
+#' ## a 3rd point is included
+#' ### numeric
+#' polygon(c(100, 0, 30), c(101, 0, 30), c(101, 1, 30),
+#'   c(100, 0, 30), fmt = 2)
+#' polygon(c(100, 0, 30), c(101, 0, 30), c(101, 1, 30),
+#'   c(100, 0, 30), fmt = 2, third = "m")
+#' 
+#' ### data.frame
+#' df <- us_cities[2:5, c('long','lat')]
+#' df <- rbind(df, df[1,])
+#' df$altitude <- round(runif(NROW(df), 10, 50))
+#' polygon(df, fmt=2)
+#' polygon(df, fmt=2, third = "m")
+#' 
+#' ### matrix
+#' mat <- matrix(c(df$long, df$lat, df$altitude), ncol = 3)
+#' polygon(mat, fmt=2)
+#' polygon(mat, fmt=2, third = "m")
+#' 
+#' ### list
+#' ply <- list(c(100, 0, 1), c(101, 0, 1), c(101, 1, 1),
+#'   c(100, 0, 1))
+#' polygon(ply, fmt=2)
+#' polygon(ply, fmt=2, third = "m")
+#' 
+#' 
+#' ## a 4th point is included
+#' ### numeric
+#' polygon(c(100, 0, 30, 3.5), c(101, 0, 30, 3.5), c(101, 1, 30, 3.5),
+#'   c(100, 0, 30, 3.5), fmt = 2)
+#' 
+#' ### data.frame
+#' df <- us_cities[2:5, c('long','lat')]
+#' df <- rbind(df, df[1,])
+#' df$altitude <- round(runif(NROW(df), 10, 50))
+#' df$weight <- round(runif(NROW(df), 0, 1), 1)
+#' polygon(df, fmt=2)
+#' 
+#' ### matrix
+#' mat <- matrix(unname(unlist(df)), ncol = 4)
+#' polygon(mat, fmt=2)
+#' 
+#' ### list
+#' ply <- list(c(100, 0, 1, 40), c(101, 0, 1, 44), c(101, 1, 1, 45),
+#'   c(100, 0, 1, 49))
+#' polygon(ply, fmt=2)
+polygon <- function(..., fmt = 16, third = "z") {
   UseMethod("polygon")
 }
 
 #' @export
-polygon.character <- function(..., fmt = 16) {
+polygon.character <- function(..., fmt = 16, third = "z") {
   pts <- list(...)
   if (grepl("empty", pts[[1]], ignore.case = TRUE)) {
     return('POLYGON EMPTY')
@@ -59,55 +106,68 @@ polygon.character <- function(..., fmt = 16) {
 }
 
 #' @export
-polygon.numeric <- function(..., fmt = 16){
+polygon.numeric <- function(..., fmt = 16, third = "z") {
   pts <- list(...)
   fmtcheck(fmt)
-  invisible(lapply(pts, checker, type = 'POLYGON', len = 2))
+  invisible(lapply(pts, checker, type = 'POLYGON', len = 2:4))
   str <- paste0(lapply(pts, function(z){
     paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
   }), collapse = ", ")
-  sprintf('POLYGON ((%s))', str)
+  len <- unique(vapply(pts, length, numeric(1)))
+  if (len == 3) {
+    sprintf('POLYGON %s((%s))', pick3(third), str)
+  } else if (len == 4) {
+    sprintf('POLYGON ZM((%s))', str)
+  } else {
+    sprintf('POLYGON ((%s))', str)
+  }
 }
 
 #' @export
-polygon.data.frame <- function(..., fmt = 16){
+polygon.data.frame <- function(..., fmt = 16, third = "z") {
   pts <- list(...)
   fmtcheck(fmt)
-  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  # invisible(lapply(pts, checker, type='POLYGON', len=2:4))
   str <- lapply(pts, function(v) {
     sprintf("(%s)", paste0(apply(v, 1, function(z){
       paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
     }), collapse = ", "))
   })
-  sprintf('POLYGON (%s)', paste0(str, collapse = ", "))
+  len <- unique(vapply(pts, NCOL, numeric(1)))
+  make_poly(str, len, third)
 }
 
 #' @export
-polygon.matrix <- function(..., fmt = 16){
+polygon.matrix <- function(..., fmt = 16, third = "z") {
   pts <- list(...)
   fmtcheck(fmt)
-  # invisible(lapply(pts, checker, type='MULTIPOINT', len=2))
+  # invisible(lapply(pts, checker, type='POLYGON', len=2:4))
   str <- lapply(pts, function(v) {
     sprintf("(%s)", paste0(apply(v, 1, function(z){
       paste0(str_trim_(format(z, nsmall = fmt, trim = TRUE)), collapse = " ")
     }), collapse = ", "))
   })
-  sprintf('POLYGON (%s)', paste0(str, collapse = ", "))
+  len <- unique(vapply(pts, NCOL, numeric(1)))
+  make_poly(str, len, third)
 }
 
 #' @export
-polygon.list <- function(..., fmt = 16) {
+polygon.list <- function(..., fmt = 16, third = "z") {
   pts <- list(...)
   fmtcheck(fmt)
+  # invisible(lapply(pts, checker, type='POLYGON', len=2:4))
   pts <- un_nest(pts)
   str <- sprintf("(%s)", lapply(pts, function(z) {
     paste0(lapply(z, function(b)
       paste0(str_trim_(format(b, nsmall = fmt, trim = TRUE)), collapse = " ")),
       collapse = ", ")
   }))
-  sprintf('POLYGON (%s)', paste0(str, collapse = ", "))
+  len <- unique(vapply(pts[[1]], length, numeric(1)))
+  make_poly(str, len, third)
 }
 
+
+# helpers -----
 un_nest <- function(x) {
   first <- sapply(x, class)
   if (length(first) == 1 && first == "list") {
@@ -119,4 +179,14 @@ un_nest <- function(x) {
   } else {
     return(x)
   }
+}
+
+make_poly <- function(str, len, third) {
+  if (len == 3) {
+    sprintf('POLYGON %s(%s)', pick3(third), paste0(str, collapse = ", "))
+  } else if (len == 4) {
+    sprintf('POLYGON ZM(%s)', paste0(str, collapse = ", "))
+  } else {
+    sprintf('POLYGON (%s)', paste0(str, collapse = ", "))
+  }   
 }

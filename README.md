@@ -81,7 +81,7 @@ library("wellknown")
 ```r
 point <- list(Point = c(116.4, 45.2, 11.1))
 geojson2wkt(point)
-#> [1] "POINT (116.4000000000000057  45.2000000000000028  11.0999999999999996)"
+#> [1] "POINT Z(116.4000000000000057  45.2000000000000028  11.0999999999999996)"
 ```
 
 ### Multipoint
@@ -203,7 +203,7 @@ And you can convert from a geojson character string:
 ```r
 str <- '{"type":"LineString","coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
 geojson2wkt(str)
-#> [1] "LINESTRING (0 0 10, 2 1 20, 4 2 30, 5 4 40)"
+#> [1] "LINESTRING Z(0 0 10, 2 1 20, 4 2 30, 5 4 40)"
 ```
 
 ## WKT to GeoJSON

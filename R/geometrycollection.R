@@ -7,7 +7,7 @@
 #' @details This is different from the other functions that create WKT from R
 #' objects, in that we can't do the same thing for GeometryCollection's since
 #' many different WkT object could be created from the same input. So,
-#' this function accepts WKT strings already formed and attempts to creat a c
+#' this function accepts WKT strings already formed and attempts to creat a
 #' GeommetryCollection from them.
 #' @family R-objects
 #' @examples

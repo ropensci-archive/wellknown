@@ -6,6 +6,11 @@
 #' @param obj (list/json/character) A GeoJSON-like object representing a
 #' Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
 #' or GeometryCollection
+#' @param third (character) Only applicable when there are three dimensions. 
+#' If `m`, assign a `M` value for a measurement, and if `z` assign a 
+#' `Z` value for three-dimenionsal system. Case is ignored. An `M` value 
+#' represents  a measurement, while a `Z` value usually represents altitude 
+#' (but can be something like depth in a water based location).
 #' @param ... Further args passed on to [jsonlite::fromJSON()] only
 #' in the event of json passed as a character string.
 #' @seealso [wkt2geojson()]
@@ -40,6 +45,10 @@
 #' mp <- list(MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18),
 #'    ncol = 2))
 #' geojson2wkt(mp)
+#' ## 3D
+#' mp <- list(MultiPoint = matrix(c(100, 101, 3, 3, 2, 2, 4, 5, 6),
+#'    ncol = 3))
+#' geojson2wkt(mp)
 #' ## old format, warns
 #' mp <- list(
 #'   type = 'MultiPoint',
@@ -53,6 +62,13 @@
 #'                                0.0, 1.0, 2.0, 4.0),
 #'                                ncol = 2))
 #' geojson2wkt(st)
+#' ## 3D
+#' st <- list(LineString = matrix(
+#'   c(0.0, 0, 0, 
+#'    2, 1, 5,
+#'    100, 300, 800), nrow = 3))
+#' geojson2wkt(st, fmt = 2)
+#' geojson2wkt(st, fmt = 2, third = "m")
 #' ## old format, warns
 #' st <- list(
 #'   type = 'LineString',
@@ -84,6 +100,14 @@
 #'  )
 #' )
 #' geojson2wkt(multist)
+#' ## 3D
+#' multist <- list(MultiLineString = list(
+#'    matrix(c(0, -2, -4, -1, -3, -5, 100, 200, 300), ncol = 3),
+#'    matrix(c(1, 10, 10.9, 0, -31.5, 3.0, 1.1, 0, 3, 3, 3, 3), ncol = 3)
+#'  )
+#' )
+#' geojson2wkt(multist, fmt = 2)
+#' geojson2wkt(multist, fmt = 2, third = "m")
 #' ## old format, warns
 #' multist <- list(
 #'   type = 'MultiLineString',
@@ -103,6 +127,13 @@
 #' ))
 #' geojson2wkt(poly)
 #' geojson2wkt(poly, fmt=6)
+#' ## 3D
+#' poly <- list(Polygon = list(
+#'    matrix(c(100.1, 101.1, 101.1, 100.1, 0.1, 0.1, 1.1, 0.1, 1, 1, 1, 1), ncol = 3),
+#'    matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.80, 0.2, 3, 3, 3, 3), ncol = 3)
+#' ))
+#' geojson2wkt(poly, fmt = 2)
+#' geojson2wkt(poly, fmt = 2, third = "m")
 #' ## old format, warns
 #' poly <- list(
 #'   type = 'Polygon',
@@ -129,6 +160,23 @@
 #'   )
 #' ))
 #' geojson2wkt(mpoly, fmt=2)
+#' ## 3D
+#' mpoly <- list(MultiPolygon = list(
+#'   list(
+#'     matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001, 1, 1, 1, 1), 
+#'       ncol = 3),
+#'     matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2, 3, 4, 5, 6), 
+#'       ncol = 3)
+#'   ),
+#'   list(
+#'     matrix(c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 1, 1, 1, 1),
+#'       ncol = 3),
+#'     matrix(c(9.0, 10.0, 11.0, 12.0, 1.0, 2.0, 3.0, 4.0, 9.0, 9, 9, 9, 9),
+#'       ncol = 3)
+#'   )
+#' ))
+#' geojson2wkt(mpoly, fmt=2)
+#' geojson2wkt(mpoly, fmt=2, third = "m")
 #' ## old format, warns
 #' mpoly <- list(
 #'   type = 'MultiPolygon',
@@ -235,27 +283,27 @@
 #' json <- toJSON(list(type="Point", coordinates=c(-105,39)), auto_unbox=TRUE)
 #' geojson2wkt(json)
 #'
-geojson2wkt <- function(obj, fmt = 16, ...) {
+geojson2wkt <- function(obj, fmt = 16, third = "z", ...) {
   UseMethod("geojson2wkt")
 }
 
 #' @export
-geojson2wkt.default <- function(obj, fmt = 16, ...) {
+geojson2wkt.default <- function(obj, fmt = 16, third = "z", ...) {
   stop("not 'geojson2wkt' method for ", class(obj), call. = FALSE)
 }
 
 #' @export
-geojson2wkt.character <- function(obj, fmt = 16, ...) {
-  geojson2wkt(jsonlite::fromJSON(obj, ...), fmt)
+geojson2wkt.character <- function(obj, fmt = 16, third = "z", ...) {
+  geojson2wkt(jsonlite::fromJSON(obj, ...), fmt, third)
 }
 
 #' @export
-geojson2wkt.json <- function(obj, fmt = 16, ...) {
-  geojson2wkt(jsonlite::fromJSON(obj, ...), fmt)
+geojson2wkt.json <- function(obj, fmt = 16, third = "z", ...) {
+  geojson2wkt(jsonlite::fromJSON(obj, ...), fmt, third)
 }
 
 #' @export
-geojson2wkt.list <- function(obj, fmt = 16, ...) {
+geojson2wkt.list <- function(obj, fmt = 16, third = "z", ...) {
   nms <- tolower(names(obj))
   if (
     !any(tolower(wkt_geojson_types) %in% nms) &&
@@ -264,7 +312,11 @@ geojson2wkt.list <- function(obj, fmt = 16, ...) {
       !all(c('type', 'geometries') %in% nms)
     )
   ) {
-    stop(strwrap(paste0("'obj' must be list w/ either 'type' & 'coordinates' OR one of ", paste0(tolower(wkt_geojson_types), collapse = ", ")), width = 80))
+    stop(
+      strwrap(
+        paste0(
+          "'obj' must be list w/ either 'type' & 'coordinates' OR one of ", 
+          paste0(tolower(wkt_geojson_types), collapse = ", ")), width = 80))
   }
 
   if (
@@ -291,39 +343,40 @@ geojson2wkt.list <- function(obj, fmt = 16, ...) {
 
   switch(
     tolower(obj$type),
-    point = dump_point(obj, fmt),
-    multipoint = dump_multipoint(obj, fmt),
-    linestring = dump_linestring(obj, fmt),
-    multilinestring = dump_multilinestring(obj, fmt),
-    polygon = dump_polygon(obj, fmt),
-    multipolygon = dump_multipolygon(obj, fmt),
+    point = dump_point(obj, fmt, third),
+    multipoint = dump_multipoint(obj, fmt, third),
+    linestring = dump_linestring(obj, fmt, third),
+    multilinestring = dump_multilinestring(obj, fmt, third),
+    polygon = dump_polygon(obj, fmt, third),
+    multipolygon = dump_multipolygon(obj, fmt, third),
     geometrycollection = dump_geometrycollection(obj, fmt),
     stop('type ', obj$type, ' not supported', call. = FALSE)
   )
 }
 
-dump_point <- function(obj, fmt = 16){
+
+## --------------------------------------
+dump_point <- function(obj, fmt = 16, third = "z"){
   coords <- obj$coordinates
   if (!is.vector(coords) || is.list(coords)) {
     stop("expecting a vector in 'coordinates', got a ", class(coords))
   }
-
-  sprintf('POINT (%s)', paste0(format(coords, nsmall = fmt), collapse = " "))
+  str <- paste0(format(coords, nsmall = fmt), collapse = " ")
+  make_it('POINT', str, length(coords), third)
 }
 
-dump_multipoint <- function(obj, fmt = 16){
+dump_multipoint <- function(obj, fmt = 16, third = "z"){
   coords <- obj$coordinates
   if (!is.matrix(coords)) {
     stop("expecting a matrix in 'coordinates', got a ", class(coords))
   }
-
   str <- paste0(apply(coords, 1, function(z){
     sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt)), collapse = " "))
   }), collapse = ", ")
-  sprintf('MULTIPOINT (%s)', str)
+  make_it('MULTIPOINT', str, NCOL(coords), third)
 }
 
-dump_linestring <- function(obj, fmt = 16){
+dump_linestring <- function(obj, fmt = 16, third = "z"){
   coords <- obj$coordinates
   if (!is.matrix(coords)) {
     stop("expecting a matrix in 'coordinates', got a ", class(coords))
@@ -332,10 +385,10 @@ dump_linestring <- function(obj, fmt = 16){
   str <- paste0(apply(coords, 1, function(z){
     paste0(gsub("\\s", "", format(z, nsmall = fmt)), collapse = " ")
   }), collapse = ", ")
-  sprintf('LINESTRING (%s)', str)
+  make_it('LINESTRING', str, NCOL(coords), third)
 }
 
-dump_multilinestring <- function(obj, fmt = 16){
+dump_multilinestring <- function(obj, fmt = 16, third = "z"){
   coords <- obj$coordinates
   if (!is.list(coords)) {
     stop("your top most element must be a list")
@@ -346,12 +399,15 @@ dump_multilinestring <- function(obj, fmt = 16){
 
   str <- paste0(lapply(coords, function(z){
     sprintf("(%s)", paste0(gsub(",", "",
-                                apply(str_trim_(format(z, nsmall = fmt)), 1, paste0, collapse = " ")), collapse = ", "))
+                                apply(str_trim_(format(z, nsmall = fmt)), 
+                                  1, paste0, collapse = " ")), 
+    collapse = ", "))
   }), collapse = ", ")
-  sprintf('MULTILINESTRING (%s)', str)
+  len <- unique(vapply(coords, NCOL, numeric(1)))
+  make_it('MULTILINESTRING', str, len, third)
 }
 
-dump_polygon <- function(obj, fmt = 16){
+dump_polygon <- function(obj, fmt = 16, third = "z"){
   coords <- obj$coordinates
   if (!is.list(coords)) {
     stop("your top most element must be a list")
@@ -365,10 +421,11 @@ dump_polygon <- function(obj, fmt = 16){
       paste0(gsub("\\s", "", format(w, nsmall = fmt)), collapse = " ")
     }), collapse = ", "))
   }), collapse = ", ")
-  sprintf('POLYGON (%s)', str)
+  len <- unique(vapply(coords, NCOL, numeric(1)))
+  make_it('POLYGON', str, len, third)
 }
 
-dump_multipolygon <- function(obj, fmt = 16){
+dump_multipolygon <- function(obj, fmt = 16, third = "z"){
   coords <- obj$coordinates
   if (!is.list(coords)) {
     stop("your top most element must be a list")
@@ -385,10 +442,12 @@ dump_multipolygon <- function(obj, fmt = 16){
       paste0(gsub(",", "", unname(apply(str_trim_(format(w, nsmall = fmt)), 1, paste0, collapse = " "))), collapse = ", ")
     })), collapse = ", "))
   }), collapse = ", ")
-  sprintf('MULTIPOLYGON (%s)', str)
+  len <- unique(vapply(coords, function(z) unique(vapply(z, NCOL, numeric(1))), 
+    numeric(1)))
+  make_it('MULTIPOLYGON', str, len, third)
 }
 
-dump_geometrycollection <- function(obj, fmt = 16){
+dump_geometrycollection <- function(obj, fmt = 16, third = "z"){
   geoms <- obj$geometries
   str <- paste0(lapply(geoms, function(z) {
     if (all(c('type', 'coordinates') %in% tolower(names(z)))) {
@@ -413,3 +472,13 @@ get_fxn <- function(type){
 
 wkt_geojson_types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
                      "LINESTRING","MULTILINESTRING","GEOMETRYCOLLECTION")
+
+make_it <- function(geom, x, len, third) {
+  if (len == 3) {
+    sprintf('%s %s(%s)', geom, pick3(third), x)
+  } else if (len == 4) {
+    sprintf('%s ZM(%s)', geom, x)
+  } else {
+    sprintf('%s (%s)', geom, x)
+  }
+}

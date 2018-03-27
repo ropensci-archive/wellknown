@@ -4,7 +4,8 @@
 \alias{wkt2geojson}
 \title{Convert WKT to GeoJSON-like objects.}
 \usage{
-wkt2geojson(str, fmt = 16, feature = TRUE, numeric = TRUE)
+wkt2geojson(str, fmt = 16, feature = TRUE, numeric = TRUE,
+  simplify = FALSE)
 }
 \arguments{
 \item{str}{A GeoJSON-like object representing a Point, LineString, Polygon,
@@ -16,6 +17,9 @@ after the decimal point when formatting coordinates. Max: 20}
 \item{feature}{(logical) Make a feature geojson object. Default: \code{TRUE}}
 
 \item{numeric}{(logical) Give back values as numeric. Default: \code{TRUE}}
+
+\item{simplify}{(logical) Attempt to simplify from a multi- geometry type
+to a single type. Applies to multi features only. Default: \code{FALSE}}
 }
 \description{
 Convert WKT to GeoJSON-like objects.
@@ -25,6 +29,11 @@ Should be robust against a variety of typing errors, including
 extra spaces between coordinates, no space between WKT type and coordinates.
 However, some things won't pass, including lowercase WKT types, no
 spaces between coordinates.
+
+WKT with a 3rd value and when Z is found will be left as is and assumed to
+be a altitude or similar value. WKT with a 3rd value and when M is found
+will be discarded as the GeoJSON spec says to do so. WKT with a 4th value
+as (presumably as a measurement) will also be discarded.
 }
 \examples{
 # point
@@ -32,12 +41,32 @@ str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 wkt2geojson(str, numeric=FALSE)
+wkt2geojson("POINT (-116 45)")
+wkt2geojson("POINT (-116 45 0)")
+## 3D
+wkt2geojson("POINT Z(100 3 35)")
+wkt2geojson("POINT M(100 3 35)") # dropped if M
+## 4D
+wkt2geojson("POINT ZM(100 3 35 1.5)") # Z retained
 
 # multipoint
 str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
 wkt2geojson(str, fmt = 2)
 wkt2geojson(str, fmt = 2, feature=FALSE)
 wkt2geojson(str, numeric=FALSE)
+wkt2geojson("MULTIPOINT ((100 3), (101 2), (3 2))")
+wkt2geojson("MULTIPOINT ((100 3 0), (101 2 0), (3 2 0))")
+wkt2geojson("MULTIPOINT ((100 3 0 1), (101 2 0 1), (3 2 0 1))") 
+## 3D
+wkt2geojson("MULTIPOINT Z((100 3 35), (101 2 45), (3 2 89))")
+wkt2geojson("MULTIPOINT M((100 3 1.3), (101 2 1.4), (3 2 1.9))")
+## 4D
+wkt2geojson("MULTIPOINT ZM((100 3 35 0), (101 2 45 0), (3 2 89 0))")
+
+## simplify
+wkt2geojson("MULTIPOINT ((100 3))", simplify = FALSE)
+wkt2geojson("MULTIPOINT ((100 3))", simplify = TRUE)
+
 
 # polygon
 str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
@@ -45,6 +74,15 @@ str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1),
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 wkt2geojson(str, numeric=FALSE)
+## 3D
+str <- "POLYGON Z((100 0.1 3, 101.1 0.3 1, 101 0.5 5, 100 0.1 8),
+   (103.2 0.2 3, 104.8 0.2 4, 100.8 0.8 5, 103.2 0.2 9))"
+wkt2geojson(str)
+## 4D
+str <- "POLYGON ZM((100 0.1 3 0, 101.1 0.3 1 0, 101 0.5 5 0, 100 0.1 8 0),
+   (103.2 0.2 3 0, 104.8 0.2 4 0, 100.8 0.8 5 0, 103.2 0.2 9 0))"
+wkt2geojson(str)
+
 
 # multipolygon
 str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
@@ -52,14 +90,36 @@ str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
 wkt2geojson(str)
 wkt2geojson(str, feature=FALSE)
 wkt2geojson(str, numeric=FALSE)
+## 3D
+str <- "MULTIPOLYGON Z(((40 40 1, 20 45 3, 45 30 10, 40 40 0)),
+ ((20 35 5, 45 20 67, 30 5 890, 10 10 2, 10 30 0, 20 35 4), 
+ (30 20 4, 20 25 54, 20 15 56, 30 20 89)))"
+wkt2geojson(str)
+## 4D
+str <- "MULTIPOLYGON ZM(((40 40 1 0, 20 45 3 4, 45 30 10 45, 40 40 0 1)),
+ ((20 35 5 8, 45 20 67 9, 30 5 890 89, 10 10 2 234, 10 30 0 5, 20 35 4 1), 
+ (30 20 4 0, 20 25 54 5, 20 15 56 55, 30 20 89 78)))"
+wkt2geojson(str)
+
+# simplify multipolygon to polygon if possible
+str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)))"
+wkt2geojson(str, simplify = FALSE)
+wkt2geojson(str, simplify = TRUE)
+
 
 # linestring
 str <- "LINESTRING (100.000 0.000, 101.000 1.000)"
 wkt2geojson(str)
 wkt2geojson(str, feature = FALSE)
 wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)")
-wkt2geojson("LINESTRING (0 1 2 3, 4 5 6 7)")
+wkt2geojson("LINESTRING (0 1 2, 4 5 6)")
 wkt2geojson(str, numeric = FALSE)
+## 3D
+wkt2geojson("LINESTRING Z(100.000 0.000 3, 101.000 1.000 5)")
+wkt2geojson("LINESTRING M(100.000 0.000 10, 101.000 1.000 67)")
+## 4D
+wkt2geojson("LINESTRING ZM(100 0 1 4, 101 1 5 78)")
+
 
 # multilinestring
 str <- "MULTILINESTRING ((30 1, 40 30, 50 20)(10 0, 20 1))"
@@ -75,9 +135,24 @@ str <- "MULTILINESTRING (
 wkt2geojson(str)
 wkt2geojson(str, numeric=FALSE)
 
+## 3D
+str <- "MULTILINESTRING Z((30 1 0, 40 30 0, 50 20 0)(10 0 1, 20 1 1))"
+wkt2geojson(str)
+str <- "MULTILINESTRING M((30 1 0, 40 30 0, 50 20 0)(10 0 1, 20 1 1))"
+wkt2geojson(str)
+## 4D
+str <- "MULTILINESTRING ZM((30 1 0 5, 40 30 0 7, 50 20 0 1)(10 0 1 1, 20 1 1 1))"
+wkt2geojson(str)
+
+# simplify multilinestring to linestring if possible
+str <- "MULTILINESTRING ((30 1, 40 30, 50 20))"
+wkt2geojson(str, simplify = FALSE)
+wkt2geojson(str, simplify = TRUE)
+
+
 # Geometrycollection
 str <- "GEOMETRYCOLLECTION (
- POINT (0 1),
+ POINT Z(0 1 4),
  LINESTRING (-100 0, -101 -1),
  POLYGON ((100.001 0.001, 101.1235 0.0010, 101.001 1.001, 100.001 0.001),
            (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)),
@@ -86,7 +161,7 @@ str <- "GEOMETRYCOLLECTION (
        (1.66 -31.50, 10.0 3.0, 10.9 1.1, 0.0 4.4)),
  MULTIPOLYGON (((100.001 0.001, 101.001 0.001, 101.001 1.001, 100.001 0.001),
                (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)),
-                 ((1 2 3 4, 5 6 7 8, 9 10 11 12, 1 2 3 4))))"
+                 ((1 2 3, 5 6 7, 9 10 11, 1 2 3))))"
 wkt2geojson(str)
 wkt2geojson(str, numeric=FALSE)
 

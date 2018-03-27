@@ -4,7 +4,7 @@
 \alias{linestring}
 \title{Make WKT linestring objects}
 \usage{
-linestring(..., fmt = 16)
+linestring(..., fmt = 16, third = "z")
 }
 \arguments{
 \item{...}{A GeoJSON-like object representing a Point, LineString, Polygon,
@@ -12,6 +12,12 @@ MultiPolygon, etc.}
 
 \item{fmt}{Format string which indicates the number of digits to display
 after the decimal point when formatting coordinates. Max: 20}
+
+\item{third}{(character) Only applicable when there are three dimensions.
+If \code{m}, assign a \code{M} value for a measurement, and if \code{z} assign a
+\code{Z} value for three-dimenionsal system. Case is ignored. An \code{M} value
+represents  a measurement, while a \code{Z} value usually represents altitude
+(but can be something like depth in a water based location).}
 }
 \description{
 Make WKT linestring objects
@@ -40,15 +46,39 @@ df <- data.frame(lon=c(-116.4,-118), lat=c(45.2,47))
 linestring(df, fmt=1)
 df <- data.frame(lon=c(-116.4,-118,-120), lat=c(45.2,47,49))
 linestring(df, fmt=1)
+## 3D
+df$altitude <- round(runif(NROW(df), 10, 50))
+linestring(df, fmt=1)
+linestring(df, fmt=1, third = "m")
+## 4D
+df$weight <- round(runif(NROW(df), 0, 1), 1)
+linestring(df, fmt=1)
+
 
 # matrix
 mat <- matrix(c(-116.4,-118, 45.2, 47), ncol = 2)
 linestring(mat, fmt=1)
 mat2 <- matrix(c(-116.4, -118, -120, 45.2, 47, 49), ncol = 2)
 linestring(mat2, fmt=1)
+## 3D
+mat <- matrix(c(df$long, df$lat, df$altitude), ncol = 3)
+polygon(mat, fmt=2)
+polygon(mat, fmt=2, third = "m")
+## 4D
+mat <- matrix(unname(unlist(df)), ncol = 4)
+polygon(mat, fmt=2)
 
 # list
 linestring(list(c(100.000, 0.000), c(101.000, 1.000)), fmt=2)
+## 3D
+line <- list(c(100, 0, 1), c(101, 0, 1), c(101, 1, 1),
+  c(100, 0, 1))
+linestring(line, fmt=2)
+linestring(line, fmt=2, third = "m")
+## 4D
+line <- list(c(100, 0, 1, 40), c(101, 0, 1, 44), c(101, 1, 1, 45),
+  c(100, 0, 1, 49))
+linestring(line, fmt=2)
 }
 \seealso{
 Other R-objects: \code{\link{circularstring}},
