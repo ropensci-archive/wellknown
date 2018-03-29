@@ -32,18 +32,18 @@ wktview(str)
 # multipoint
 df <- us_cities[1:5,c('long','lat')]
 str <- multipoint(df)
-wktview(str)
 wktview(str, center = c(-100,40))
-wktview(str, zoom = 3)
+wktview(str, center = c(-100,40), zoom = 3)
 
 # linestring
-wktview(linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2))
+wktview(linestring(c(100.000, 0.000), c(101.000, 1.000), fmt=2),
+  center = c(100, 0))
 
 # polygon
 a <- polygon(list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001),
   c(100.001, 0.001)))
-wktview(a)
-wktview(a, zoom=9)
+wktview(a, center = c(100, 0))
+wktview(a, center = c(100.5, 0), zoom=9)
 }
 }
 \seealso{
