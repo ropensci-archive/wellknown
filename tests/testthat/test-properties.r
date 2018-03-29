@@ -12,6 +12,6 @@ test_that("set propertiers works", {
 
 test_that("properties deals with bad input well", {
   expect_error(properties(x, style=list()), "needs a non-empty list")
-  expect_error(properties(x, style=NULL), "supply a list of named options")
-  expect_error(properties(x, popup=NULL), "supply a list of named options")
+  expect_error(properties(x, style=NULL), "Supply a list of named options")
+  expect_error(properties(x, popup=NULL), "Supply a list of named options")
 })

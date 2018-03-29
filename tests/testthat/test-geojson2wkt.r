@@ -57,23 +57,21 @@ test_that("convert polygon works", {
 })
 
 test_that("convert multipolygon works", {
-  mpoly2 <- list(type = "MultiPolygon",
-               coordinates = list(
-      list(
-        matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001), ncol = 2),
-        matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2), ncol = 2)
-      ),
-      list(
-        matrix(c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0), ncol = 3),
-        matrix(c(9.0, 10.0, 11.0, 12.0, 1.0, 2.0, 3.0, 4.0, 9.0), ncol = 3)
-      )
+  mpoly <- list(MultiPolygon = list(
+    list(
+      matrix(c(40, 130, 155, 40, 20, 34, 34, 20), ncol = 2),
+      matrix(c(30, 40, 54, 30, 0.1, 42, 62, 0.1), ncol = 2)
+    ),
+    list(
+      matrix(c(9, 49, 79, 9, 11, 35, 15, 11), ncol = 2),
+      matrix(c(1, 33, 59, 1, 5, 16, 36, 5), ncol = 2)
     )
-  )
-  f <- geojson2wkt(mpoly2, fmt=0)
+  ))
+  f <- geojson2wkt(mpoly, fmt=0)
   expect_is(f, "character")
   expect_match(f, "POLYGON")
   expect_match(f, "MULTIPOLYGON")
-  expect_equal(f, "MULTIPOLYGON (((100.000 0.001, 101.000 0.001, 101.000 1.001, 100.000 0.001), (100.2 0.2, 100.8 0.2, 100.8 0.8, 100.2 0.2)), ((1 4 7, 2 5 8, 3 6 1), (9 12 3, 10 1 4, 11 2 9)))")
+  expect_equal(f, "MULTIPOLYGON (((40 20, 130 34, 155 34, 40 20), (30.0 0.1, 40.0 42.0, 54.0 62.0, 30.0 0.1)), ((9 11, 49 35, 79 15, 9 11), (1 5, 33 16, 59 36, 1 5)))")
 })
 
 test_that("convert geometrycollection works", {
