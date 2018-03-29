@@ -1,11 +1,29 @@
-I have read and agree to the the CRAN policies at
-http://cran.r-project.org/web/packages/policies.html
+## Test environments
 
-R CMD CHECK passed on my local OS X install with R 3.2.2 and
-R development version, Ubuntu running on Travis-CI, and Windows
-R 3.2.2 and devel on Win-Builder.
+* local OS X install, R 3.4.4 patched
+* ubuntu 12.04 (on travis-ci), R 3.4.4
+* win-builder (devel and release)
 
-This is a new submission.
+## R CMD check results
+
+0 errors | 0 warnings | 1 note
+
+License components with restrictions and base license permitting such:
+  MIT + file LICENSE
+File 'LICENSE':
+  YEAR: 2018
+  COPYRIGHT HOLDER: Scott Chamberlain
+
+## Reverse dependencies
+
+* I have run R CMD check on the 2 reverse dependencies. No problems were
+found.
+
+summary at <https://github.com/ropensci/wellknown/tree/master/revdep>
+
+--------
+
+This version xxxx.
 
 Thanks!
 Scott Chamberlain

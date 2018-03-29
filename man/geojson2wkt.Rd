@@ -2,7 +2,7 @@
 % Please edit documentation in R/geojson2wkt.R
 \name{geojson2wkt}
 \alias{geojson2wkt}
-\title{Convert GeoJSON-like objects to WKT.}
+\title{Convert GeoJSON-like objects to WKT}
 \usage{
 geojson2wkt(obj, fmt = 16, third = "z", ...)
 }
@@ -21,14 +21,16 @@ represents  a measurement, while a \code{Z} value usually represents altitude
 (but can be something like depth in a water based location).}
 
 \item{...}{Further args passed on to \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}} only
-in the event of json passed as a character string.}
+in the event of json passed as a character string (can also be json
+of class \code{json} as returned from \code{\link[jsonlite:toJSON]{jsonlite::toJSON()}} or simply coerced
+to \code{json} by adding the class manually)}
 }
 \description{
-Convert GeoJSON-like objects to WKT.
+Convert GeoJSON-like objects to WKT
 }
-\details{
-Input to \code{obj} parameter can take two forms:
+\section{Inputs}{
 
+Input to \code{obj} parameter can take two forms:
 \itemize{
 \item A list with named elements \code{type} and \code{coordinates} OR
 \code{type} and \code{geometries} (only in the case of GeometryCollection).
@@ -40,6 +42,48 @@ GeoJSON, but is less verbose than the previous format, so should save
 the user time and make it easier to use.
 }
 }
+
+\section{Each point}{
+
+For any one point, 2 to 4 values can be used:
+\itemize{
+\item 2 values: longitude, latitude
+\item 3 values: longitude, latitude, altitude
+\item 4 values: longitude, latitude, altitude, measure
+}
+
+The 3rd value is typically altitude though can be depth in an
+aquatic context.
+
+The 4th value is a measurement of some kind.
+
+The GeoJSON spec \url{https://tools.ietf.org/html/rfc7946} actually
+doesn't allow a 4th value for a point, but we allow it here since
+we're converting to WKT which does allow a 4th value for a point.
+}
+
+\section{Coordinates data formats}{
+
+Coordinates data should follow the following formats:
+\itemize{
+\item Point: a vector or list, with a single point (2-4 values)
+\item MultiPoint: a matrix, with N points
+\item Linestring: a matrix, with N points
+\item MultiLinestring: the top most level is a list, containing N matrices
+\item Polygon: the top most level is a list, containing N matrices
+\item MultiPolygon: the top most level is a list, the next level is N
+lists, each of them containing N matrices
+\item Geometrycollection: a list containing any combination and number
+of the above types
+}
+
+Matrices by definition can not have unequal lengths in their columns,
+so we don't have to check for that user error.
+
+Each matrix can have any number of rows, and from 2 to 4 columns.
+If > 5 columns we stop with an error message.
+}
+
 \examples{
 # point
 ## new format
@@ -127,6 +171,26 @@ multist <- list(
 )
 geojson2wkt(multist)
 
+## points within MultiLineString that differ 
+## -> use length of longest 
+## -> fill with zeros
+# 3D and 2D
+multist <- list(MultiLineString = list(
+    matrix(1:6, ncol = 3), matrix(1:8, ncol = 2)))
+geojson2wkt(multist, fmt = 0)
+# 4D and 2D
+multist <- list(MultiLineString = list(
+    matrix(1:8, ncol = 4), matrix(1:8, ncol = 2)))
+geojson2wkt(multist, fmt = 0)
+# 2D and 2D
+multist <- list(MultiLineString = list(
+    matrix(1:4, ncol = 2), matrix(1:8, ncol = 2)))
+geojson2wkt(multist, fmt = 0)
+# 5D and 2D - FAILS
+# multist <- list(MultiLineString = list(
+#    matrix(1:10, ncol = 5), matrix(1:8, ncol = 2)))
+# geojson2wkt(multist, fmt = 0)
+
 
 # polygon
 ## new format
@@ -155,6 +219,29 @@ poly <- list(
 )
 geojson2wkt(poly)
 geojson2wkt(poly, fmt=6)
+
+## points within Polygon that differ 
+## -> use length of longest 
+## -> fill with zeros
+# 3D and 2D
+poly <- list(Polygon = list(
+   matrix(c(100, 101, 101, 100, 0.1, 0.2, 0.3, 0.1, 5, 6, 7, 8), ncol = 3),
+   matrix(c(40, 41, 61, 40, 0.1, 0.2, 0.3, 0.1), ncol = 2)
+))
+geojson2wkt(poly, fmt = 0)
+# 4D and 2D
+poly <- list(Polygon = list(
+   matrix(c(100, 101, 101, 100, 0.1, 0.2, 0.3, 0.1, 5, 6, 7, 8, 1, 1, 1, 1), 
+     ncol = 4),
+   matrix(c(40, 41, 61, 40, 0.1, 0.2, 0.3, 0.1), ncol = 2)
+))
+geojson2wkt(poly, fmt = 0)
+# 5D and 2D - FAILS
+# multist <- list(Polygon = list(
+#    matrix(1:10, ncol = 5), matrix(1:8, ncol = 2)))
+# geojson2wkt(poly, fmt = 0)
+
+
 
 # multipolygon
 ## new format
@@ -222,6 +309,52 @@ mpoly2 <- list(
   )
 )
 geojson2wkt(mpoly2, fmt=1)
+
+## points within MultiPolygon that differ 
+## -> use length of longest 
+## -> fill with zeros
+# 3D and 2D
+mpoly <- list(MultiPolygon = list(
+  list(
+    matrix(c(40, 130, 155, 40, 20, 34, 34, 20), ncol = 2),
+    matrix(c(30, 40, 54, 30, 0.1, 42, 62, 0.1, 1, 1, 1, 1), ncol = 3)
+  ),
+  list(
+    matrix(c(9, 49, 79, 9, 11, 35, 15, 11), ncol = 2),
+    matrix(c(1, 33, 59, 1, 5, 16, 36, 5), ncol = 2)
+  )
+))
+geojson2wkt(mpoly, fmt = 0)
+# 4D and 2D
+mpoly <- list(MultiPolygon = list(
+  list(
+    matrix(c(40, 130, 155, 40, 20, 34, 34, 20), ncol = 2),
+    matrix(c(30, 40, 54, 30, 0.1, 42, 62, 0.1, 1, 1, 1, 1, 0, 0, 0, 0), ncol = 4)
+  ),
+  list(
+    matrix(c(9, 49, 79, 9, 11, 35, 15, 11), ncol = 2),
+    matrix(c(1, 33, 59, 1, 5, 16, 36, 5), ncol = 2)
+  )
+))
+geojson2wkt(mpoly, fmt = 0)
+# 5D and 2D - FAILS
+mpoly <- list(MultiPolygon = list(
+  list(
+    matrix(c(40, 130, 155, 40, 20, 34, 34, 20), ncol = 2),
+    matrix(c(30, 40, 54, 30, 
+             0.1, 42, 62, 0.1, 
+             1, 1, 1, 1, 
+             0, 0, 0, 0,
+             0, 0, 0, 0), ncol = 5)
+  ),
+  list(
+    matrix(c(9, 49, 79, 9, 11, 35, 15, 11), ncol = 2),
+    matrix(c(1, 33, 59, 1, 5, 16, 36, 5), ncol = 2)
+  )
+))
+# geojson2wkt(mpoly, fmt = 0)
+
+
 
 # geometrycollection
 ## new format
@@ -291,7 +424,6 @@ geojson2wkt(json)
 ## old format, warns
 json <- toJSON(list(type="Point", coordinates=c(-105,39)), auto_unbox=TRUE)
 geojson2wkt(json)
-
 }
 \references{
 \url{https://tools.ietf.org/html/rfc7946},
