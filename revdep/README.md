@@ -9,13 +9,13 @@
 |language |(EN)                                        |
 |collate  |en_US.UTF-8                                 |
 |tz       |America/Los_Angeles                         |
-|date     |2018-03-27                                  |
+|date     |2018-03-29                                  |
 
 # Dependencies
 
-|package   |old   |new        |Δ  |
-|:---------|:-----|:----------|:--|
-|wellknown |0.1.0 |0.4.9.9210 |*  |
+|package   |old   |new   |Δ  |
+|:---------|:-----|:-----|:--|
+|wellknown |0.1.0 |0.5.0 |*  |
 
 # Revdeps
 
