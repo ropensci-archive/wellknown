@@ -22,3 +22,6 @@ Suggests:
     leaflet (>= 1.0.0),
     testthat
 RoxygenNote: 6.0.1
+X-schema.org-applicationCategory: Geosptial
+X-schema.org-keywords: spatial, geospatial, wkt, wkb, well-known-text, geojson, binary, conversion
+X-schema.org-isPartOf: https://ropensci.org
