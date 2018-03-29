@@ -23,7 +23,7 @@ summary at <https://github.com/ropensci/wellknown/tree/master/revdep>
 
 --------
 
-This version xxxx.
+This version contains a number of new functions, some new parameters, and some bug fixes.
 
 Thanks!
 Scott Chamberlain
