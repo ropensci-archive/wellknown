@@ -15,7 +15,6 @@ VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Imports:
     jsonlite (>= 0.9.21),
-    magrittr,
     V8 (>= 1.0.2)
 Suggests:
     knitr,

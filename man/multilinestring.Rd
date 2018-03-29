@@ -40,8 +40,8 @@ multilinestring(x)
 df <- data.frame(long = c(30, 45, 10), lat = c(20, 40, 40))
 df2 <- data.frame(long = c(15, 40, 10), lat = c(5, 10, 20))
 multilinestring(df, df2, fmt=0)
-multilinestring(df, df2, fmt=0) \%>\% lint
-multilinestring(df, df2) \%>\% wktview(zoom=3)
+lint(multilinestring(df, df2, fmt=0))
+wktview(multilinestring(df, df2), zoom=3)
 
 # matrix
 mat <- matrix(c(df$long, df$lat), ncol = 2)
@@ -57,8 +57,7 @@ polys <- list(
   list(c(30, 20), c(45, 40), c(10, 40)),
   list(c(15, 5), c(40, 10), c(10, 20))
 )
-multilinestring(polys, fmt=2) \%>\%
-  wktview(zoom=3)
+wktview(multilinestring(polys, fmt=2), zoom=3)
 
 # 3D
 ## data.frame

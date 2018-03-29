@@ -41,12 +41,12 @@ wktview.character <- function(x, center = NULL, zoom = 5, fmt = 16) {
 
 make_view <- function(x, center = NULL, zoom = 5, fmt = 16) {
   chek_for_pkg("leaflet")
-  geojson <- wkt2geojson(x, fmt = fmt) %>% properties(style = list(NULL))
+  geojson <- properties(wkt2geojson(x, fmt = fmt), style = list(NULL))
   cen <- centroid(geojson, center)
-  leaflet::leaflet() %>%
-    leaflet::addTiles() %>%
-    leaflet::setView(lng = cen[1], lat = cen[2], zoom = zoom) %>%
-    leaflet::addGeoJSON(geojson)
+  w <- leaflet::leaflet()
+  w <- leaflet::addTiles(w)
+  w <- leaflet::setView(w, lng = cen[1], lat = cen[2], zoom = zoom)
+  leaflet::addGeoJSON(w, geojson)
 }
 
 not_some <- function(x) {
