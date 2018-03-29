@@ -2,22 +2,23 @@
 % Please edit documentation in R/properties.R
 \name{properties}
 \alias{properties}
-\title{Add properties to a geojson object}
+\title{Add properties to a GeoJSON object}
 \usage{
 properties(x, style = NULL, popup = NULL)
 }
 \arguments{
-\item{x}{Input}
+\item{x}{(list) GeoJSON as a list}
 
-\item{style}{List of color, fillColor, etc., or NULL}
+\item{style}{(list) named list of color, fillColor, etc. attributes.
+Default: \code{NULL}}
 
-\item{popup}{Popup text, or NULL}
+\item{popup}{(list) named list of popup values. Default: \code{NULL}}
 }
 \description{
-Add properties to a geojson object
+Add properties to a GeoJSON object
 }
 \examples{
 str <- "POINT (-116.4000000000000057 45.2000000000000028)"
 x <- wkt2geojson(str)
-properties(x, style=list(color = "red"))
+properties(x, style = list(color = "red"))
 }
