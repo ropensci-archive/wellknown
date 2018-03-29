@@ -320,15 +320,6 @@ geojson2wkt.list <- function(obj, fmt = 16, third = "z", ...) {
   }
 
   if (
-    (
-      all(c('type', 'coordinates') %in% nms) ||
-      all(c('type', 'geometries') %in% nms)
-    ) &&
-    !all(tolower(wkt_geojson_types) %in% nms)
-  ) {
-    warning('using old format - move to new format - see ?geojson2wkt',
-            call. = FALSE)
-  } else if (
     !all(c('type', 'coordinates') %in% nms) &&
     any(tolower(wkt_geojson_types) %in% nms)
   ) {
@@ -337,8 +328,6 @@ geojson2wkt.list <- function(obj, fmt = 16, third = "z", ...) {
     } else{
       obj <- list(type = nms, coordinates = obj[[1]])
     }
-  } else {
-    stop("bad input", call. = FALSE)
   }
 
   switch(
