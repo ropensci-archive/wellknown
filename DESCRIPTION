@@ -4,7 +4,7 @@ Description: Convert 'WKT' to 'GeoJSON' and 'GeoJSON' to 'WKT'. Functions
     included for converting between 'GeoJSON' to 'WKT', creating both
     'GeoJSON' features, and non-features, creating 'WKT' from R objects
     (e.g., lists, data.frames, vectors), and linting 'WKT'.
-Version: 0.5.0
+Version: 0.5.0.9100
 Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
     email = "myrmecocystus@gmail.com")
 License: MIT + file LICENSE
