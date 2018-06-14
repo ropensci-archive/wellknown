@@ -10,3 +10,4 @@ Makefile
 .V8history
 ^codemeta\.json$
 ^revdep$
+.github
