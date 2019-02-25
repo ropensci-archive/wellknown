@@ -4,7 +4,7 @@ dump_point <- function(obj, fmt = 16, third = "z"){
   if (!is.vector(coords) || is.list(coords)) {
     stop("expecting a vector in 'coordinates', got a ", class(coords))
   }
-  str <- paste0(format(coords, nsmall = fmt), collapse = " ")
+  str <- paste0(format(coords, nsmall = fmt), collapse = "")
   make_it('POINT', str, length(coords), third)
 }
 
@@ -43,8 +43,8 @@ dump_multilinestring <- function(obj, fmt = 16, third = "z"){
   coords <- check_diff_dim(coords)
   str <- paste0(lapply(coords, function(z){
     sprintf("(%s)", paste0(gsub(",", "",
-      apply(str_trim_(format(z, nsmall = fmt)), 
-        1, paste0, collapse = " ")), 
+      apply(str_trim_(format(z, nsmall = fmt)),
+        1, paste0, collapse = " ")),
     collapse = ", "))
   }), collapse = ", ")
   len <- unique(vapply(coords, NCOL, numeric(1)))
@@ -88,7 +88,7 @@ dump_multipolygon <- function(obj, fmt = 16, third = "z"){
       paste0(gsub(",", "", unname(apply(str_trim_(format(w, nsmall = fmt)), 1, paste0, collapse = " "))), collapse = ", ")
     })), collapse = ", "))
   }), collapse = ", ")
-  len <- unique(vapply(coords, function(z) unique(vapply(z, NCOL, numeric(1))), 
+  len <- unique(vapply(coords, function(z) unique(vapply(z, NCOL, numeric(1))),
     numeric(1)))
   make_it('MULTIPOLYGON', str, len, third)
 }
@@ -121,7 +121,7 @@ get_fxn <- function(type){
          geometrycollection = dump_geometrycollection)
 }
 
-# vector of acceptable types 
+# vector of acceptable types
 # some WKT types are not valid GeoJSON types so make no sense to allow
 wkt_geojson_types <- c("POINT",'MULTIPOINT',"POLYGON","MULTIPOLYGON",
                      "LINESTRING","MULTILINESTRING","GEOMETRYCOLLECTION")
@@ -145,7 +145,7 @@ check_diff_dim <- function(coords) {
   if (length(unique(lns)) > 1) {
     to_add <- max(lns) - min(lns)
     to_fix <- coords[[which.min(lns)]]
-    coords[[which.min(lns)]] <- 
+    coords[[which.min(lns)]] <-
       cbind(to_fix, replicate(to_add, rep(0, NROW(to_fix))))
   }
   return(coords)
@@ -161,7 +161,7 @@ check_diff_dim_multi <- function(coords) {
     to_add <- max(lns) - min(lns)
     coords <- lapply(coords, function(z) {
       to_fix <- z[vapply(z, NCOL, 1) == min(lns)]
-      z[vapply(z, NCOL, 1) == min(lns)] <- 
+      z[vapply(z, NCOL, 1) == min(lns)] <-
        lapply(to_fix, function(w) cbind(w, replicate(to_add, rep(0, NROW(w)))))
       z
     })

@@ -84,3 +84,4 @@ Other R-objects: \code{\link{circularstring}},
   \code{\link{multipolygon}}, \code{\link{point}},
   \code{\link{polygon}}
 }
+\concept{R-objects}

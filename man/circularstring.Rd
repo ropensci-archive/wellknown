@@ -46,3 +46,4 @@ Other R-objects: \code{\link{geometrycollection}},
   \code{\link{multipoint}}, \code{\link{multipolygon}},
   \code{\link{point}}, \code{\link{polygon}}
 }
+\concept{R-objects}

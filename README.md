@@ -82,7 +82,7 @@ library("wellknown")
 ```r
 point <- list(Point = c(116.4, 45.2, 11.1))
 geojson2wkt(point)
-#> [1] "POINT Z(116.4000000000000057  45.2000000000000028  11.0999999999999996)"
+#> [1] "POINT Z(116.4000000000000057 45.2000000000000028 11.0999999999999996)"
 ```
 
 ### Multipoint
@@ -178,7 +178,7 @@ gmcoll <- list(
  )
 )
 geojson2wkt(gmcoll, fmt=0)
-#> [1] "GEOMETRYCOLLECTION (POINT (0 1), LINESTRING (0 0, 2 1, 4 2, 5 4), POLYGON ((100.001 0.001, 101.100 0.001, 101.001 1.001, 100.001 0.001), (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)))"
+#> [1] "GEOMETRYCOLLECTION (POINT (01), LINESTRING (0 0, 2 1, 4 2, 5 4), POLYGON ((100.001 0.001, 101.100 0.001, 101.001 1.001, 100.001 0.001), (100.201 0.201, 100.801 0.201, 100.801 0.801, 100.201 0.201)))"
 ```
 
 ### Convert json or character objects
@@ -195,7 +195,7 @@ library("jsonlite")
 
 ```r
 geojson2wkt(json)
-#> [1] "POINT (-105   39)"
+#> [1] "POINT (-105  39)"
 ```
 
 And you can convert from a geojson character string:
@@ -380,6 +380,111 @@ wkb_wkt(x)
 wkb_wkt(x)
 #> [1] "POLYGON((100 0,101.1 0,101 1,100 0))"
 ```
+
+## Moving to C++
+
+### GeoJSON to WKT
+
+Point
+
+
+```r
+point <- list(Point = c(116.4, 45.2))
+bench::mark(
+  geojson2wkt(point),
+  geojson2wkt(point, use_cpp = TRUE)
+)
+#> # A tibble: 2 x 10
+#>   expression    min   mean median   max `itr/sec` mem_alloc  n_gc n_itr
+#>   <chr>      <bch:> <bch:> <bch:> <bch>     <dbl> <bch:byt> <dbl> <int>
+#> 1 geojson2w… 32.2µs 36.1µs 34.4µs 376µs    27669.        0B     6  9994
+#> 2 geojson2w… 19.8µs 22.9µs 21.3µs 204µs    43643.    5.66KB     3  9997
+#> # … with 1 more variable: total_time <bch:tm>
+```
+
+MultiPoint
+
+
+```r
+mp <- list(MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18),
+                                ncol = 2))
+bench::mark(
+  R = geojson2wkt(mp),
+  cpp = geojson2wkt(mp, use_cpp = TRUE)
+)
+#> # A tibble: 2 x 10
+#>   expression   min    mean  median    max `itr/sec` mem_alloc  n_gc n_itr
+#>   <chr>      <bch> <bch:t> <bch:t> <bch:>     <dbl> <bch:byt> <dbl> <int>
+#> 1 R          164µs 192.5µs 171.9µs 1.96ms     5194.      192B     5  2524
+#> 2 cpp         29µs  36.7µs  30.9µs 1.43ms    27254.    5.69KB     3  9997
+#> # … with 1 more variable: total_time <bch:tm>
+```
+
+LineString
+
+
+```r
+st <- list(LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
+                                 0.0, 1.0, 2.0, 4.0),
+                               ncol = 2))
+bench::mark(
+  R = geojson2wkt(st),
+  cpp = geojson2wkt(st, use_cpp = TRUE)
+)
+#> # A tibble: 2 x 10
+#>   expression     min    mean  median   max `itr/sec` mem_alloc  n_gc n_itr
+#>   <chr>      <bch:t> <bch:t> <bch:t> <bch>     <dbl> <bch:byt> <dbl> <int>
+#> 1 R          159.1µs 177.6µs 168.2µs 604µs     5631.      424B     7  2730
+#> 2 cpp         27.5µs  31.6µs  28.7µs 899µs    31604.    5.69KB     3  9997
+#> # … with 1 more variable: total_time <bch:tm>
+```
+
+MultiLineString
+
+
+```r
+multist <- list(MultiLineString = list(
+  matrix(c(0, -2, -4, -1, -3, -5),
+         ncol = 2),
+  matrix(c(1.66, 10.9999, 10.9, 0, -31.5, 3.0, 1.1, 0),
+         ncol = 2)
+  )
+)
+bench::mark(
+  R = geojson2wkt(multist),
+  cpp = geojson2wkt(multist, use_cpp = TRUE)
+)
+#> # A tibble: 2 x 10
+#>   expression     min    mean  median   max `itr/sec` mem_alloc  n_gc n_itr
+#>   <chr>      <bch:t> <bch:t> <bch:t> <bch>     <dbl> <bch:byt> <dbl> <int>
+#> 1 R          228.7µs 254.8µs   239µs 938µs     3924.    1.09KB     5  1896
+#> 2 cpp         40.1µs  43.8µs  42.1µs 168µs    22831.    5.71KB     3  9997
+#> # … with 1 more variable: total_time <bch:tm>
+```
+
+Polygon
+
+
+```r
+poly <- list(Polygon = list(
+  matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
+         ncol = 2),
+  matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
+         ncol = 2)
+))
+bench::mark(
+  R = geojson2wkt(poly),
+  cpp = geojson2wkt(poly, use_cpp = TRUE)
+)
+#> # A tibble: 2 x 10
+#>   expression     min    mean  median   max `itr/sec` mem_alloc  n_gc n_itr
+#>   <chr>      <bch:t> <bch:t> <bch:t> <bch>     <dbl> <bch:byt> <dbl> <int>
+#> 1 R          357.3µs 387.5µs   373µs 951µs     2581.     1.6KB     7  1248
+#> 2 cpp         44.7µs  49.7µs  46.7µs 331µs    20139.    5.67KB     3  9919
+#> # … with 1 more variable: total_time <bch:tm>
+```
+
+
 
 ## Meta
 

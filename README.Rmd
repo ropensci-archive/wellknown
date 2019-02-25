@@ -306,6 +306,76 @@ wkb_wkt(x)
 wkb_wkt(x)
 ```
 
+## Moving to C++
+
+### GeoJSON to WKT
+
+Point
+
+```{r}
+point <- list(Point = c(116.4, 45.2))
+bench::mark(
+  geojson2wkt(point),
+  geojson2wkt(point, use_cpp = TRUE)
+)
+```
+
+MultiPoint
+
+```{r}
+mp <- list(MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18),
+                                ncol = 2))
+bench::mark(
+  R = geojson2wkt(mp),
+  cpp = geojson2wkt(mp, use_cpp = TRUE)
+)
+```
+
+LineString
+
+```{r}
+st <- list(LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
+                                 0.0, 1.0, 2.0, 4.0),
+                               ncol = 2))
+bench::mark(
+  R = geojson2wkt(st),
+  cpp = geojson2wkt(st, use_cpp = TRUE)
+)
+```
+
+MultiLineString
+
+```{r}
+multist <- list(MultiLineString = list(
+  matrix(c(0, -2, -4, -1, -3, -5),
+         ncol = 2),
+  matrix(c(1.66, 10.9999, 10.9, 0, -31.5, 3.0, 1.1, 0),
+         ncol = 2)
+  )
+)
+bench::mark(
+  R = geojson2wkt(multist),
+  cpp = geojson2wkt(multist, use_cpp = TRUE)
+)
+```
+
+Polygon
+
+```{r}
+poly <- list(Polygon = list(
+  matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
+         ncol = 2),
+  matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
+         ncol = 2)
+))
+bench::mark(
+  R = geojson2wkt(poly),
+  cpp = geojson2wkt(poly, use_cpp = TRUE)
+)
+```
+
+
+
 ## Meta
 
 * Please [report any issues or bugs](https://github.com/ropensci/wellknown/issues).

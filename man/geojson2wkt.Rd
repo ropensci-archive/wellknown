@@ -4,7 +4,7 @@
 \alias{geojson2wkt}
 \title{Convert GeoJSON-like objects to WKT}
 \usage{
-geojson2wkt(obj, fmt = 16, third = "z", ...)
+geojson2wkt(obj, fmt = 16, third = "z", use_cpp = FALSE, ...)
 }
 \arguments{
 \item{obj}{(list/json/character) A GeoJSON-like object representing a
@@ -88,16 +88,27 @@ If > 5 columns we stop with an error message.
 # point
 ## new format
 point <- list(Point = c(116.4, 45.2))
+point
 geojson2wkt(point)
+geojson2wkt(point, use_cpp = TRUE)
+geojson2wkt(point, fmt = 3)
+geojson2wkt(point, fmt = 3, use_cpp = TRUE)
+geojson2wkt(point, fmt = 8)
+geojson2wkt(point, fmt = 8, use_cpp = TRUE)
+
+system.time(replicate(10^5, geojson2wkt(point)))
+system.time(replicate(10^5, geojson2wkt(point, use_cpp = TRUE)))
+
 ## old format, warns
 point <- list(type = 'Point', coordinates = c(116.4, 45.2))
 geojson2wkt(point)
 
 # multipoint
 ## new format
-mp <- list(MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18),
-   ncol = 2))
+(mp <- list(MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18),
+   ncol = 2)))
 geojson2wkt(mp)
+geojson2wkt(mp, use_cpp = TRUE)
 ## 3D
 mp <- list(MultiPoint = matrix(c(100, 101, 3, 3, 2, 2, 4, 5, 6),
    ncol = 3))
@@ -115,9 +126,10 @@ st <- list(LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
                                0.0, 1.0, 2.0, 4.0),
                                ncol = 2))
 geojson2wkt(st)
+geojson2wkt(st, use_cpp = TRUE)
 ## 3D
 st <- list(LineString = matrix(
-  c(0.0, 0, 0, 
+  c(0.0, 0, 0,
    2, 1, 5,
    100, 300, 800), nrow = 3))
 geojson2wkt(st, fmt = 2)
@@ -152,7 +164,8 @@ multist <- list(MultiLineString = list(
    matrix(c(1.66, 10.9999, 10.9, 0, -31.5, 3.0, 1.1, 0), ncol = 2)
  )
 )
-geojson2wkt(multist)
+geojson2wkt(multist, fmt = 2)
+geojson2wkt(multist, fmt = 2, use_cpp = TRUE)
 ## 3D
 multist <- list(MultiLineString = list(
    matrix(c(0, -2, -4, -1, -3, -5, 100, 200, 300), ncol = 3),
@@ -171,8 +184,8 @@ multist <- list(
 )
 geojson2wkt(multist)
 
-## points within MultiLineString that differ 
-## -> use length of longest 
+## points within MultiLineString that differ
+## -> use length of longest
 ## -> fill with zeros
 # 3D and 2D
 multist <- list(MultiLineString = list(
@@ -198,7 +211,9 @@ poly <- list(Polygon = list(
    matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001), ncol = 2),
    matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201), ncol = 2)
 ))
-geojson2wkt(poly)
+poly
+geojson2wkt(poly, fmt = 2)
+geojson2wkt(poly, fmt = 2, use_cpp = TRUE)
 geojson2wkt(poly, fmt=6)
 ## 3D
 poly <- list(Polygon = list(
@@ -220,8 +235,8 @@ poly <- list(
 geojson2wkt(poly)
 geojson2wkt(poly, fmt=6)
 
-## points within Polygon that differ 
-## -> use length of longest 
+## points within Polygon that differ
+## -> use length of longest
 ## -> fill with zeros
 # 3D and 2D
 poly <- list(Polygon = list(
@@ -231,7 +246,7 @@ poly <- list(Polygon = list(
 geojson2wkt(poly, fmt = 0)
 # 4D and 2D
 poly <- list(Polygon = list(
-   matrix(c(100, 101, 101, 100, 0.1, 0.2, 0.3, 0.1, 5, 6, 7, 8, 1, 1, 1, 1), 
+   matrix(c(100, 101, 101, 100, 0.1, 0.2, 0.3, 0.1, 5, 6, 7, 8, 1, 1, 1, 1),
      ncol = 4),
    matrix(c(40, 41, 61, 40, 0.1, 0.2, 0.3, 0.1), ncol = 2)
 ))
@@ -259,9 +274,9 @@ geojson2wkt(mpoly, fmt=2)
 ## 3D
 mpoly <- list(MultiPolygon = list(
   list(
-    matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001, 1, 1, 1, 1), 
+    matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001, 1, 1, 1, 1),
       ncol = 3),
-    matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2, 3, 4, 5, 6), 
+    matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2, 3, 4, 5, 6),
       ncol = 3)
   ),
   list(
@@ -310,8 +325,8 @@ mpoly2 <- list(
 )
 geojson2wkt(mpoly2, fmt=1)
 
-## points within MultiPolygon that differ 
-## -> use length of longest 
+## points within MultiPolygon that differ
+## -> use length of longest
 ## -> fill with zeros
 # 3D and 2D
 mpoly <- list(MultiPolygon = list(
@@ -341,9 +356,9 @@ geojson2wkt(mpoly, fmt = 0)
 mpoly <- list(MultiPolygon = list(
   list(
     matrix(c(40, 130, 155, 40, 20, 34, 34, 20), ncol = 2),
-    matrix(c(30, 40, 54, 30, 
-             0.1, 42, 62, 0.1, 
-             1, 1, 1, 1, 
+    matrix(c(30, 40, 54, 30,
+             0.1, 42, 62, 0.1,
+             1, 1, 1, 1,
              0, 0, 0, 0,
              0, 0, 0, 0), ncol = 5)
   ),
