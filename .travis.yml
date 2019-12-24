@@ -1,21 +1,23 @@
 language: r
-sudo: false
 cache: packages
-dist: trusty
 
 matrix:
   include:
-    - os: linux
-      r: release
+    - r: release
       env: R_CODECOV=true
+    - r: devel
     - os: linux
-      r: devel
+      addons:
+        apt:
+          packages: libnode-dev
+    - os: osx
+      brew_packages: v8
+    - os: osx
+      disable_homebrew: true
 
 r_github_packages:
   - jimhester/covr
-
-r_binary_install:
-  - leaflet
+  - jeroen/V8
 
 addons:
   apt:
