@@ -41,7 +41,12 @@
 
 wkt_wkb <- function(x) {
   sh$eval(sprintf("var tt = wkx.Geometry.parse('%s').toWkb();", x))
-  as.raw(sh$get("tt")$data)
+  out <- sh$get("tt")
+  # Newer version of V8 converts JS buffers directly to raw vectors:
+  if(is.raw(out))
+    return(out)
+  # Older versions of V8 return json data:
+  as.raw(out$data)
 }
 
 #' @export
