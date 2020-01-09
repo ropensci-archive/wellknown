@@ -112,9 +112,13 @@ ply <- list(c(100, 0, 1, 40), c(101, 0, 1, 44), c(101, 1, 1, 45),
 polygon(ply, fmt=2)
 }
 \seealso{
-Other R-objects: \code{\link{circularstring}},
-  \code{\link{geometrycollection}},
-  \code{\link{linestring}}, \code{\link{multilinestring}},
-  \code{\link{multipoint}}, \code{\link{multipolygon}},
-  \code{\link{point}}
+Other R-objects: 
+\code{\link{circularstring}()},
+\code{\link{geometrycollection}()},
+\code{\link{linestring}()},
+\code{\link{multilinestring}()},
+\code{\link{multipoint}()},
+\code{\link{multipolygon}()},
+\code{\link{point}()}
 }
+\concept{R-objects}

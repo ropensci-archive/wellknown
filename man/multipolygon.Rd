@@ -106,9 +106,13 @@ l2 <- list(c(15, 5, 5, 1), c(40, 10, 5, 1), c(10, 20, 5, 1), c(5, 10, 5, 1),
 multipolygon(l1, l2, fmt=2)
 }
 \seealso{
-Other R-objects: \code{\link{circularstring}},
-  \code{\link{geometrycollection}},
-  \code{\link{linestring}}, \code{\link{multilinestring}},
-  \code{\link{multipoint}}, \code{\link{point}},
-  \code{\link{polygon}}
+Other R-objects: 
+\code{\link{circularstring}()},
+\code{\link{geometrycollection}()},
+\code{\link{linestring}()},
+\code{\link{multilinestring}()},
+\code{\link{multipoint}()},
+\code{\link{point}()},
+\code{\link{polygon}()}
 }
+\concept{R-objects}

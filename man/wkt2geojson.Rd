@@ -4,8 +4,7 @@
 \alias{wkt2geojson}
 \title{Convert WKT to GeoJSON-like objects.}
 \usage{
-wkt2geojson(str, fmt = 16, feature = TRUE, numeric = TRUE,
-  simplify = FALSE)
+wkt2geojson(str, fmt = 16, feature = TRUE, numeric = TRUE, simplify = FALSE)
 }
 \arguments{
 \item{str}{A GeoJSON-like object representing a Point, LineString, Polygon,

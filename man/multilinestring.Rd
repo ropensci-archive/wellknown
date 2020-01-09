@@ -94,9 +94,13 @@ x2 <- list(c(15, 5, 0, 40), c(40, 10, 3, 40), c(10, 20, 4, 40))
 multilinestring(x1, x2, fmt=2)
 }
 \seealso{
-Other R-objects: \code{\link{circularstring}},
-  \code{\link{geometrycollection}},
-  \code{\link{linestring}}, \code{\link{multipoint}},
-  \code{\link{multipolygon}}, \code{\link{point}},
-  \code{\link{polygon}}
+Other R-objects: 
+\code{\link{circularstring}()},
+\code{\link{geometrycollection}()},
+\code{\link{linestring}()},
+\code{\link{multipoint}()},
+\code{\link{multipolygon}()},
+\code{\link{point}()},
+\code{\link{polygon}()}
 }
+\concept{R-objects}

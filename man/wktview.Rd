@@ -10,7 +10,7 @@ wktview(x, center = NULL, zoom = 5, fmt = 16)
 \item{x}{Input, a geojson character string or list}
 
 \item{center}{(numeric) A length two vector of the form:
-\code{longitude, latitude}}
+\verb{longitude, latitude}}
 
 \item{zoom}{(integer) A number between 1 and 18 (1 zoomed out, 18 zoomed in)}
 

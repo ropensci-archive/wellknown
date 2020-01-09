@@ -78,9 +78,13 @@ x <- list(c(100, 3, 0, 300), c(101, 2, 1, 200), c(3, 2, 5, 100))
 multipoint(x, fmt = 3)
 }
 \seealso{
-Other R-objects: \code{\link{circularstring}},
-  \code{\link{geometrycollection}},
-  \code{\link{linestring}}, \code{\link{multilinestring}},
-  \code{\link{multipolygon}}, \code{\link{point}},
-  \code{\link{polygon}}
+Other R-objects: 
+\code{\link{circularstring}()},
+\code{\link{geometrycollection}()},
+\code{\link{linestring}()},
+\code{\link{multilinestring}()},
+\code{\link{multipolygon}()},
+\code{\link{point}()},
+\code{\link{polygon}()}
 }
+\concept{R-objects}

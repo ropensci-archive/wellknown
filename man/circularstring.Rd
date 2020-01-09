@@ -41,8 +41,13 @@ x <- list(c(1, 5), c(6, 2), c(7, 3))
 circularstring(x, fmt=2)
 }
 \seealso{
-Other R-objects: \code{\link{geometrycollection}},
-  \code{\link{linestring}}, \code{\link{multilinestring}},
-  \code{\link{multipoint}}, \code{\link{multipolygon}},
-  \code{\link{point}}, \code{\link{polygon}}
+Other R-objects: 
+\code{\link{geometrycollection}()},
+\code{\link{linestring}()},
+\code{\link{multilinestring}()},
+\code{\link{multipoint}()},
+\code{\link{multipolygon}()},
+\code{\link{point}()},
+\code{\link{polygon}()}
 }
+\concept{R-objects}

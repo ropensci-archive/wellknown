@@ -41,8 +41,13 @@ geometrycollection(point(-116.4, 45.2),
 )
 }
 \seealso{
-Other R-objects: \code{\link{circularstring}},
-  \code{\link{linestring}}, \code{\link{multilinestring}},
-  \code{\link{multipoint}}, \code{\link{multipolygon}},
-  \code{\link{point}}, \code{\link{polygon}}
+Other R-objects: 
+\code{\link{circularstring}()},
+\code{\link{linestring}()},
+\code{\link{multilinestring}()},
+\code{\link{multipoint}()},
+\code{\link{multipolygon}()},
+\code{\link{point}()},
+\code{\link{polygon}()}
 }
+\concept{R-objects}
