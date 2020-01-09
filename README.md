@@ -7,8 +7,8 @@ wellknown
 [![Build Status](https://travis-ci.org/ropensci/wellknown.svg)](https://travis-ci.org/ropensci/wellknown)
 [![Build status](https://ci.appveyor.com/api/projects/status/ot3lth177a6f8jgg?svg=true)](https://ci.appveyor.com/project/sckott/wellknown)
 [![codecov.io](https://codecov.io/github/ropensci/wellknown/coverage.svg?branch=master)](https://codecov.io/github/ropensci/wellknown?branch=master)
-[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/wellknown)](https://github.com/metacran/cranlogs.app)
-[![cran version](http://www.r-pkg.org/badges/version/wellknown)](https://cran.r-project.org/package=wellknown)
+[![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/wellknown)](https://github.com/metacran/cranlogs.app)
+[![cran version](https://www.r-pkg.org/badges/version/wellknown)](https://cran.r-project.org/package=wellknown)
 
 `wellknown` - convert WKT to GeoJSON and vice versa.
 
@@ -355,10 +355,10 @@ wkt_wkb("POINT (-116.4 45.2)")
 
 ## polygon
 wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))")
-#>  [1] 01 03 00 00 00 01 00 00 00 04 00 00 00 00 00 00 00 00 00 59 40 00 00
-#> [24] 00 00 00 00 00 00 66 66 66 66 66 46 59 40 00 00 00 00 00 00 00 00 00
-#> [47] 00 00 00 00 40 59 40 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 59 40
-#> [70] 00 00 00 00 00 00 00 00
+#>  [1] 01 03 00 00 00 01 00 00 00 04 00 00 00 00 00 00 00 00 00 59 40 00 00 00 00
+#> [26] 00 00 00 00 66 66 66 66 66 46 59 40 00 00 00 00 00 00 00 00 00 00 00 00 00
+#> [51] 40 59 40 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 59 40 00 00 00 00 00 00
+#> [76] 00 00
 ```
 
 WKB to WKT
@@ -373,10 +373,10 @@ wkb_wkt(x)
 
 ## polygon
 (x <- wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))"))
-#>  [1] 01 03 00 00 00 01 00 00 00 04 00 00 00 00 00 00 00 00 00 59 40 00 00
-#> [24] 00 00 00 00 00 00 66 66 66 66 66 46 59 40 00 00 00 00 00 00 00 00 00
-#> [47] 00 00 00 00 40 59 40 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 59 40
-#> [70] 00 00 00 00 00 00 00 00
+#>  [1] 01 03 00 00 00 01 00 00 00 04 00 00 00 00 00 00 00 00 00 59 40 00 00 00 00
+#> [26] 00 00 00 00 66 66 66 66 66 46 59 40 00 00 00 00 00 00 00 00 00 00 00 00 00
+#> [51] 40 59 40 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 59 40 00 00 00 00 00 00
+#> [76] 00 00
 wkb_wkt(x)
 #> [1] "POLYGON((100 0,101.1 0,101 1,100 0))"
 ```
@@ -386,6 +386,8 @@ wkb_wkt(x)
 * Please [report any issues or bugs](https://github.com/ropensci/wellknown/issues).
 * License: MIT
 * Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
-* Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+* Please note that this project is released with a [Contributor Code of Conduct][coc]. By participating in this project you agree to abide by its terms.
 
-[![ropensci_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
+[![ropensci_footer](https://ropensci.org/public_images/github_footer.png)](https://ropensci.org)
+
+[coc]: https://github.com/ropensci/wellknown/blob/master/CODE_OF_CONDUCT.md
