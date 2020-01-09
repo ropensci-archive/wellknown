@@ -1,3 +1,11 @@
+wellknown 0.6.0
+===============
+
+### BUG FIXES
+
+* fix to `wkt_wkb` method; support new version of V8 that converts JS buffers to raw vectors (#29)
+
+
 wellknown 0.5.0
 ===============
 
