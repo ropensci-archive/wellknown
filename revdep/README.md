@@ -2,27 +2,21 @@
 
 |field    |value                                       |
 |:--------|:-------------------------------------------|
-|version  |R version 3.4.4 Patched (2018-03-19 r74426) |
-|os       |macOS High Sierra 10.13.3                   |
+|version  |R version 3.6.2 Patched (2019-12-12 r77564) |
+|os       |macOS Mojave 10.14.6                        |
 |system   |x86_64, darwin15.6.0                        |
 |ui       |X11                                         |
 |language |(EN)                                        |
 |collate  |en_US.UTF-8                                 |
-|tz       |America/Los_Angeles                         |
-|date     |2018-03-29                                  |
+|ctype    |en_US.UTF-8                                 |
+|tz       |US/Pacific                                  |
+|date     |2020-01-08                                  |
 
 # Dependencies
 
 |package   |old   |new   |Δ  |
 |:---------|:-----|:-----|:--|
-|wellknown |0.1.0 |0.5.0 |*  |
+|wellknown |0.5.0 |0.6.0 |*  |
 
 # Revdeps
-
-## All (2)
-
-|package  |version |error |warning |note |
-|:--------|:-------|:-----|:-------|:----|
-|ALA4R    |1.5.6   |      |        |     |
-|mregions |0.1.6   |      |        |     |
 
