@@ -123,7 +123,7 @@
   "contIntegration": ["https://travis-ci.org/ropensci/wellknown", "https://ci.appveyor.com/project/sckott/wellknown", "https://codecov.io/github/ropensci/wellknown?branch=master"],
   "releaseNotes": "https://github.com/ropensci/wellknown/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/wellknown/blob/master/README.md",
-  "fileSize": "101.955KB",
+  "fileSize": "101.968KB",
   "applicationCategory": "Geosptial",
   "isPartOf": "https://ropensci.org",
   "keywords": ["spatial", "geospatial", "wkt", "wkb", "well-known-text", "geojson", "binary", "conversion", "rstats", "wellknown", "r", "r-package"],
