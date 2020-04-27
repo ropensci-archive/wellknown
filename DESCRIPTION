@@ -13,6 +13,7 @@ LazyData: true
 URL: https://docs.ropensci.org/wellknown, https://github.com/ropensci/wellknown
 BugReports: https://github.com/ropensci/wellknown/issues
 VignetteBuilder: knitr
+Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
     jsonlite,
@@ -22,7 +23,7 @@ Suggests:
     rmarkdown,
     leaflet (>= 1.0.0),
     testthat
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 X-schema.org-applicationCategory: Geosptial
 X-schema.org-keywords: spatial, geospatial, wkt, wkb, well-known-text, geojson, binary, conversion
 X-schema.org-isPartOf: https://ropensci.org
