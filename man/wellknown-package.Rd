@@ -4,7 +4,10 @@
 \name{wellknown-package}
 \alias{wellknown-package}
 \alias{wellknown}
-\title{WKT to GeoJSON and vice versa}
+\title{wellknown}
+\description{
+WKT to GeoJSON and vice versa
+}
 \examples{
 # GeoJSON to WKT
 point <- list(Point = c(116.4, 45.2, 11.1))

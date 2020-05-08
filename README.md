@@ -65,8 +65,7 @@ Dev version
 
 
 ```r
-install.packages("devtools")
-devtools::install_github("ropensci/wellknown")
+remotes::install_github("ropensci/wellknown")
 ```
 
 
