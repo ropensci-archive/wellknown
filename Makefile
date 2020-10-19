@@ -7,6 +7,12 @@ install: doc build
 build:
 	R CMD build .
 
+clean:
+	rm -f src/*.o src/*.so
+
+attributes:
+	${RSCRIPT} -e 'library(methods); Rcpp::compileAttributes()'
+
 doc:
 	${RSCRIPT} -e "devtools::document()"
 
@@ -31,4 +37,3 @@ vign:
 	cd vignettes;\
 	${RSCRIPT} -e "Sys.setenv(NOT_CRAN='true'); knitr::knit('wellknown.Rmd.og', output = 'wellknown.Rmd')";\
 	cd ..
-

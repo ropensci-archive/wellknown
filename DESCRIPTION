@@ -16,9 +16,13 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
+LinkingTo:
+    Rcpp,
+    BH
 Imports:
     jsonlite,
-    wk
+    wk,
+    Rcpp
 Suggests:
     knitr,
     rmarkdown,
