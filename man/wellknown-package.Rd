@@ -26,6 +26,6 @@ wkt_wkb("POINT (-116.4 45.2)")
 wkb_wkt(wkt_wkb("POINT (-116.4 45.2)"))
 }
 \author{
-Scott Chamberlain \email{myrmecocystus@gmail.com}
+Scott Chamberlain
 }
 \keyword{package}

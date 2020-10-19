@@ -12,3 +12,4 @@ Makefile
 ^revdep$
 .github
 ^LICENSE\.md$
+vignettes/wellknown.Rmd

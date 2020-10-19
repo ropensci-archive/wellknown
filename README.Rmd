@@ -2,42 +2,17 @@ wellknown
 =======
 
 ```{r echo=FALSE}
-library("knitr")
-hook_output <- knitr::knit_hooks$get("output")
-knitr::knit_hooks$set(output = function(x, options) {
-   lines <- options$output.lines
-   if (is.null(lines)) {
-     return(hook_output(x, options))  # pass to default hook
-   }
-   x <- unlist(strsplit(x, "\n"))
-   more <- "..."
-   if (length(lines)==1) {        # first n lines
-     if (length(x) > lines) {
-       # truncate the output, but add ....
-       x <- c(head(x, lines), more)
-     }
-   } else {
-     x <- c(if (abs(lines[1])>1) more else NULL,
-            x[lines],
-            if (length(x)>lines[abs(length(lines))]) more else NULL
-           )
-   }
-   # paste these lines together
-   x <- paste(c(x, ""), collapse = "\n")
-   hook_output(x, options)
- })
-
 knitr::opts_chunk$set(
   comment = "#>",
   collapse = TRUE,
   warning = FALSE,
-  message = FALSE
+  message = FALSE,
+  eval = FALSE
 )
 ```
 
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![cran checks](https://cranchecks.info/badges/summary/wellknown)](https://cranchecks.info/pkgs/wellknown)
-[![Build Status](https://travis-ci.org/ropensci/wellknown.svg)](https://travis-ci.org/ropensci/wellknown)
-[![Build status](https://ci.appveyor.com/api/projects/status/ot3lth177a6f8jgg?svg=true)](https://ci.appveyor.com/project/sckott/wellknown)
 [![codecov.io](https://codecov.io/github/ropensci/wellknown/coverage.svg?branch=master)](https://codecov.io/github/ropensci/wellknown?branch=master)
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/wellknown)](https://github.com/metacran/cranlogs.app)
 [![cran version](https://www.r-pkg.org/badges/version/wellknown)](https://cran.r-project.org/package=wellknown)
@@ -88,221 +63,20 @@ The above currently accept (depending on the fxn) `numeric`, `list`, and `data.f
 
 Stable version
 
-```{r eval=FALSE}
+```{r}
 install.packages("wellknown")
 ```
 
 Dev version
 
-```{r eval=FALSE}
+```{r}
 remotes::install_github("ropensci/wellknown")
+# OR
+install.packages("wellknown", repos="https://dev.ropensci.org")
 ```
 
 ```{r}
 library("wellknown")
-```
-
-## GeoJSON to WKT
-
-### Point
-
-```{r}
-point <- list(Point = c(116.4, 45.2, 11.1))
-geojson2wkt(point)
-```
-
-### Multipoint
-
-```{r}
-mp <- list(
-  MultiPoint = matrix(c(100, 101, 3.14, 3.101, 2.1, 2.18), 
-    ncol = 2)
-)
-geojson2wkt(mp)
-```
-
-### LineString
-
-```{r}
-st <- list(
-  LineString = matrix(c(0.0, 2.0, 4.0, 5.0,
-                         0.0, 1.0, 2.0, 4.0), ncol = 2)
-)
-geojson2wkt(st, fmt=0)
-```
-
-### Multilinestring
-
-```{r}
-multist <- list(
-  MultiLineString = list(
-   matrix(c(0, -2, -4, -1, -3, -5), ncol = 2),
-   matrix(c(1.66, 10.9999, 10.9, 0, -31.5, 3.0, 1.1, 0), ncol = 2)
- )
-)
-geojson2wkt(multist)
-```
-
-### Polygon
-
-```{r}
-poly <- list(
-  Polygon = list(
-    matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
-      ncol = 2),
-    matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
-      ncol = 2)
-  )
-)
-geojson2wkt(poly)
-```
-
-### Multipolygon
-
-```{r}
-mpoly <- list(
-  MultiPolygon = list(
-    list(
-      matrix(c(100, 101, 101, 100, 0.001, 0.001, 1.001, 0.001), ncol = 2),
-      matrix(c(100.2, 100.8, 100.8, 100.2, 0.2, 0.2, 0.8, 0.2), ncol = 2)
-    ),
-    list(
-      matrix(c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0), ncol = 3),
-      matrix(c(9.0, 10.0, 11.0, 12.0, 1.0, 2.0, 3.0, 4.0, 9.0), ncol = 3)
-    )
-  )
-)
-geojson2wkt(mpoly, fmt=1)
-```
-
-### GeometryCollection
-
-```{r}
-gmcoll <- list(
- GeometryCollection = list(
-   list(type = 'Point', coordinates = c(0.0, 1.0)),
-   list(type = 'LineString', coordinates = matrix(c(0.0, 2.0, 4.0, 5.0,
-                           0.0, 1.0, 2.0, 4.0),
-                           ncol = 2)),
-   list(type = 'Polygon', coordinates = list(
-     matrix(c(100.001, 101.1, 101.001, 100.001, 0.001, 0.001, 1.001, 0.001),
-       ncol = 2),
-     matrix(c(100.201, 100.801, 100.801, 100.201, 0.201, 0.201, 0.801, 0.201),
-       ncol = 2)
-  ))
- )
-)
-geojson2wkt(gmcoll, fmt=0)
-```
-
-### Convert json or character objects
-
-You can convert directly from an object of class `json`, which is output from `jsonlite::toJSON()`.
-
-```{r}
-library("jsonlite")
-(json <- toJSON(list(Point = c(-105, 39)), auto_unbox = TRUE))
-```
-
-```{r}
-geojson2wkt(json)
-```
-
-And you can convert from a geojson character string:
-
-```{r}
-str <- '{"type":"LineString","coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
-geojson2wkt(str)
-```
-
-## WKT to GeoJSON
-
-### Point
-
-As a `Feature`
-
-```{r output.lines=1:10}
-str <- "POINT (-116.4000000000000057 45.2000000000000028)"
-wkt2geojson(str)
-```
-
-Not `Feature`
-
-```{r}
-wkt2geojson(str, feature=FALSE)
-```
-
-### Multipoint
-
-```{r output.lines=1:10}
-str <- 'MULTIPOINT ((100.000 3.101), (101.000 2.100), (3.140 2.180))'
-wkt2geojson(str, feature=FALSE)
-```
-
-### Polygon
-
-```{r output.lines=1:10}
-str <- "POLYGON ((100 0.1, 101.1 0.3, 101 0.5, 100 0.1), (103.2 0.2, 104.8 0.2, 100.8 0.8, 103.2 0.2))"
-wkt2geojson(str, feature=FALSE)
-```
-
-### MultiPolygon
-
-```{r output.lines=1:10}
-str <- "MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),
-    ((20 35, 45 20, 30 5, 10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))"
-wkt2geojson(str, feature=FALSE)
-```
-
-### Linestring
-
-```{r output.lines=1:10}
-wkt2geojson("LINESTRING (0 -1, -2 -3, -4 5)", feature=FALSE)
-```
-
-## lint WKT
-
-```{r eval=FALSE}
-lint("POINT (1 2)")
-#> [1] TRUE
-lint("LINESTRING EMPTY")
-#> [1] TRUE
-lint("MULTIPOINT ((1 2), (3 4), (-10 100))")
-#> [1] TRUE
-lint("POLYGON((20.3 28.6, 20.3 19.6, 8.5 19.6, 8.5 28.6, 20.3 28.6))")
-#> [1] TRUE
-lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))")
-#> [1] TRUE
-lint("POINT (1 2 3 4 5)")
-#> [1] FALSE
-lint("LINESTRING (100)")
-#> [1] FALSE
-lint("MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, a b, 10 20, 5 10, 15 5)))")
-#> [1] FALSE
-```
-
-## WKT <--> WKB
-
-WKT to WKB
-
-```{r}
-## point
-wkt_wkb("POINT (-116.4 45.2)")
-
-## polygon
-wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))")
-```
-
-WKB to WKT
-
-```{r}
-## point
-(x <- wkt_wkb("POINT (-116.4 45.2)"))
-wkb_wkt(x)
-
-## polygon
-(x <- wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))"))
-wkb_wkt(x)
 ```
 
 ## Meta
@@ -310,8 +84,6 @@ wkb_wkt(x)
 * Please [report any issues or bugs](https://github.com/ropensci/wellknown/issues).
 * License: MIT
 * Get citation information for `wellknown` in R doing `citation(package = 'wellknown')`
-* Please note that this project is released with a [Contributor Code of Conduct][coc]. By participating in this project you agree to abide by its terms.
+* Please note that this package is released with a [Contributor Code of Conduct](https://ropensci.org/code-of-conduct/). By contributing to this project, you agree to abide by its terms.
 
 [![ropensci_footer](https://ropensci.org/public_images/github_footer.png)](https://ropensci.org)
-
-[coc]: https://github.com/ropensci/wellknown/blob/master/CODE_OF_CONDUCT.md

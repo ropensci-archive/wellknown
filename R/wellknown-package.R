@@ -3,7 +3,7 @@
 #' @name wellknown-package
 #' @aliases wellknown
 #' @docType package
-#' @author Scott Chamberlain \email{myrmecocystus@@gmail.com}
+#' @author Scott Chamberlain
 #' @keywords package
 #' @importFrom wk wkt_translate_wkb wkb_translate_wkt
 #' @examples
