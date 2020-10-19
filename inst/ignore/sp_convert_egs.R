@@ -2,9 +2,13 @@
 #' library(sp)
 #' library(sf)
 #' s1 <- SpatialPolygons(list(Polygons(list(Polygon(cbind(c(2,4,4,1,2),c(2,3,5,4,2)))), "s1")))
+#' class(s1)
 #' sp_convert(s1)
+#' wk::as_wkt(s1)
 #' x = st_as_sf(s1)
+#' class(x)
 #' sf_convert(x)
+#' wk::as_wkt(x)
 #'
 #' library(sf)
 #' one = Polygon(cbind(c(91,90,90,91), c(30,30,32,30)))
