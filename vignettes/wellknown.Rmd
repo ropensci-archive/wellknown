@@ -386,3 +386,111 @@ wkb_wkt(x)
 wkb_wkt(x)
 #> [1] "POLYGON ((100 0, 101.1 0, 101 1, 100 0))"
 ```
+
+
+## Bounding boxes
+
+A bounding box is a very simple concept: a representation of the smallest area in which all the points in a dataset lie. In WKT, bounding boxes look like:
+
+```
+POLYGON((10 14,10 16,12 16,12 14,10 14))
+```
+
+Sometimes you've got WKT data like this - a Polygon, a LineString, whatever - and you want a bounding box in a format R can understand. The answer is `wkt_bounding`, which takes a vector of valid WKT objects and produces a data.frame or matrix of R representations, whichever you'd prefer:
+
+
+```r
+wkt <- c("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))",
+         "LINESTRING (30 10, 10 90, 40 40)")
+wkt_bounding(wkt)
+#>   min_x min_y max_x max_y
+#> 1    10    10    40    40
+#> 2    10    10    40    90
+```
+
+Alternately you might want to go in the other direction and turn R bounding boxes into WKT objects. You can do that with, appropriately, `bounding_wkt`:
+
+
+```r
+bounding_wkt(min_x = 10, min_y = 10, max_x = 40, max_y = 40)
+#> [1] "POLYGON((10 10,10 40,40 40,40 10,10 10))"
+```
+
+This accepts either a series of vectors, one for each min or max value, or a list of length-4 vectors. Either way, it produces a nice WKT representation of the R data you give it.
+
+## WKT validation
+
+`validate_wkt` takes a vector of WKT objects and spits out a data.frame containing whether each object is valid, and any comments the parser has in the case that it isn't:
+
+
+```r
+wkt <- c("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))",
+         "ARGHLEFLARFDFG",
+         "LINESTRING (30 10, 10 90, 40 out of cheese error redo universe from start)")
+validate_wkt(wkt)
+#>   is_valid
+#> 1    FALSE
+#> 2    FALSE
+#> 3    FALSE
+#>                                                                                                                                                          comments
+#> 1                                                                           The WKT object has a different orientation from the default. Use ?wkt_correct to fix.
+#> 2                                                                                                          Object could not be recognised as a supported WKT type
+#> 3 bad lexical cast: source type value could not be interpreted as target at 'out' in 'linestring (30 10, 10 90, 40 out of cheese error redo universe from start)'
+```
+
+With this you can check and clean your data before you rely on it and watch all your code fall down in a heap.
+
+## WKT generation from `sp` objects
+
+`sp` objects - particularly SpatialPolygons and SpatialPolygonDataFrames - are the standard way of representing geodata in R. They're also entirely unique to R and really difficult to use elsewhere. Enter `sp_convert`, which takes a list of SP/SPDF objects (or a single one) and turns the coordinate sets within them into WKT. In the case that there are multiple coordinate sets in an object and the `group` argument is set to TRUE, a MultiPolygon will be generated for that entry: if it's FALSE, a vector of Polygons:
+
+
+```r
+library(sp)
+Sr1 <- Polygon(cbind(c(2,4,4,1,2),c(2,3,5,4,2)))
+Sr2 <- Polygon(cbind(c(5,4,2,5),c(2,3,2,2)))
+Sr3 <- Polygon(cbind(c(4,4,5,10,4),c(5,3,2,5,5)))
+Sr4 <- Polygon(cbind(c(5,6,6,5,5),c(4,4,3,3,4)), hole = TRUE)
+
+Srs1 <- Polygons(list(Sr1), "s1")
+Srs2 <- Polygons(list(Sr2), "s2")
+Srs3 <- Polygons(list(Sr3, Sr4), "s3/4")
+sp_object <- SpatialPolygons(list(Srs1,Srs2,Srs3), 1:3)
+
+# With grouping
+sp_convert(x = sp_object, group = TRUE)
+# [1] "MULTIPOLYGON(((2 2,1 4,4 5,4 3,2 2)),((5 2,2 2,4 3,5 2)),((4 5,10 5,5 2,4 3,4 5)),((5 4,5 3,6 3,6 4,5 4)))"
+
+# Without grouping
+sp_convert(x = sp_object, group = FALSE)
+# [[1]]
+# [1] "POLYGON((2 2,1 4,4 5,4 3,2 2))"  "POLYGON((5 2,2 2,4 3,5 2))"      "POLYGON((4 5,10 5,5 2,4 3,4 5))"
+# [4] "POLYGON((5 4,5 3,6 3,6 4,5 4))"
+
+```
+
+## Coordinate and centroid extraction
+
+WKT POLYGONs are often used to store latitude and longitude coordinates - and you can use `wkt_coords` to get them:
+
+
+```r
+wkt_coords(("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"))
+#>   object  ring lng lat
+#> 1      1 outer  30  10
+#> 2      1 outer  40  40
+#> 3      1 outer  20  40
+#> 4      1 outer  10  20
+#> 5      1 outer  30  10
+```
+
+The result of a `wkt_coords` call is a data.frame of four columns - `object`, identifying which of the input WKT objects the row refers to, `ring` referring to the layer in that object, and then `lat` and `lng`.
+
+Extracting centroids is also useful, and can be performed with `wkt_centroid`. Again, it's entirely vectorised and produces a data.frame:
+
+
+```r
+wkt_centroid(("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"))
+#>        lng     lat
+#> 1 25.45455 26.9697
+```
