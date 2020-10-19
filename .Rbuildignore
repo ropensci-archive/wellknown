@@ -11,3 +11,4 @@ Makefile
 ^codemeta\.json$
 ^revdep$
 .github
+^LICENSE\.md$
