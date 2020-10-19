@@ -17,7 +17,7 @@ makes it easy to copy paste to a text editor, etc.}
 \item{auto_unbox}{(logical) Automatically unbox all atomic vectors of
 length 1. Default: \code{TRUE}}
 
-\item{...}{Further args passed on to \code{\link[jsonlite:toJSON]{jsonlite::toJSON()}}}
+\item{...}{Further args passed on to \code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}}}
 }
 \description{
 Convert geojson R list to JSON

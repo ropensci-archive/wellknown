@@ -22,7 +22,7 @@ represents  a measurement, while a \code{Z} value usually represents altitude
 
 \item{...}{Further args passed on to \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}} only
 in the event of json passed as a character string (can also be json
-of class \code{json} as returned from \code{\link[jsonlite:toJSON]{jsonlite::toJSON()}} or simply coerced
+of class \code{json} as returned from \code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}} or simply coerced
 to \code{json} by adding the class manually)}
 }
 \description{
