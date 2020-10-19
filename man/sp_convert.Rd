@@ -29,40 +29,6 @@ if \code{group} is \code{TRUE}, or a list of vectors if \code{group} is \code{FA
 (SpatialPolygons, SpatialPolygonDataFrames) or the \code{sf} package
 (sf, sfc, POLYGON, MULTIPOLYGON) - into WKT POLYGONs or MULTIPOLYGONs
 }
-\examples{
-\dontrun{
-library(sp)
-library(sf)
-s1 <- SpatialPolygons(list(Polygons(list(Polygon(cbind(c(2,4,4,1,2),c(2,3,5,4,2)))), "s1")))
-sp_convert(s1)
-x = st_as_sf(s1)
-sf_convert(x)
-
-library(sf)
-one = Polygon(cbind(c(91,90,90,91), c(30,30,32,30)))
-two = Polygon(cbind(c(94,92,92,94), c(40,40,42,40)))
-spone = Polygons(list(one), "s1")
-sptwo = Polygons(list(two), "s2")
-z = SpatialPolygons(list(spone, sptwo), as.integer(1:2))
-x = st_as_sf(z)
-sp_convert(z)
-# class: sf
-sf_convert(x)
-# class: sfc
-sf_convert(x = x[[1]])
-# class: polygon
-sf_convert(x = unclass(x[[1]])[[1]])
-sf_convert(x = unclass(x[[1]])[[2]])
-
-library(silicate)
-x <- sfzoo$multipolygon
-class(x)
-x_sp <- as(x, "Spatial")
-st_as_text(x)
-sp_convert(x_sp)
-sf_convert(x)
-}
-}
 \seealso{
 \code{\link[=bounding_wkt]{bounding_wkt()}}, for turning bounding boxes within
 \code{sp} objects into WKT objects.
