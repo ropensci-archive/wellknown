@@ -2,8 +2,10 @@
 #'
 #' @export
 #' @name wkb
-#' @param x A `character` string representing a WKT object, or an object
-#' of class `raw`, representing a WKB object
+#' @param x For `wkt_wkb()`, a `character` string representing a WKT object;
+#' for `wkb_wkt()`, an of class `raw` representing a WKB object
+#' @param ... arguments passed on to [wk::wkt_translate_wkb()] or 
+#' [wk::wkb_translate_wkt()]
 #' @return `wkt_wkb` returns an object of class `raw`, a WKB
 #' reprsentation. `wkb_wkt` returns an object of class `character`,
 #' a WKT representation
@@ -38,21 +40,15 @@
 #' ## polygon
 #' (x <- wkt_wkb("POLYGON ((100.0 0.0, 101.1 0.0, 101.0 1.0, 100.0 0.0))"))
 #' wkb_wkt(x)
-
-wkt_wkb <- function(x) {
-  sh$eval(sprintf("var tt = wkx.Geometry.parse('%s').toWkb();", x))
-  out <- sh$get("tt")
-  # Newer version of V8 converts JS buffers directly to raw vectors:
-  if(is.raw(out))
-    return(out)
-  # Older versions of V8 return json data:
-  as.raw(out$data)
+wkt_wkb <- function(x, ...) {
+  assert(x, "character")
+  stopifnot("'x' must be non-zero in length" = nzchar(x))
+  wk::wkt_translate_wkb(x, ...)[[1]]
 }
 
 #' @export
 #' @rdname wkb
-wkb_wkt <- function(x) {
-  sh$eval(sprintf("var w = new buffer('%s', 'hex')", paste0(x, collapse = "")))
-  sh$eval("var tt = wkx.Geometry.parse(w).toWkt();")
-  sh$get("tt")
+wkb_wkt <- function(x, ...) {
+  assert(x, "raw")
+  wk::wkb_translate_wkt(list(x), ...)
 }

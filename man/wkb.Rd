@@ -6,13 +6,16 @@
 \alias{wkb_wkt}
 \title{Convert WKT to WKB}
 \usage{
-wkt_wkb(x)
+wkt_wkb(x, ...)
 
-wkb_wkt(x)
+wkb_wkt(x, ...)
 }
 \arguments{
-\item{x}{A \code{character} string representing a WKT object, or an object
-of class \code{raw}, representing a WKB object}
+\item{x}{For \code{wkt_wkb()}, a \code{character} string representing a WKT object;
+for \code{wkb_wkt()}, an of class \code{raw} representing a WKB object}
+
+\item{...}{arguments passed on to \code{\link[wk:wkb_translate_wkt]{wk::wkt_translate_wkb()}} or
+\code{\link[wk:wkb_translate_wkt]{wk::wkb_translate_wkt()}}}
 }
 \value{
 \code{wkt_wkb} returns an object of class \code{raw}, a WKB

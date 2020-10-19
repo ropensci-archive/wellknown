@@ -5,6 +5,7 @@
 #' @docType package
 #' @author Scott Chamberlain \email{myrmecocystus@@gmail.com}
 #' @keywords package
+#' @importFrom wk wkt_translate_wkb wkb_translate_wkt
 #' @examples
 #' # GeoJSON to WKT
 #' point <- list(Point = c(116.4, 45.2, 11.1))

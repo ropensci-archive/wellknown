@@ -4,7 +4,7 @@ Description: Convert 'WKT' to 'GeoJSON' and 'GeoJSON' to 'WKT'. Functions
     included for converting between 'GeoJSON' to 'WKT', creating both
     'GeoJSON' features, and non-features, creating 'WKT' from R objects
     (e.g., lists, data.frames, vectors), and linting 'WKT'.
-Version: 0.6.0.92
+Version: 0.6.1.91
 Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
     email = "myrmecocystus@gmail.com",
     comment = c(ORCID="0000-0003-1444-9135"))
@@ -17,13 +17,13 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
     jsonlite,
-    V8 (>= 1.0.2)
+    wk
 Suggests:
     knitr,
     rmarkdown,
     leaflet (>= 1.0.0),
     testthat
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 X-schema.org-applicationCategory: Geosptial
 X-schema.org-keywords: spatial, geospatial, wkt, wkb, well-known-text, geojson, binary, conversion
 X-schema.org-isPartOf: https://ropensci.org

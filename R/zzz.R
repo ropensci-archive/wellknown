@@ -120,3 +120,12 @@ count_regex <- function(str, x) {
 `%||%` <- function (x, y) if (is.null(x) || length(x) == 0) y else x
 
 wc <- function(x) Filter(Negate(is.null), x)
+
+assert <- function(x, y) {
+  if (!is.null(x)) {
+    if (!inherits(x, y)) {
+      stop(deparse(substitute(x)), " must be of class ",
+           paste0(y, collapse = ", "), call. = FALSE)
+    }
+  }
+}
