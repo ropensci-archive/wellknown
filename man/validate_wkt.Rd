@@ -29,7 +29,6 @@ wkt <- c("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))",
 validate_wkt(wkt)
 }
 \seealso{
-\code{\link{sp_convert}} for generating valid WKT objects from SpatialPolygons
-and SpatialPolygonDataFrames, or \code{\link{wkt_correct}} for correcting WKT objects
+\code{\link{wkt_correct}} for correcting WKT objects
 that fail validity checks due to having a non-default orientation.
 }

@@ -13,3 +13,4 @@ Makefile
 .github
 ^LICENSE\.md$
 vignettes/wellknown.Rmd
+tests/othertests/

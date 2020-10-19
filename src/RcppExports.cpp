@@ -52,18 +52,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sp_convert_
-SEXP sp_convert_(List x, bool group);
-RcppExport SEXP _wellknown_sp_convert_(SEXP xSEXP, SEXP groupSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type x(xSEXP);
-    Rcpp::traits::input_parameter< bool >::type group(groupSEXP);
-    rcpp_result_gen = Rcpp::wrap(sp_convert_(x, group));
-    return rcpp_result_gen;
-END_RCPP
-}
 // validate_wkt
 DataFrame validate_wkt(CharacterVector x);
 RcppExport SEXP _wellknown_validate_wkt(SEXP xSEXP) {
@@ -115,7 +103,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_wellknown_bounding_wkt_list", (DL_FUNC) &_wellknown_bounding_wkt_list, 1},
     {"_wellknown_wkt_centroid", (DL_FUNC) &_wellknown_wkt_centroid, 1},
     {"_wellknown_wkt_reverse", (DL_FUNC) &_wellknown_wkt_reverse, 1},
-    {"_wellknown_sp_convert_", (DL_FUNC) &_wellknown_sp_convert_, 2},
     {"_wellknown_validate_wkt", (DL_FUNC) &_wellknown_validate_wkt, 1},
     {"_wellknown_wkt_bounding", (DL_FUNC) &_wellknown_wkt_bounding, 2},
     {"_wellknown_wkt_coords", (DL_FUNC) &_wellknown_wkt_coords, 1},

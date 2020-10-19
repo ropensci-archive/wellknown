@@ -149,8 +149,7 @@ void validate_gc(std::string& x, unsigned int& i_sup, CharacterVector& com, Logi
 //' for whether the WKT object is parseable and valid) and \code{comments} (containing any error messages
 //' in the case that the WKT object is not). If the objects are simply NA,
 //' both fields will contain NA.
-//' @seealso \code{\link{sp_convert}} for generating valid WKT objects from SpatialPolygons
-//' and SpatialPolygonDataFrames, or \code{\link{wkt_correct}} for correcting WKT objects
+//' @seealso \code{\link{wkt_correct}} for correcting WKT objects
 //' that fail validity checks due to having a non-default orientation.
 //' @examples
 //' wkt <- c("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))",
