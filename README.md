@@ -7,7 +7,7 @@ wellknown
 [![cran checks](https://cranchecks.info/badges/summary/wellknown)](https://cranchecks.info/pkgs/wellknown)
 [![R-check](https://github.com/ropensci/wellknown/workflows/R-check/badge.svg)](https://github.com/ropensci/wellknown/actions?query=workflow%3AR-check)
 [![codecov.io](https://codecov.io/github/ropensci/wellknown/coverage.svg?branch=master)](https://codecov.io/github/ropensci/wellknown?branch=master)
-[![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/wellknown)](https://github.com/metacran/cranlogs.app)
+[![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/wellknown)](https://github.com/r-hub/cranlogs.app)
 [![cran version](https://www.r-pkg.org/badges/version/wellknown)](https://cran.r-project.org/package=wellknown)
 
 `wellknown` - convert WKT to GeoJSON and vice versa, and other WKT utilities.
