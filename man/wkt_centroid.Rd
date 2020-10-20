@@ -22,10 +22,8 @@ cartesian values.
 }
 \examples{
 wkt_centroid("POLYGON((2 1.3,2.4 1.7))")
-#  lng lat
-#1 2   1.3
 }
 \seealso{
-\code{\link{wkt_coords}} to extract all coordinates, and
-\code{\link{wkt_bounding}} to extract a bounding box.
+\code{\link[=wkt_coords]{wkt_coords()}} to extract all coordinates, and
+\code{\link[=wkt_bounding]{wkt_bounding()}} to extract a bounding box.
 }

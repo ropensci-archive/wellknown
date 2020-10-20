@@ -23,13 +23,13 @@ std::string wkt_correct_single(std::string& x, T& poly){
 }
 
 //' @title Correct Incorrectly Oriented WKT Objects
-//' @description \code{wkt_correct} does precisely what it says on the tin,
+//' @description `wkt_correct` does precisely what it says on the tin,
 //' correcting the orientation of WKT objects that are improperly oriented
 //' (say, back to front). It can be applied to WKT objects that,
-//' when validated with \code{\link{validate_wkt}}, fail for that reason.
+//' when validated with [validate_wkt()], fail for that reason.
 //' @export
 //' @param x a character vector of WKT objects to correct
-//' @return a character vector, the same length as \code{x}, containing
+//' @return a character vector, the same length as `x`, containing
 //' either the original value (if there was no correction to make, or if
 //' the object was invalid for other reasons) or the corrected WKT
 //' value.

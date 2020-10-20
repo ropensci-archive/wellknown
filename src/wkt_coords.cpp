@@ -68,27 +68,21 @@ void extract_coords(s_polygon_type& p, unsigned int& outsize,
 }
 
 //' @title Extract Latitude and Longitude from WKT polygons
-//' @description \code{wkt_coords} extracts lat/long values from WKT polygons,
-//' specifically the outer shell of those polygons (working on the assumption that
-//' said outer edge is what you want).
+//' @description `wkt_coords` extracts lat/long values from WKT polygons,
+//' specifically the outer shell of those polygons (working on the assumption
+//' that said outer edge is what you want).
 //' 
-//' Because it assumes \emph{coordinates}, it also assumes a sphere - say, the earth -
-//' and uses spherical coordinate values.
+//' Because it assumes **coordinates**, it also assumes a sphere - say, the
+//' earth - and uses spherical coordinate values.
 //' @export
 //' @param wkt a character vector of WKT objects
-//' @return a data.frame of four columns; \code{object} (containing which object
-//' the row refers to), \code{ring} containing which layer of the object the row
-//' refers to, \code{lng} and \code{lat}.
-//' @seealso \code{\link{wkt_bounding}} to extract a bounding box,
-//' and \code{\link{wkt_centroid}} to extract the centroid.
+//' @return a data.frame of four columns; `object` (containing which object
+//' the row refers to), `ring` containing which layer of the object the row
+//' refers to, `lng` and `lat`.
+//' @seealso [wkt_bounding()] to extract a bounding box, and [wkt_centroid()]
+//' to extract the centroid.
 //' @examples
 //' wkt_coords("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")
-//' # object  ring lng lat
-//' # 1    1 outer  30  10
-//' # 2    1 outer  40  40
-//' # 3    1 outer  20  40
-//' # 4    1 outer  10  20
-//' # 5    1 outer  30  10
 // [[Rcpp::export]]
 DataFrame wkt_coords(CharacterVector wkt){
 

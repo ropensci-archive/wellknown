@@ -10,25 +10,26 @@ validate_wkt(x)
 \item{x}{a character vector of WKT objects.}
 }
 \value{
-a data.frame of two columns, \code{is_valid} (containing TRUE or FALSE values
-for whether the WKT object is parseable and valid) and \code{comments} (containing any error messages
+a data.frame of two columns, \code{is_valid} (containing
+\code{TRUE} or \code{FALSE} values for whether the WKT object is parseable and
+valid) and \code{comments} (containing any error messages
 in the case that the WKT object is not). If the objects are simply NA,
 both fields will contain NA.
 }
 \description{
-\code{validate_wkt} takes a vector of WKT objects and validates them,
-returning a data.frame containing the status of each entry and
-(in the case it cannot be parsed) any comments as to what, in particular, may be
-wrong with it. It does not, unfortunately, check whether the object meets the WKT
-spec - merely that it is formatted correctly.
+\code{validate_wkt} takes a vector of WKT objects and validates
+them, returning a data.frame containing the status of each entry and
+(in the case it cannot be parsed) any comments as to what, in particular,
+may be wrong with it. It does not, unfortunately, check whether the
+object meets the WKT spec - merely that it is formatted correctly.
 }
 \examples{
 wkt <- c("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))",
-         "ARGHLEFLARFDFG",
-         "LINESTRING (30 10, 10 90, 40 out of cheese error redo universe from start)")
+ "ARGHLEFLARFDFG",
+ "LINESTRING (30 10, 10 90, 40 some string)")
 validate_wkt(wkt)
 }
 \seealso{
-\code{\link{wkt_correct}} for correcting WKT objects
+\code{\link[=wkt_correct]{wkt_correct()}} for correcting WKT objects
 that fail validity checks due to having a non-default orientation.
 }

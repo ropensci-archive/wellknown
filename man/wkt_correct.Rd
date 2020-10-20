@@ -19,7 +19,7 @@ value.
 \code{wkt_correct} does precisely what it says on the tin,
 correcting the orientation of WKT objects that are improperly oriented
 (say, back to front). It can be applied to WKT objects that,
-when validated with \code{\link{validate_wkt}}, fail for that reason.
+when validated with \code{\link[=validate_wkt]{validate_wkt()}}, fail for that reason.
 }
 \examples{
 # A WKT object

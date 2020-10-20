@@ -16,22 +16,16 @@ refers to, \code{lng} and \code{lat}.
 }
 \description{
 \code{wkt_coords} extracts lat/long values from WKT polygons,
-specifically the outer shell of those polygons (working on the assumption that
-said outer edge is what you want).
+specifically the outer shell of those polygons (working on the assumption
+that said outer edge is what you want).
 
-Because it assumes \emph{coordinates}, it also assumes a sphere - say, the earth -
-and uses spherical coordinate values.
+Because it assumes \strong{coordinates}, it also assumes a sphere - say, the
+earth - and uses spherical coordinate values.
 }
 \examples{
 wkt_coords("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")
-# object  ring lng lat
-# 1    1 outer  30  10
-# 2    1 outer  40  40
-# 3    1 outer  20  40
-# 4    1 outer  10  20
-# 5    1 outer  30  10
 }
 \seealso{
-\code{\link{wkt_bounding}} to extract a bounding box,
-and \code{\link{wkt_centroid}} to extract the centroid.
+\code{\link[=wkt_bounding]{wkt_bounding()}} to extract a bounding box, and \code{\link[=wkt_centroid]{wkt_centroid()}}
+to extract the centroid.
 }
