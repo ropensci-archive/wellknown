@@ -16,7 +16,7 @@ CharacterVector bounding_wkt_points(NumericVector min_x, NumericVector max_x, Nu
   box_type bx;
   polygon_type poly;
 
-  for(unsigned int i = 0; i < input_size; i++){
+  for(signed int i = 0; i < input_size; i++){
     if((i % 10000) == 0){
       Rcpp::checkUserInterrupt();
     }
