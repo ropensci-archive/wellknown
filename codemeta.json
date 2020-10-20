@@ -10,14 +10,13 @@
   "codeRepository": "https://github.com/ropensci/wellknown",
   "issueTracker": "https://github.com/ropensci/wellknown/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "3.6.2",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.6.2 Patched (2019-12-12 r77564)",
+  "runtimePlatform": "R version 4.0.3 (2020-10-10)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -43,30 +42,6 @@
     }
   ],
   "softwareSuggestions": [
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "knitr",
-      "name": "knitr",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=knitr"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "rmarkdown",
-      "name": "rmarkdown",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
-    },
     {
       "@type": "SoftwareApplication",
       "identifier": "leaflet",
@@ -108,27 +83,39 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "V8",
-      "name": "V8",
-      "version": ">= 1.0.2",
+      "identifier": "wk",
+      "name": "wk",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=V8"
+      "sameAs": "https://CRAN.R-project.org/package=wk"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "Rcpp",
+      "name": "Rcpp",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rcpp"
     }
   ],
-  "contIntegration": ["https://travis-ci.org/ropensci/wellknown", "https://ci.appveyor.com/project/sckott/wellknown", "https://codecov.io/github/ropensci/wellknown?branch=master"],
+  "contIntegration": "https://codecov.io/github/ropensci/wellknown?branch=master",
   "releaseNotes": "https://github.com/ropensci/wellknown/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/wellknown/blob/master/README.md",
-  "fileSize": "101.968KB",
+  "fileSize": "0KB",
   "applicationCategory": "Geosptial",
   "isPartOf": "https://ropensci.org",
   "keywords": ["spatial", "geospatial", "wkt", "wkb", "well-known-text", "geojson", "binary", "conversion", "rstats", "wellknown", "r", "r-package"],
-  "relatedLink": "https://docs.ropensci.org/wellknown",
+  "relatedLink": ["https://docs.ropensci.org/wellknown", "https://docs.ropensci.org/wellknown/"],
   "contributor": {},
   "copyrightHolder": {},
-  "funder": {}
+  "funder": {},
+  "developmentStatus": "https://www.repostatus.org/#active"
 }

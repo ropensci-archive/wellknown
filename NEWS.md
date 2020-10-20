@@ -1,3 +1,16 @@
+wellknown 0.7.0
+===============
+
+### NEW FEATURES
+
+* Dropped import package V8 used in `wkt_wkb()` and `wkb_wkt()` functions; now using package `wk` for those functions. Javascript no longer used in the package; should make installation of this package easier on some platforms that had trouble installing V8  (#24) (#31)
+* Gains new functions for working with WKT: `bounding_wkt`, `wkt_bounding`, `sf_convert`, `validate_wkt`, `wkt_centroid`, `wkt_coords`, `wkt_reverse`. As part of this, package now uses Rcpp and BH (boost headers), so installation from source requires compilation (#32)
+
+### MINOR IMPROVEMENTS
+
+* vignette available on docs site only now
+
+
 wellknown 0.6.0
 ===============
 
