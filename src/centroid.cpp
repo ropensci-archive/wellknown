@@ -19,8 +19,8 @@ void centroid_single(std::string wkt, T& geom_obj,
     return;
   }
 
-  lat[outlength]  = boost::geometry::get<1>(p);
-  lng[outlength]  = boost::geometry::get<0>(p);
+  lat[outlength] = boost::geometry::get<1>(p);
+  lng[outlength] = boost::geometry::get<0>(p);
 }
 
 //' @title Extract Centroid

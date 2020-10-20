@@ -89,5 +89,5 @@ namespace wkt_utils {
   std::string make_wkt_multipoly(multipolygon_type p);
 
   std::string make_string(int x);
-};
+}
 #endif
