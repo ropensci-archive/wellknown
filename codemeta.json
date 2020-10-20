@@ -113,7 +113,10 @@
   "applicationCategory": "Geosptial",
   "isPartOf": "https://ropensci.org",
   "keywords": ["spatial", "geospatial", "wkt", "wkb", "well-known-text", "geojson", "binary", "conversion", "rstats", "wellknown", "r", "r-package"],
-  "relatedLink": ["https://docs.ropensci.org/wellknown", "https://docs.ropensci.org/wellknown/"],
+  "relatedLink": [
+    "https://docs.ropensci.org/wellknown",
+    "https://docs.ropensci.org/wellknown/"
+  ],
   "contributor": {},
   "copyrightHolder": {},
   "funder": {},
