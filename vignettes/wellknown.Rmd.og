@@ -344,7 +344,7 @@ This accepts either a series of vectors, one for each min or max value, or a lis
 ```{r}
 wkt <- c("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))",
          "ARGHLEFLARFDFG",
-         "LINESTRING (30 10, 10 90, 40 out of cheese error redo universe from start)")
+         "LINESTRING (30 10, 10 90, 40 some string)")
 validate_wkt(wkt)
 ```
 

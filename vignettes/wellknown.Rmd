@@ -1,7 +1,7 @@
 ---
 title: "Introduction to the wellknown package"
 author: "Scott Chamberlain"
-date: "2020-10-19"
+date: "2020-10-20"
 output:
   html_document:
     toc: true
@@ -426,16 +426,16 @@ This accepts either a series of vectors, one for each min or max value, or a lis
 ```r
 wkt <- c("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))",
          "ARGHLEFLARFDFG",
-         "LINESTRING (30 10, 10 90, 40 out of cheese error redo universe from start)")
+         "LINESTRING (30 10, 10 90, 40 some string)")
 validate_wkt(wkt)
 #>   is_valid
 #> 1    FALSE
 #> 2    FALSE
 #> 3    FALSE
-#>                                                                                                                                                          comments
-#> 1                                                                           The WKT object has a different orientation from the default. Use ?wkt_correct to fix.
-#> 2                                                                                                          Object could not be recognised as a supported WKT type
-#> 3 bad lexical cast: source type value could not be interpreted as target at 'out' in 'linestring (30 10, 10 90, 40 out of cheese error redo universe from start)'
+#>                                                                                                                          comments
+#> 1                                           The WKT object has a different orientation from the default. Use ?wkt_correct to fix.
+#> 2                                                                          Object could not be recognised as a supported WKT type
+#> 3 bad lexical cast: source type value could not be interpreted as target at 'some' in 'linestring (30 10, 10 90, 40 some string)'
 ```
 
 With this you can check and clean your data before you rely on it and watch all your code fall down in a heap.
