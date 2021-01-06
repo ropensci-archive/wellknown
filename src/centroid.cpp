@@ -8,8 +8,11 @@ void centroid_single(std::string wkt, T& geom_obj,
                      unsigned int& outlength,
                      NumericVector& lat,
                      NumericVector& lng){
-
-  point_type p(0,0,0);
+  
+  point_type p;
+  // point_type p(0,0,0)
+  // boost::geometry::set<0>(point_type,0);
+  // boost::geometry::set<1>(point_type,0);
   try{
     boost::geometry::read_wkt(wkt, geom_obj);
     boost::geometry::centroid(geom_obj, p);
