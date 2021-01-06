@@ -19,7 +19,7 @@ Language: en-US
 Roxygen: list(markdown = TRUE)
 LinkingTo:
     Rcpp,
-    BH
+    BH (>= 1.75.0)
 Imports:
     jsonlite,
     wk,
