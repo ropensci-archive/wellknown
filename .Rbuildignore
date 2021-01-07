@@ -7,10 +7,11 @@ Makefile
 ^\.travis\.yml$
 ^cran-comments\.md$
 ^README\.Rmd$
+^README\.md$
 .V8history
 ^codemeta\.json$
 ^revdep$
 .github
 ^LICENSE\.md$
-vignettes/wellknown.Rmd
+vignettes/*
 tests/othertests/
