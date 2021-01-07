@@ -1,3 +1,11 @@
+wellknown 0.7.2
+===============
+
+### MINOR IMPROVEMENTS
+
+* fixes to make this package compatible with an upcoming version of BH (v1.75.0) (#33)
+
+
 wellknown 0.7.0
 ===============
 

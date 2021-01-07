@@ -1,9 +1,8 @@
 ## Test environments
 
 * local OS X install, R 4.0.3
-* ubuntu 16.04 (on travis-ci), R 4.0.3
+* ubuntu 16.04 (on GitHub Actions), R 4.0.3
 * win-builder (devel and release)
-* R-hub (windows, ubuntu, fedora)
 
 ## R CMD check results
 
@@ -11,14 +10,12 @@
 
 ## Reverse dependencies
 
-* I have run R CMD check on the 2 reverse dependencies. No problems were
-found. Summary at <https://github.com/ropensci/wellknown/tree/master/revdep>
+* I have run R CMD check on the 3 reverse dependencies. No problems were
+found
 
 --------
 
-This version changes some package imports and adds some new functions.
-
-There are some remaining compiler warnings and notes on installation. I have inspected them and as far as I can tell they are all unrelated to this package's code; most are from Boost and the rest from bits/unique_ptr.h.
+This version makes the package compatible with the upcoming BH version.
 
 Thanks!
 Scott Chamberlain
