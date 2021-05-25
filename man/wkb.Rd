@@ -14,8 +14,8 @@ wkb_wkt(x, ...)
 \item{x}{For \code{wkt_wkb()}, a \code{character} string representing a WKT object;
 for \code{wkb_wkt()}, an of class \code{raw} representing a WKB object}
 
-\item{...}{arguments passed on to \code{\link[wk:wkb_translate_wkt]{wk::wkt_translate_wkb()}} or
-\code{\link[wk:wkb_translate_wkt]{wk::wkb_translate_wkt()}}}
+\item{...}{arguments passed on to \code{\link[wk:deprecated]{wk::wkt_translate_wkb()}} or
+\code{\link[wk:deprecated]{wk::wkb_translate_wkt()}}}
 }
 \value{
 \code{wkt_wkb} returns an object of class \code{raw}, a WKB
