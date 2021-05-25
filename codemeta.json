@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/ropensci/wellknown",
   "issueTracker": "https://github.com/ropensci/wellknown/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.7.2",
+  "version": "0.7.4",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.3 Patched (2020-12-29 r79725)",
+  "runtimePlatform": "R version 4.1.0 (2021-05-18)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -114,7 +114,7 @@
   "contIntegration": "https://codecov.io/github/ropensci/wellknown?branch=master",
   "releaseNotes": "https://github.com/ropensci/wellknown/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/wellknown/blob/master/README.md",
-  "fileSize": "33652.74KB",
+  "fileSize": "30101.59KB",
   "applicationCategory": "Geosptial",
   "isPartOf": "https://ropensci.org",
   "keywords": ["spatial", "geospatial", "wkt", "wkb", "well-known-text", "geojson", "binary", "conversion", "rstats", "wellknown", "r", "r-package"],

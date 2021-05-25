@@ -1,3 +1,11 @@
+wellknown 0.7.4
+===============
+
+### MINOR IMPROVEMENTS
+
+* fix a few examples for `geojson2wkt()` that had calls to `matrix()` that were leading to warnings because the input vectors were not a multiple of the nrow/ncol (#35)
+
+
 wellknown 0.7.2
 ===============
 
